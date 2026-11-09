@@ -1,0 +1,113 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
+
+export type Organization = {
+  id: string;
+  name: string;
+  slug: string;
+  time_zone: string;
+  contact_email: string | null;
+};
+
+export type Event = {
+  id: string;
+  org_id: string;
+  title: string;
+  description: string | null;
+  location: string | null;
+  notes_for_volunteers: string | null;
+  starts_at: string;
+  ends_at: string;
+  status: "draft" | "published" | "cancelled";
+  public_token: string;
+  created_at: string;
+};
+
+export type Shift = {
+  id: string;
+  event_id: string;
+  name: string;
+  starts_at: string;
+  ends_at: string;
+  capacity: number;
+  sort_order: number;
+};
+
+export type Signup = {
+  id: string;
+  event_id: string;
+  shift_id: string;
+  volunteer_name: string;
+  phone: string | null;
+  email: string | null;
+  is_minor: boolean;
+  guardian_name: string | null;
+  guardian_phone: string | null;
+  status: "confirmed" | "cancelled";
+  cancel_token: string;
+  checked_in_at: string | null;
+  checked_out_at: string | null;
+  created_at: string;
+};
+
+export type Session = {
+  supabase: SupabaseClient;
+  userId: string;
+  email: string;
+};
+
+/** The signed-in coordinator, or null (not configured / not signed in). */
+export async function getSession(): Promise<Session | null> {
+  try {
+    const supabase = await createClient();
+    if (!supabase) return null;
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) return null;
+    return { supabase, userId: data.user.id, email: data.user.email ?? "" };
+  } catch {
+    return null;
+  }
+}
+
+/** The coordinator's organization (first membership), or null if they have none yet. */
+export async function getOrg(session: Session): Promise<Organization | null> {
+  const { data: m } = await session.supabase
+    .from("memberships")
+    .select("org_id")
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  if (!m) return null;
+  const { data: org } = await session.supabase
+    .from("organizations")
+    .select("id,name,slug,time_zone,contact_email")
+    .eq("id", m.org_id)
+    .maybeSingle();
+  return (org as Organization) ?? null;
+}
+
+export function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 48) || "org";
+}
+
+export function normalizePhone(raw: string): string {
+  const digits = raw.replace(/\D/g, "");
+  if (digits.length === 10) return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  if (digits.length === 11 && digits.startsWith("1"))
+    return `(${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7)}`;
+  return raw.trim();
+}
+
+export type ShiftWithCounts = Shift & { confirmed: number; open: number };
+
+export function withCounts(shifts: Shift[], signups: Pick<Signup, "shift_id" | "status">[]): ShiftWithCounts[] {
+  return shifts.map((s) => {
+    const confirmed = signups.filter((x) => x.shift_id === s.id && x.status === "confirmed").length;
+    return { ...s, confirmed, open: Math.max(0, s.capacity - confirmed) };
+  });
+}

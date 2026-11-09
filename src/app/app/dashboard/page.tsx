@@ -1,89 +1,115 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import AppShell from "@/components/AppShell";
+import { getOrg, getSession, withCounts, type Event, type Shift, type Signup } from "@/lib/db";
+import { isSupabaseConfigured } from "@/lib/supabase/server";
+import { dateTile, fmtLongDate, fmtRange } from "@/lib/time";
 
 export const metadata: Metadata = { title: "Overview — CivicKettle" };
-
-const nav = [
-  { href: "/app/dashboard", label: "Overview", on: true },
-  { href: "/app/dashboard", label: "Events" },
-  { href: "/app/dashboard", label: "Volunteers" },
-  { href: "/app/dashboard", label: "Hours" },
-  { href: "/app/dashboard", label: "Settings" },
-];
-
 export const dynamic = "force-dynamic";
 
-async function Workspace() {
-  let supabase = null;
-  try {
-    supabase = await createClient();
-  } catch {
-    supabase = null;
-  }
-  if (!supabase) {
+export default async function DashboardPage() {
+  if (!isSupabaseConfigured()) {
     return (
-      <div className="ap-card ap-notice">
-        <h2>Workspace not connected yet</h2>
-        <p>The database for CivicKettle hasn&apos;t been linked to this deployment. Nothing is broken; this screen fills in once it is.</p>
-      </div>
+      <AppShell active="overview">
+        <div className="ap-card ap-notice">
+          <h2>Workspace not connected yet</h2>
+          <p>The database for CivicKettle hasn&apos;t been linked to this deployment.</p>
+        </div>
+      </AppShell>
     );
   }
-  let email: string | null = null;
-  try {
-    const { data } = await supabase.auth.getUser();
-    email = data.user?.email ?? null;
-  } catch {
-    email = null;
+  const session = await getSession();
+  if (!session) redirect("/app");
+  const org = await getOrg(session);
+  if (!org) redirect("/app/setup");
+
+  const nowIso = new Date().toISOString();
+  const monthStart = new Date();
+  monthStart.setUTCDate(1);
+  monthStart.setUTCHours(0, 0, 0, 0);
+
+  const [{ data: upcoming }, { data: monthSignups }] = await Promise.all([
+    session.supabase
+      .from("events")
+      .select("id,title,location,starts_at,ends_at,status,public_token")
+      .eq("org_id", org.id)
+      .neq("status", "cancelled")
+      .gte("ends_at", nowIso)
+      .order("starts_at", { ascending: true })
+      .limit(5),
+    session.supabase
+      .from("signups")
+      .select("id,created_at,status,event_id")
+      .gte("created_at", monthStart.toISOString()),
+  ]);
+
+  const events = (upcoming ?? []) as Pick<Event, "id" | "title" | "location" | "starts_at" | "ends_at" | "status" | "public_token">[];
+  const eventIds = events.map((e) => e.id);
+
+  let shifts: Shift[] = [];
+  let signups: Pick<Signup, "shift_id" | "status" | "event_id">[] = [];
+  if (eventIds.length) {
+    const [{ data: s }, { data: su }] = await Promise.all([
+      session.supabase.from("shifts").select("*").in("event_id", eventIds),
+      session.supabase.from("signups").select("shift_id,status,event_id").in("event_id", eventIds),
+    ]);
+    shifts = (s ?? []) as Shift[];
+    signups = (su ?? []) as Pick<Signup, "shift_id" | "status" | "event_id">[];
   }
-  if (!email) redirect("/app");
+
+  const perEvent = events.map((e) => {
+    const sc = withCounts(shifts.filter((s) => s.event_id === e.id), signups);
+    const capacity = sc.reduce((a, s) => a + s.capacity, 0);
+    const filled = sc.reduce((a, s) => a + s.confirmed, 0);
+    return { event: e, shifts: sc, capacity, filled, open: Math.max(0, capacity - filled) };
+  });
+
+  const openSpots = perEvent.reduce((a, p) => a + p.open, 0);
+  const understaffed = perEvent.filter((p) => p.capacity > 0 && p.filled / p.capacity < 0.5).length;
+  const signupsThisMonth = (monthSignups ?? []).filter((x) => x.status === "confirmed").length;
 
   return (
-    <>
+    <AppShell active="overview" orgName={org.name} email={session.email}>
       <div className="ap-top">
         <div>
-          <p className="ck-kicker">Your week at a glance</p>
-          <h1>Welcome to CivicKettle</h1>
+          <p className="ck-kicker">{fmtLongDate(nowIso, org.time_zone)}</p>
+          <h1 className="ap-h1">Your week at a glance</h1>
         </div>
-        <form action="/app/api/signout" method="post">
-          <button className="ap-ghost" type="submit">Sign out</button>
-        </form>
+        <a className="ck-button" href="/app/events/new">New event <span aria-hidden="true">+</span></a>
       </div>
-      <div className="ap-card ap-notice">
-        <h2>Signed in as {email}</h2>
-        <p>Events, shifts and sign-ups arrive here next. This is the foundation: login works, sessions persist, and the rest of the build lands on top of it.</p>
-      </div>
-    </>
-  );
-}
 
-export default function DashboardPage() {
-  return (
-    <div className="ap-shell">
-      <aside className="ap-side">
-        <a className="ap-brand" href="/">
-          <svg aria-hidden="true" viewBox="0 0 40 40" fill="none" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 15.5h17v10.1a7.4 7.4 0 0 1-7.4 7.4h-2.2a7.4 7.4 0 0 1-7.4-7.4V15.5Z" />
-            <path d="M29 18h2.1a4.3 4.3 0 0 1 0 8.6H29M12 19H9.5a3.3 3.3 0 0 0-3.3 3.3v1.2M16 11.5c0-2.1 1.5-2.7 1.5-4.8M23 11.5c0-2.1 1.5-2.7 1.5-4.8" />
-            <path d="M20.5 22c1.8-3.3 5.4-2.8 6.1-2.6-.2 3.6-2.6 5.5-6.1 5.4" />
-          </svg>
-          CivicKettle
-        </a>
-        <nav className="ap-nav" aria-label="Workspace sections">
-          {nav.map((item) => (
-            <a key={item.label} href={item.href} className={item.on ? "on" : undefined} aria-current={item.on ? "page" : undefined}>
-              {item.label}
-            </a>
-          ))}
-        </nav>
-        <p className="ap-side-foot">{isSupabaseConfigured() ? "Connected" : "Setup pending"}</p>
-      </aside>
-      <main className="ap-main">
-        <Suspense fallback={<p className="ap-muted">Loading your workspace…</p>}>
-          <Workspace />
-        </Suspense>
-      </main>
-    </div>
+      <div className="ap-tiles">
+        <div className="ap-tile"><span className="l">Upcoming events</span><span className="v">{events.length}</span><span className="d">{events[0] ? `Next: ${dateTile(events[0].starts_at, org.time_zone).dow} ${dateTile(events[0].starts_at, org.time_zone).day}` : "Nothing scheduled"}</span></div>
+        <div className="ap-tile"><span className="l">Open spots</span><span className="v">{openSpots}</span><span className={understaffed ? "d warn" : "d"}>{understaffed ? `${understaffed} event${understaffed > 1 ? "s" : ""} under half full` : "All events on track"}</span></div>
+        <div className="ap-tile"><span className="l">Sign-ups this month</span><span className="v">{signupsThisMonth}</span><span className="d">Confirmed volunteers</span></div>
+        <div className="ap-tile"><span className="l">Hours logged this month</span><span className="v">0</span><span className="d">Check-in arrives next</span></div>
+      </div>
+
+      <section className="ap-card">
+        <div className="ap-card-h"><h2>Upcoming events</h2><a href="/app/events">All events ›</a></div>
+        {perEvent.length === 0 ? (
+          <div className="ap-empty">
+            <p>No events yet. Create your first one and you&apos;ll get a sign-up link to share.</p>
+            <a className="ck-button" href="/app/events/new">Create an event <span aria-hidden="true">↗</span></a>
+          </div>
+        ) : (
+          perEvent.map(({ event, capacity, filled, shifts: sc }) => {
+            const tile = dateTile(event.starts_at, org.time_zone);
+            const pct = capacity ? Math.round((filled / capacity) * 100) : 0;
+            return (
+              <a key={event.id} href={`/app/events/${event.id}`} className="ap-ev">
+                <span className="ap-date"><small>{tile.dow}</small><strong>{tile.day}</strong></span>
+                <span>
+                  <h3>{event.title}</h3>
+                  <p>{fmtRange(event.starts_at, event.ends_at, org.time_zone)} · {sc.length} shift{sc.length === 1 ? "" : "s"}{event.location ? ` · ${event.location}` : ""}</p>
+                </span>
+                <span className="ap-cap">{filled} of {capacity} spots<span className="ap-bar"><i className={pct < 50 ? "low" : undefined} style={{ width: `${pct}%` }} /></span></span>
+              </a>
+            );
+          })
+        )}
+      </section>
+    </AppShell>
   );
 }
