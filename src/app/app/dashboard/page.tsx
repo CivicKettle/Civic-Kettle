@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import { signOut } from "../actions";
 
 export const metadata: Metadata = { title: "Overview — CivicKettle" };
 
@@ -47,7 +46,7 @@ async function Workspace() {
           <p className="ck-kicker">Your week at a glance</p>
           <h1>Welcome to CivicKettle</h1>
         </div>
-        <form action={signOut}>
+        <form action="/app/api/signout" method="post">
           <button className="ap-ghost" type="submit">Sign out</button>
         </form>
       </div>
