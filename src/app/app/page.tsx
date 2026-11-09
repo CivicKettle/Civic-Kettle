@@ -8,12 +8,20 @@ import SignInForm from "./SignInForm";
 
 export const metadata: Metadata = { title: "Sign in — CivicKettle" };
 
+export const dynamic = "force-dynamic";
+
 async function RedirectIfSignedIn() {
-  const supabase = await createClient();
-  if (supabase) {
-    const { data } = await supabase.auth.getUser();
-    if (data.user) redirect("/app/dashboard");
+  let signedIn = false;
+  try {
+    const supabase = await createClient();
+    if (supabase) {
+      const { data } = await supabase.auth.getUser();
+      signedIn = Boolean(data.user);
+    }
+  } catch {
+    // Never let an auth hiccup take down the sign-in page.
   }
+  if (signedIn) redirect("/app/dashboard");
   return null;
 }
 

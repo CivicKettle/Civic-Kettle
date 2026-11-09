@@ -14,8 +14,15 @@ const nav = [
   { href: "/app/dashboard", label: "Settings" },
 ];
 
+export const dynamic = "force-dynamic";
+
 async function Workspace() {
-  const supabase = await createClient();
+  let supabase = null;
+  try {
+    supabase = await createClient();
+  } catch {
+    supabase = null;
+  }
   if (!supabase) {
     return (
       <div className="ap-card ap-notice">
@@ -24,8 +31,14 @@ async function Workspace() {
       </div>
     );
   }
-  const { data } = await supabase.auth.getUser();
-  if (!data.user) redirect("/app");
+  let email: string | null = null;
+  try {
+    const { data } = await supabase.auth.getUser();
+    email = data.user?.email ?? null;
+  } catch {
+    email = null;
+  }
+  if (!email) redirect("/app");
 
   return (
     <>
@@ -39,7 +52,7 @@ async function Workspace() {
         </form>
       </div>
       <div className="ap-card ap-notice">
-        <h2>Signed in as {data.user.email}</h2>
+        <h2>Signed in as {email}</h2>
         <p>Events, shifts and sign-ups arrive here next. This is the foundation: login works, sessions persist, and the rest of the build lands on top of it.</p>
       </div>
     </>
