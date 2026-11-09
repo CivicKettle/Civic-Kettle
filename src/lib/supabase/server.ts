@@ -1,10 +1,20 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
+/** Trim, strip quotes, and add https:// if the dashboard value was pasted without it. */
+export function supabaseUrl(): string {
+  let raw = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim().replace(/^["']|["']$/g, "");
+  if (raw && !/^https?:\/\//i.test(raw)) raw = `https://${raw}`;
+  return raw.replace(/\/$/, "");
+}
+
+export function supabaseAnonKey(): string {
+  return (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim().replace(/^["']|["']$/g, "");
+}
+
 export function isSupabaseConfigured(): boolean {
-  return Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  );
+  const url = supabaseUrl();
+  return Boolean(url && /^https?:\/\/[^\s/]+\.[^\s/]+/.test(url) && supabaseAnonKey());
 }
 
 export function siteUrl(): string {
@@ -23,10 +33,7 @@ export function siteUrl(): string {
 export async function createClient() {
   if (!isSupabaseConfigured()) return null;
   const cookieStore = await cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  return createServerClient(supabaseUrl(), supabaseAnonKey(), {
       cookies: {
         getAll() {
           return cookieStore.getAll();

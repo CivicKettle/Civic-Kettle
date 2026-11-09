@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { isSupabaseConfigured } from "@/lib/supabase/server";
+import { isSupabaseConfigured, supabaseUrl, supabaseAnonKey } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
@@ -9,8 +9,8 @@ export async function POST(request: NextRequest) {
   if (!isSupabaseConfigured()) return response;
   try {
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      supabaseUrl(),
+      supabaseAnonKey(),
       {
         cookies: {
           getAll() {
