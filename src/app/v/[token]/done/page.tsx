@@ -43,7 +43,8 @@ export default async function DonePage({
           </p>
         </div>
         <div className="pv-card pv-fields">
-          <p className="pv-note">Save this page or copy the link below. It&apos;s how you cancel if plans change, and no login is needed.</p>
+          <p className="pv-note">Plans change? Use the button below, now or later. Copy the link if you want to keep it somewhere. No login needed.</p>
+          <a className="pv-button ghost" href={`/v/cancel/${signup.cancel_token}`}>Cancel this sign-up</a>
           <CopyField value={cancelUrl} />
           {signup.is_minor && signup.guardian_name && (
             <p className="pv-muted">Guardian on file: {signup.guardian_name}{signup.guardian_phone ? `, ${signup.guardian_phone}` : ""}.</p>
