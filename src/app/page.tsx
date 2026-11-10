@@ -150,9 +150,8 @@ export default function Home() {
         <p>CivicKettle is onboarding a handful of founding organizations first, so every workspace is set up with you, not handed over. Tell us about your group and we'll be in touch within a day or two.</p>
         <p className="ck-contact-alt">Prefer email? <a href="mailto:civickettle@gmail.com">civickettle@gmail.com</a></p>
       </div>
-      <form className="ck-form" name="founding-org" method="POST" action="/thanks" data-netlify="true" netlify-honeypot="bot-field">
-        <input type="hidden" name="form-name" value="founding-org" readOnly />
-        <p className="ck-hidden"><label>Leave this empty: <input name="bot-field" /></label></p>
+      <form className="ck-form" name="founding-org" method="POST" action="/app/api/inquiry">
+                <p className="ck-hidden"><label>Leave this empty: <input name="bot-field" /></label></p>
         <div className="ck-form-row">
           <label htmlFor="f-org">Organization</label>
           <input id="f-org" name="organization" type="text" required autoComplete="organization" placeholder="Maple Street Community Garden" />

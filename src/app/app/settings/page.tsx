@@ -36,6 +36,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
         <button className="ck-button" type="submit">Save <span aria-hidden="true">↗</span></button>
       </form>
       <p className="ap-muted">Coordinator: {session.email}. Adding more coordinators comes later.</p>
+      <p className="ap-muted"><a className="ap-link" href="/app/inquiries">Inquiries from the website form ›</a></p>
     </AppShell>
   );
 }
