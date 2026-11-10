@@ -6,6 +6,7 @@ export default function SiteFooter() {
       <span>CivicKettle</span>
     </a>
     <p>Less admin, more community impact.</p>
+    <a href="/app">Coordinator sign in</a>
     <a href="mailto:civickettle@gmail.com">civickettle@gmail.com</a>
     <span className="ck-copyright">© 2026 CivicKettle</span>
   </footer>
