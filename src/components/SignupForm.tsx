@@ -58,14 +58,14 @@ export default function SignupForm({ token, shifts, tz, error, prefillShift }: P
               <label>{adult === "no" ? "Volunteer's name" : "Your name"}<input name="volunteer_name" type="text" required maxLength={80} autoComplete="name" placeholder="First and last" /></label>
               {adult === "yes" ? (
                 <>
-                  <label>Mobile number<input name="phone" type="tel" required autoComplete="tel" inputMode="tel" placeholder="For the reminder" /></label>
+                  <label>Mobile number<input name="phone" type="tel" required autoComplete="tel" inputMode="tel" pattern="[0-9()+\-. ]{10,20}" title="10-digit phone number" placeholder="949 555 0100" /></label>
                   <label>Email <span>Optional</span><input name="email" type="email" autoComplete="email" /></label>
                 </>
               ) : (
                 <>
-                  <label>Volunteer&apos;s mobile <span>Optional, 13 and older</span><input name="phone" type="tel" autoComplete="off" inputMode="tel" /></label>
+                  <label>Volunteer&apos;s mobile <span>Optional, 13 and older</span><input name="phone" type="tel" autoComplete="off" inputMode="tel" pattern="[0-9()+\-. ]{10,20}" title="10-digit phone number" placeholder="949 555 0100" /></label>
                   <label>Parent or guardian name<input name="guardian_name" type="text" required maxLength={80} /></label>
-                  <label>Parent or guardian mobile<input name="guardian_phone" type="tel" required inputMode="tel" placeholder="Confirmations go here" /></label>
+                  <label>Parent or guardian mobile<input name="guardian_phone" type="tel" required inputMode="tel" pattern="[0-9()+\-. ]{10,20}" title="10-digit phone number" placeholder="949 555 0100, confirmations go here" /></label>
                   <label>Parent or guardian email <span>Optional</span><input name="email" type="email" /></label>
                   <label className="pv-check"><input type="checkbox" name="guardian_consent" value="yes" required /> I am this volunteer&apos;s parent or guardian and I consent to this sign-up.</label>
                 </>

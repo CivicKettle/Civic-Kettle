@@ -95,12 +95,13 @@ export function slugify(input: string): string {
     .slice(0, 48) || "org";
 }
 
-export function normalizePhone(raw: string): string {
+/** US mobile number → "(949) 555-0100", or null if it isn't a 10-digit number. */
+export function normalizePhone(raw: string): string | null {
   const digits = raw.replace(/\D/g, "");
   if (digits.length === 10) return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
   if (digits.length === 11 && digits.startsWith("1"))
     return `(${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7)}`;
-  return raw.trim();
+  return null;
 }
 
 export type ShiftWithCounts = Shift & { confirmed: number; open: number };

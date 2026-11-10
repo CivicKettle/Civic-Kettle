@@ -38,8 +38,11 @@ export async function POST(request: NextRequest) {
   const guardianPhone = guardianPhoneRaw ? normalizePhone(guardianPhoneRaw) : null;
   const email = emailRaw && emailRaw.includes("@") ? emailRaw : null;
 
-  if (!isMinor && !phone) return go(request, back, "A mobile number is needed for the reminder.");
-  if (isMinor && (!guardianName || !guardianPhone)) return go(request, back, "A parent or guardian's name and mobile are required for volunteers under 18.");
+  if (!isMinor && !phoneRaw) return go(request, back, "A mobile number is needed for the reminder.");
+  if (phoneRaw && !phone) return go(request, back, "That mobile number doesn't look right. Use 10 digits, like 949 555 0100.");
+  if (isMinor && !guardianName) return go(request, back, "A parent or guardian's name is required for volunteers under 18.");
+  if (isMinor && !guardianPhoneRaw) return go(request, back, "A parent or guardian's mobile number is required for volunteers under 18.");
+  if (isMinor && !guardianPhone) return go(request, back, "The guardian's mobile should be a 10-digit phone number, like 949 555 0100. The consent is the checkbox below.");
   if (isMinor && !consent) return go(request, back, "Please confirm you are the volunteer's parent or guardian.");
 
   // Event and shift must match the token, be open, and in the future.
