@@ -1,4 +1,5 @@
 import type { Event, Shift } from "@/lib/db";
+import FormMemory from "@/components/FormMemory";
 import { utcToZonedInputs } from "@/lib/time";
 
 const MAX_SHIFTS = 5;
@@ -16,8 +17,10 @@ export default function EventForm({ tz, event, shifts = [], error }: Props) {
   const rows = Array.from({ length: MAX_SHIFTS }, (_, i) => shifts[i]);
 
   return (
-    <form action={editing ? `/app/api/events/${event!.id}` : "/app/api/events"} method="post" className="ap-form ap-form-wide">
+    <form id="event-form" action={editing ? `/app/api/events/${event!.id}` : "/app/api/events"} method="post" className="ap-form ap-form-wide">
       <input type="hidden" name="intent" value={editing ? "update" : "create"} />
+      {error && <p className="ap-error ap-error-top">{decodeURIComponent(error)}</p>}
+      <FormMemory formId="event-form" storageKey={editing ? `ck-event-${event!.id}` : "ck-event-new"} restore={Boolean(error)} />
 
       <div className="ap-card ap-form">
         <h2 className="ap-h2">Event</h2>
@@ -56,7 +59,7 @@ export default function EventForm({ tz, event, shifts = [], error }: Props) {
                 <input aria-label={`Shift ${i + 1} name`} name={`shift_name_${i}`} type="text" maxLength={60} defaultValue={s?.name ?? ""} placeholder={i === 0 ? "Setup crew" : i === 1 ? "Main shift" : i === 2 ? "Cleanup" : ""} />
                 <input aria-label={`Shift ${i + 1} start time`} name={`shift_start_${i}`} type="time" defaultValue={st} />
                 <input aria-label={`Shift ${i + 1} end time`} name={`shift_end_${i}`} type="time" defaultValue={en} />
-                <input aria-label={`Shift ${i + 1} spots`} name={`shift_capacity_${i}`} type="number" min={1} max={500} defaultValue={s?.capacity ?? ""} placeholder="8" />
+                <input aria-label={`Shift ${i + 1} spots`} name={`shift_capacity_${i}`} type="number" min={1} max={500} defaultValue={s?.capacity ?? 8} />
               </div>
             );
           })}

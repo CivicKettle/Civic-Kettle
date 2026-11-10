@@ -33,17 +33,17 @@ export function parseEventForm(form: FormData, tz: string): { ok: true; data: Pa
     const end = String(form.get(`shift_end_${i}`) || "");
     const capRaw = String(form.get(`shift_capacity_${i}`) || "");
     const id = String(form.get(`shift_id_${i}`) || "") || undefined;
-    const blank = !name && !start && !end && !capRaw;
+    const blank = !name && !start && !end;
     if (blank) continue;
-    if (!name || !start || !end || !capRaw) {
-      return { ok: false, error: `Shift ${i + 1} needs a name, start, end and number of spots.` };
+    if (!name || !start || !end) {
+      const missing = [!name && "a name", !start && "a start time", !end && "an end time"].filter(Boolean).join(", ");
+      return { ok: false, error: `Shift ${i + 1} is missing ${missing}.` };
     }
     const s = zonedToUtc(date, start, tz);
     let e = zonedToUtc(date, end, tz);
     if (!s || !e) return { ok: false, error: `Shift ${i + 1} has an invalid time.` };
     if (e.getTime() <= s.getTime()) e = new Date(e.getTime() + 24 * 3600 * 1000); // past midnight
-    const capacity = Math.max(1, Math.min(500, parseInt(capRaw, 10) || 0));
-    if (!capacity) return { ok: false, error: `Shift ${i + 1} needs at least one spot.` };
+    const capacity = Math.max(1, Math.min(500, parseInt(capRaw, 10) || 8));
     shifts.push({ id, name, starts_at: s.toISOString(), ends_at: e.toISOString(), capacity, sort_order: i });
   }
   if (shifts.length === 0) return { ok: false, error: "Add at least one shift so volunteers have something to sign up for." };

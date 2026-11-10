@@ -1466,3 +1466,5 @@ body {
 .pv-fields label { display: block; }
 .pv-fields label span { margin-left: 6px; }
 .pv-fields label input:not([type="checkbox"]) { display: block; width: 100%; margin-top: 6px; box-sizing: border-box; }
+
+.ap-error-top { padding: 10px 14px; border: 1px solid #e3c2b4; background: #f7e9e3; }
