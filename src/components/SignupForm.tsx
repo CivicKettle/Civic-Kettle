@@ -53,26 +53,26 @@ export default function SignupForm({ token, shifts, tz, error, prefillShift }: P
           {adult !== "" && (
             <div className="pv-card pv-fields">
               {adult === "no" && (
-                <p className="pv-note">A parent or guardian signs up a volunteer under 18. Confirmations and reminders go to the guardian. For volunteers under 13, please enter the guardian&apos;s details in both sections.</p>
+                <p className="pv-note">A parent or guardian signs up a volunteer under 18. Confirmations and reminders go to the guardian&apos;s email.</p>
               )}
               <label>{adult === "no" ? "Volunteer's name" : "Your name"}<input name="volunteer_name" type="text" required maxLength={80} autoComplete="name" placeholder="First and last" /></label>
               {adult === "yes" ? (
                 <>
-                  <label>Mobile number<input name="phone" type="tel" required autoComplete="tel" inputMode="tel" pattern="[0-9()+\-. ]{10,20}" title="10-digit phone number" placeholder="949 555 0100" /></label>
-                  <label>Email <span>Optional</span><input name="email" type="email" autoComplete="email" /></label>
+                  <label>Email <span>Confirmation and reminders go here</span><input name="email" type="email" required autoComplete="email" inputMode="email" /></label>
+                  <label>Mobile number <span>Optional, for texts later</span><input name="phone" type="tel" autoComplete="tel" inputMode="tel" pattern="[0-9()+\-. ]{10,20}" title="10-digit phone number" placeholder="949 555 0100" /></label>
                 </>
               ) : (
                 <>
                   <label>Volunteer&apos;s mobile <span>Optional, 13 and older</span><input name="phone" type="tel" autoComplete="off" inputMode="tel" pattern="[0-9()+\-. ]{10,20}" title="10-digit phone number" placeholder="949 555 0100" /></label>
                   <label>Parent or guardian name<input name="guardian_name" type="text" required maxLength={80} /></label>
-                  <label>Parent or guardian mobile<input name="guardian_phone" type="tel" required inputMode="tel" pattern="[0-9()+\-. ]{10,20}" title="10-digit phone number" placeholder="949 555 0100, confirmations go here" /></label>
-                  <label>Parent or guardian email <span>Optional</span><input name="email" type="email" /></label>
+                  <label>Parent or guardian email <span>Confirmation and reminders go here</span><input name="email" type="email" required inputMode="email" /></label>
+                  <label>Parent or guardian mobile <span>Optional, for texts later</span><input name="guardian_phone" type="tel" inputMode="tel" pattern="[0-9()+\-. ]{10,20}" title="10-digit phone number" placeholder="949 555 0100" /></label>
                   <label className="pv-check"><input type="checkbox" name="guardian_consent" value="yes" required /> I am this volunteer&apos;s parent or guardian and I consent to this sign-up.</label>
                 </>
               )}
               {error && <p className="pv-error">{decodeURIComponent(error)}</p>}
               <button className="pv-button" type="submit">Sign me up <span aria-hidden="true">↗</span></button>
-              <p className="pv-fine">You&apos;ll get a confirmation with a link to cancel if plans change. No account needed.</p>
+              <p className="pv-fine">A confirmation email arrives right away, with a link to cancel if plans change. Reminders come the day before and the morning of. No account needed.</p>
             </div>
           )}
         </>

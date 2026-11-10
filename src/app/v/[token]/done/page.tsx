@@ -49,7 +49,7 @@ export default async function DonePage({
           {signup.is_minor && signup.guardian_name && (
             <p className="pv-muted">Guardian on file: {signup.guardian_name}{signup.guardian_phone ? `, ${signup.guardian_phone}` : ""}.</p>
           )}
-          <p className="pv-fine">Reminders by email and text arrive once those are switched on for {org.name}. Until then, this page is your confirmation.</p>
+          <p className="pv-fine">{signup.email ? `A confirmation is on its way to ${signup.email}, and reminders follow the day before and the morning of.` : "This page is your confirmation."}</p>
           <a className="pv-link" href={`/v/${token}`}>Sign up someone else ›</a>
         </div>
       </main>

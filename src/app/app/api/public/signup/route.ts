@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { normalizePhone } from "@/lib/db";
+import { deliver, loadParts } from "@/lib/emails/deliver";
 
 export const dynamic = "force-dynamic";
 
@@ -38,11 +39,10 @@ export async function POST(request: NextRequest) {
   const guardianPhone = guardianPhoneRaw ? normalizePhone(guardianPhoneRaw) : null;
   const email = emailRaw && emailRaw.includes("@") ? emailRaw : null;
 
-  if (!isMinor && !phoneRaw) return go(request, back, "A mobile number is needed for the reminder.");
+  if (!email) return go(request, back, isMinor ? "A parent or guardian's email is needed for the confirmation and reminders." : "An email address is needed for the confirmation and reminders.");
   if (phoneRaw && !phone) return go(request, back, "That mobile number doesn't look right. Use 10 digits, like 949 555 0100.");
   if (isMinor && !guardianName) return go(request, back, "A parent or guardian's name is required for volunteers under 18.");
-  if (isMinor && !guardianPhoneRaw) return go(request, back, "A parent or guardian's mobile number is required for volunteers under 18.");
-  if (isMinor && !guardianPhone) return go(request, back, "The guardian's mobile should be a 10-digit phone number, like 949 555 0100. The consent is the checkbox below.");
+  if (isMinor && guardianPhoneRaw && !guardianPhone) return go(request, back, "The guardian's mobile should be a 10-digit phone number, like 949 555 0100. The consent is the checkbox below.");
   if (isMinor && !consent) return go(request, back, "Please confirm you are the volunteer's parent or guardian.");
 
   // Event and shift must match the token, be open, and in the future.
@@ -54,7 +54,6 @@ export async function POST(request: NextRequest) {
   if (!shift) return go(request, back, "That shift doesn't exist anymore.");
 
   // Same person, same shift: hand back the existing confirmation instead of a duplicate.
-  const contact = isMinor ? guardianPhone : phone;
   const { data: dup } = await admin
     .from("signups")
     .select("cancel_token")
@@ -79,10 +78,13 @@ export async function POST(request: NextRequest) {
       guardian_name: isMinor ? guardianName : null,
       guardian_phone: isMinor ? guardianPhone : null,
     })
-    .select("cancel_token")
+    .select("id,cancel_token")
     .single();
   if (error || !created) return go(request, back, "Something went wrong saving your sign-up. Try again.");
 
-  void contact; // reserved for the confirmation message (email/text) step
+  // Confirmation email. A failure here never blocks the sign-up itself.
+  const parts = await loadParts(admin, created.id);
+  if (parts) await deliver(admin, "confirmation", parts);
+
   return go(request, `/v/${token}/done?c=${created.cancel_token}`);
 }

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { deliver, loadParts } from "@/lib/emails/deliver";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,16 @@ export async function POST(request: NextRequest) {
   if (!admin || !/^[a-f0-9]{16,64}$/i.test(cancelToken)) {
     return NextResponse.redirect(new URL("/", request.url), { status: 303 });
   }
-  await admin.from("signups").update({ status: "cancelled" }).eq("cancel_token", cancelToken).eq("status", "confirmed");
+  const { data: updated } = await admin
+    .from("signups")
+    .update({ status: "cancelled" })
+    .eq("cancel_token", cancelToken)
+    .eq("status", "confirmed")
+    .select("id")
+    .maybeSingle();
+  if (updated) {
+    const parts = await loadParts(admin, updated.id);
+    if (parts) await deliver(admin, "cancelled", parts);
+  }
   return NextResponse.redirect(new URL(`/v/cancel/${cancelToken}?done=1`, request.url), { status: 303 });
 }
