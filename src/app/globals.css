@@ -1470,3 +1470,12 @@ body {
 .ap-error-top { padding: 10px 14px; border: 1px solid #e3c2b4; background: #f7e9e3; }
 
 .pv-button.ghost { background: transparent; color: var(--ck-green); }
+
+.ap-share { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 18px 22px; border: 1px solid #b9c9b0; border-left: 4px solid var(--ck-green); background: #e9eee2; }
+.ap-share-copy { display: grid; gap: 4px; min-width: 0; }
+.ap-share-k { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #3f5243; }
+.ap-share-url { font-size: 20px; font-weight: 500; letter-spacing: -0.02em; color: var(--ck-ink); word-break: break-all; text-decoration: underline; text-decoration-color: #9fb193; text-underline-offset: 4px; }
+.ap-share-url:hover { color: var(--ck-green); }
+.ap-share-sub { font-size: 13px; color: #4a514a; }
+.ap-share-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+@media (max-width: 640px) { .ap-share-url { font-size: 16px; } .ap-share-actions { width: 100%; } .ap-share-actions .ck-button { flex: 1; justify-content: center; } }

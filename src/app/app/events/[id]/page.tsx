@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import AppShell from "@/components/AppShell";
-import CopyField from "@/components/CopyField";
+import ShareBar from "@/components/ShareBar";
 import { getOrg, getSession, withCounts, type Event, type Shift, type Signup } from "@/lib/db";
 import { siteUrl } from "@/lib/supabase/server";
 import { fmtLongDate, fmtRange } from "@/lib/time";
@@ -73,6 +73,8 @@ export default async function EventPage({
       )}
       {flags.error && <p className="ap-error">{decodeURIComponent(flags.error)}</p>}
 
+      {ev.status !== "cancelled" && <ShareBar url={publicUrl} />}
+
       <div className="ap-grid-main">
         <section className="ap-card">
           <div className="ap-card-h"><h2>Shifts · {filled} of {capacity} spots filled</h2></div>
@@ -106,15 +108,6 @@ export default async function EventPage({
         </section>
 
         <div className="ap-stack">
-          <section className="ap-card">
-            <div className="ap-card-h"><h2>Public sign-up page</h2></div>
-            <div className="ap-card-b">
-              <CopyField value={publicUrl} />
-              <p className="ap-muted">Share this link by text, email or on a flyer. Volunteers pick a shift and sign up in under a minute. No account needed.</p>
-              <a className="ap-link" href={publicUrl} target="_blank" rel="noreferrer">Open the page as a volunteer ↗</a>
-            </div>
-          </section>
-
           <section className="ap-card">
             <div className="ap-card-h"><h2>Sign-ups</h2></div>
             <div className="ap-list">
