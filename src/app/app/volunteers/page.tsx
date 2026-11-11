@@ -15,7 +15,7 @@ const SORTS: { key: VolunteerSort; label: string }[] = [
   { key: "recent", label: "Most recent" },
 ];
 
-export default async function VolunteersPage({ searchParams }: { searchParams: Promise<{ q?: string; sort?: string }> }) {
+export default async function VolunteersPage({ searchParams }: { searchParams: Promise<{ q?: string; sort?: string; deleted?: string; n?: string; error?: string }> }) {
   const session = await getSession();
   if (!session) redirect("/app");
   const org = await getOrg(session);
@@ -40,6 +40,9 @@ export default async function VolunteersPage({ searchParams }: { searchParams: P
         </div>
         {everyone.length > 0 && <a className="ap-ghost" href="/app/api/volunteers/export">Export CSV</a>}
       </div>
+
+      {sp.deleted && <p className="ap-flash">Deleted {sp.deleted}&apos;s records{sp.n ? ` (${sp.n} sign-up${sp.n === "1" ? "" : "s"})` : ""}.</p>}
+      {sp.error && <p className="ap-error ap-error-top">{decodeURIComponent(sp.error)}</p>}
 
       <div className="ap-tiles">
         <div className="ap-tile"><span className="l">Volunteers</span><span className="v">{everyone.length}</span><span className="d">Everyone who has signed up</span></div>
@@ -96,6 +99,10 @@ export default async function VolunteersPage({ searchParams }: { searchParams: P
                   <span className={pill(h.status)}>{h.status}{h.hours !== null ? ` · ${fmtHours(h.hours)}` : ""}</span>
                 </div>
               ))}
+              <div className="ap-vfoot">
+                <a className="ap-link" href={`/app/volunteers/delete?key=${encodeURIComponent(v.key)}`}>Delete {v.name}&apos;s records…</a>
+                <span className="ap-muted">For when someone asks to have their information removed.</span>
+              </div>
             </div>
           </details>
         ))}

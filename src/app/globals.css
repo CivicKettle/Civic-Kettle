@@ -1595,7 +1595,7 @@ button.ck-button { font-family: inherit; cursor: pointer; }
 .pv-fine a, .pv-foot a { color: inherit; text-underline-offset: 2px; }
 
 /* ===== Message volunteers ===== */
-.ap-notes { font-size: 14px; line-height: 1.55; color: #3d443c; }
+.ap-notes { display: grid; gap: 10px; font-size: 14px; line-height: 1.55; color: #3d443c; }
 .ap-notes p { margin: 0; }
 .ap-notes ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 13px; }
 .ap-notes strong { font-weight: 500; }
@@ -1634,3 +1634,14 @@ button.ck-button { font-family: inherit; cursor: pointer; }
   .ap-vrow .n::before { content: attr(data-l) " "; color: #626b60; font-size: 11px; }
   .ap-range input[type=search] { min-width: 0; width: 100%; }
 }
+
+/* ===== Team and deleting records ===== */
+.ap-flash-in { margin: 12px 18px 0; }
+.ap-card .ap-row .ap-pill { margin-left: 8px; }
+.ap-vfoot { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; padding: 12px 18px 14px; border-top: 1px solid #eceae3; }
+.ap-vfoot .ap-muted { margin: 0; }
+.ap-check { display: flex !important; align-items: flex-start; gap: 10px; font-size: 14px !important; font-weight: 400 !important; line-height: 1.5; margin-top: 6px; }
+.ap-check input { width: 18px; height: 18px; min-height: 0; margin: 2px 0 0; flex: none; }
+.ck-button.danger { background: var(--ck-rust); border-color: var(--ck-rust); }
+.ap-form .ap-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.ap-form .ap-actions .ck-button { margin-top: 0; }

@@ -78,16 +78,29 @@ export async function getOrg(session: Session): Promise<Organization | null> {
   const { data: m } = await session.supabase
     .from("memberships")
     .select("org_id")
+    .eq("user_id", session.userId)
     .order("created_at", { ascending: true })
     .limit(1)
     .maybeSingle();
-  if (!m) return null;
+  let orgId = (m?.org_id as string | undefined) ?? null;
+  if (!orgId) {
+    // No workspace yet: join the one that invited this email address, if any.
+    const { acceptInvite } = await import("@/lib/team");
+    orgId = await acceptInvite(session.userId, session.email);
+  }
+  if (!orgId) return null;
   const { data: org } = await session.supabase
     .from("organizations")
     .select("id,name,slug,time_zone,contact_email")
-    .eq("id", m.org_id)
+    .eq("id", orgId)
     .maybeSingle();
   return (org as Organization) ?? null;
+}
+
+/** "owner" for the person who created the workspace, "coordinator" for people they added. */
+export async function getRole(session: Session, orgId: string): Promise<string> {
+  const { data } = await session.supabase.from("memberships").select("role").eq("org_id", orgId).eq("user_id", session.userId).maybeSingle();
+  return (data?.role as string | undefined) ?? "coordinator";
 }
 
 export function slugify(input: string): string {

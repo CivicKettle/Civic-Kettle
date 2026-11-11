@@ -28,6 +28,8 @@ export type Volunteer = {
   lastAt: string | null;
   nextAt: string | null;
   history: VolunteerShift[];
+  /** Every sign-up row behind this person, including cancelled ones. */
+  signupIds: string[];
 };
 
 /** Everyone who has signed up for any of this organization's events, one row per person. */
@@ -66,6 +68,7 @@ export async function loadVolunteers(session: Session, org: Organization, now: n
       lastAt: null,
       nextAt: null,
       history: [],
+      signupIds: [],
       eventIds: new Set<string>(),
     };
     // Newest sign-up wins for contact details.
@@ -73,6 +76,7 @@ export async function loadVolunteers(session: Session, org: Organization, now: n
     p.minor = s.is_minor;
     p.guardian = s.guardian_name || p.guardian;
 
+    p.signupIds.push(s.id);
     const e = toEntry(s, shift, event, now);
     const ended = new Date(shift.ends_at).getTime() < now;
     let status: VolunteerShift["status"];
@@ -120,4 +124,9 @@ export function filterAndSort(rows: Volunteer[], q: string, sort: VolunteerSort)
   else if (sort === "recent") out.sort((a, b) => (b.lastAt || b.firstAt).localeCompare(a.lastAt || a.firstAt));
   else out.sort((a, b) => a.name.localeCompare(b.name));
   return out;
+}
+
+/** The stable handle for one person on the Volunteers page: lower-cased name and email. */
+export function volunteerKey(name: string, email: string | null | undefined): string {
+  return `${name.trim().toLowerCase()}|${normEmail(email)}`;
 }
