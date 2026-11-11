@@ -1,11 +1,13 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Event, Shift, Signup } from "@/lib/db";
 import { deliver } from "./deliver";
+import { loadOptouts } from "./optout";
 
 /**
  * Send reminders for shifts starting inside a time window.
  *  day_before: shifts starting 12 to 36 hours from now (run in the evening)
  *  morning_of: shifts starting 0 to 14 hours from now (run in the morning)
+ * Anyone who unsubscribed from this organization's emails is left out.
  * Safe to run as often as you like: deliver() never sends the same kind twice.
  */
 export async function runReminders(kind: "day_before" | "morning_of") {
@@ -35,16 +37,20 @@ export async function runReminders(kind: "day_before" | "morning_of") {
     .eq("status", "confirmed");
   const signups = (suRaw ?? []) as Signup[];
 
-  const tally = { sent: 0, skipped: 0, failed: 0, noAddress: 0 };
+  const optouts = new Map<string, Set<string>>();
+  for (const id of orgIds) optouts.set(id, await loadOptouts(admin, id));
+
+  const tally = { sent: 0, skipped: 0, failed: 0, noAddress: 0, optedOut: 0 };
   for (const signup of signups) {
     const shift = shifts.find((s) => s.id === signup.shift_id);
     const event = events.find((e) => e.id === signup.event_id);
     const org = event ? orgs.get(event.org_id) : undefined;
     if (!shift || !event || !org) continue;
-    const r = await deliver(admin, kind, { signup, event, shift, org });
+    const r = await deliver(admin, kind, { signup, event, shift, org }, optouts.get(event.org_id));
     if (r === "sent") tally.sent++;
     else if (r === "skipped") tally.skipped++;
     else if (r === "failed") tally.failed++;
+    else if (r === "opted_out") tally.optedOut++;
     else tally.noAddress++;
   }
   return { ok: true, kind, shifts: shifts.length, signups: signups.length, ...tally };

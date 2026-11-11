@@ -72,7 +72,7 @@ export default function SignupForm({ token, shifts, tz, error, prefillShift }: P
               )}
               {error && <p className="pv-error">{decodeURIComponent(error)}</p>}
               <button className="pv-button" type="submit">Sign me up <span aria-hidden="true">↗</span></button>
-              <p className="pv-fine">A confirmation email arrives right away, with a link to cancel if plans change. Reminders come the day before and the morning of. No account needed.</p>
+              <p className="pv-fine">A confirmation email arrives right away, with a link to cancel if plans change. Reminders come the day before and the morning of. No account needed. By signing up you agree to the <a href="/terms" target="_blank" rel="noopener">Terms</a> and <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</p>
             </div>
           )}
         </>

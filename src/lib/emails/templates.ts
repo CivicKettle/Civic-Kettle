@@ -1,5 +1,6 @@
 import type { Event, Organization, Shift, Signup } from "@/lib/db";
 import { fmtLongDate, fmtRange } from "@/lib/time";
+import { unsubscribeHeaders, unsubscribeUrl } from "./optout";
 
 export type MessageKind = "confirmation" | "day_before" | "morning_of" | "cancelled";
 
@@ -26,13 +27,14 @@ export function recipient(signup: Signup): string | null {
   return signup.email;
 }
 
-export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject: string; html: string; text: string } {
+export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject: string; html: string; text: string; headers: Record<string, string> } {
   const { signup, event, shift, org, siteUrl } = ctx;
   const tz = org.time_zone;
   const who = signup.is_minor ? signup.volunteer_name : "you";
   const whoCap = signup.is_minor ? signup.volunteer_name : "You";
   const cancelUrl = `${siteUrl}/v/cancel/${signup.cancel_token}`;
   const eventUrl = `${siteUrl}/v/${event.public_token}`;
+  const offUrl = unsubscribeUrl(siteUrl, signup.cancel_token);
   const when = `${fmtLongDate(shift.starts_at, tz)}, ${fmtRange(shift.starts_at, shift.ends_at, tz)}`;
 
   const details = [
@@ -88,6 +90,7 @@ export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject:
     contact,
     "",
     `Sent by CivicKettle on behalf of ${org.name}. ${siteUrl}`,
+    `Stop reminder emails and messages from ${org.name}: ${offUrl}`,
   ].join("\n");
 
   const html = `<!doctype html><html><body style="margin:0;background:#f2f0e9;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#252b25">
@@ -105,8 +108,58 @@ export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject:
     <p style="margin:22px 0 0;font-size:14px;line-height:1.55">${kind === "cancelled" ? `Changed your mind? <a href="${eventUrl}" style="color:#2b3c30">Sign up again</a>.` : `Can't make it? <a href="${cancelUrl}" style="color:#2b3c30">Cancel in one tap</a>.`}</p>
     <p style="margin:14px 0 0;font-size:13px;line-height:1.55;color:#626b60">${esc(contact)}</p>
   </td></tr>
-  <tr><td style="padding:14px 4px 0;font-size:12px;color:#8a8d83;line-height:1.5">Sent by <a href="${siteUrl}" style="color:#626b60">CivicKettle</a> on behalf of ${esc(org.name)}.${kind === "cancelled" ? "" : ` You're receiving this because of a volunteer sign-up. <a href="${cancelUrl}" style="color:#626b60">Cancel the sign-up</a> to stop these messages.`}</td></tr>
+  <tr><td style="padding:14px 4px 0;font-size:12px;color:#8a8d83;line-height:1.5">Sent by <a href="${siteUrl}" style="color:#626b60">CivicKettle</a> on behalf of ${esc(org.name)}, because of a volunteer sign-up. <a href="${offUrl}" style="color:#626b60">Stop reminder emails and messages from ${esc(org.name)}</a>.</td></tr>
 </table></td></tr></table></body></html>`;
 
-  return { subject, html, text };
+  return { subject, html, text, headers: unsubscribeHeaders(siteUrl, signup.cancel_token) };
+}
+
+/** A coordinator's own message to the people signed up for an event. */
+export function buildBroadcast(ctx: {
+  subject: string;
+  body: string;
+  signup: Signup;
+  event: Event;
+  shift: Shift | null;
+  org: Pick<Organization, "name" | "time_zone" | "contact_email">;
+  siteUrl: string;
+}): { subject: string; html: string; text: string; headers: Record<string, string> } {
+  const { signup, event, shift, org, siteUrl } = ctx;
+  const tz = org.time_zone;
+  const offUrl = unsubscribeUrl(siteUrl, signup.cancel_token);
+  const eventUrl = `${siteUrl}/v/${event.public_token}`;
+  const hi = `Hi ${salutation(signup)},`;
+  const about = shift
+    ? `${event.title}, ${shift.name}: ${fmtLongDate(shift.starts_at, tz)}, ${fmtRange(shift.starts_at, shift.ends_at, tz)}`
+    : `${event.title}: ${fmtLongDate(event.starts_at, tz)}`;
+  const paragraphs = ctx.body.replace(/\r\n?/g, "\n").split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+  const contact = org.contact_email ? `Reply to this email to reach ${org.name}, or write to ${org.contact_email}.` : `Reply to this email to reach ${org.name}.`;
+
+  const text = [
+    hi,
+    "",
+    ...paragraphs.flatMap((p) => [p, ""]),
+    `About: ${about}`,
+    `Event page: ${eventUrl}`,
+    "",
+    contact,
+    "",
+    `Sent by ${org.name} through CivicKettle. ${siteUrl}`,
+    `Stop reminder emails and messages from ${org.name}: ${offUrl}`,
+  ].join("\n");
+
+  const html = `<!doctype html><html><body style="margin:0;background:#f2f0e9;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#252b25">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f2f0e9"><tr><td align="center" style="padding:28px 16px">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px">
+  <tr><td style="padding:0 4px 14px;font-size:13px;color:#626b60">${esc(org.name)}</td></tr>
+  <tr><td style="background:#faf8f2;border:1px solid #d5d3c9;padding:28px 28px 24px">
+    <p style="margin:0 0 14px;font-size:16px">${esc(hi)}</p>
+    ${paragraphs.map((p) => `<p style="margin:0 0 14px;font-size:16px;line-height:1.55">${esc(p).replace(/\n/g, "<br>")}</p>`).join("")}
+    <p style="margin:18px 0 0;padding:12px 14px;background:#e9eee2;font-size:14px;line-height:1.55;color:#2b3c30">${esc(about)}<br><a href="${eventUrl}" style="color:#2b3c30">Open the event page</a></p>
+    <p style="margin:14px 0 0;font-size:13px;line-height:1.55;color:#626b60">${esc(contact)}</p>
+  </td></tr>
+  <tr><td style="padding:14px 4px 0;font-size:12px;color:#8a8d83;line-height:1.5">Sent by ${esc(org.name)} through <a href="${siteUrl}" style="color:#626b60">CivicKettle</a>, because of a volunteer sign-up. <a href="${offUrl}" style="color:#626b60">Stop reminder emails and messages from ${esc(org.name)}</a>.</td></tr>
+</table></td></tr></table></body></html>`;
+
+  return { subject: ctx.subject, html, text, headers: unsubscribeHeaders(siteUrl, signup.cancel_token) };
 }

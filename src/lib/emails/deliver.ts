@@ -2,9 +2,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Event, Organization, Shift, Signup } from "@/lib/db";
 import { siteUrl } from "@/lib/supabase/server";
 import { buildMessage, recipient, type MessageKind } from "./templates";
+import { loadOptouts, normEmail } from "./optout";
 import { sendEmail } from "./send";
 
-type Org = Pick<Organization, "name" | "time_zone" | "contact_email">;
+type Org = Pick<Organization, "name" | "time_zone" | "contact_email"> & { id?: string };
 
 /**
  * Send one message for one sign-up and record it, unless it was already sent.
@@ -14,9 +15,18 @@ export async function deliver(
   admin: SupabaseClient,
   kind: MessageKind,
   parts: { signup: Signup; event: Event; shift: Shift; org: Org },
-): Promise<"sent" | "skipped" | "no_address" | "failed"> {
+  optouts?: Set<string>,
+): Promise<"sent" | "skipped" | "no_address" | "failed" | "opted_out"> {
   const to = recipient(parts.signup);
   if (!to) return "no_address";
+
+  // Reminders respect an unsubscribe. A confirmation or cancellation notice is
+  // about a sign-up the person just made or changed, so it always goes.
+  if (kind === "day_before" || kind === "morning_of") {
+    const orgId = parts.org.id || parts.event.org_id;
+    const off = optouts ?? (await loadOptouts(admin, orgId));
+    if (off.has(normEmail(to))) return "opted_out";
+  }
 
   // Already sent? (unique on signup_id + kind)
   const { data: existing } = await admin
@@ -34,6 +44,7 @@ export async function deliver(
     html: msg.html,
     text: msg.text,
     replyTo: parts.org.contact_email,
+    headers: msg.headers,
   });
   if (!result.ok) {
     console.error(`[email] ${kind} to ${to} failed: ${result.error}`);
@@ -61,7 +72,7 @@ export async function loadParts(admin: SupabaseClient, signupId: string) {
   if (!ev || !sh) return null;
   const { data: org } = await admin
     .from("organizations")
-    .select("name,time_zone,contact_email")
+    .select("id,name,time_zone,contact_email")
     .eq("id", (ev as Event).org_id)
     .single();
   if (!org) return null;

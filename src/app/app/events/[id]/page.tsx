@@ -62,6 +62,7 @@ export default async function EventPage({
         </div>
         <div className="ap-actions">
           {ev.status !== "cancelled" && <a className="ck-button" href={`/app/events/${id}/checkin`}>Check-in and QR code</a>}
+          <a className="ap-ghost" href={`/app/events/${id}/message`}>Message volunteers</a>
           <a className="ap-ghost" href={`/app/events/${id}/summary`}>Summary</a>
           <a className="ap-ghost" href={`/app/events/${id}/edit`}>Edit event</a>
           <form action={`/app/api/events/${id}`} method="post">
@@ -75,6 +76,9 @@ export default async function EventPage({
         <p className="ap-flash">{flags.created ? "Event created. Share the sign-up link below." : "Changes saved."}</p>
       )}
       {flags.error && <p className="ap-error">{decodeURIComponent(flags.error)}</p>}
+      {ev.status === "cancelled" && filled > 0 && (
+        <p className="ap-flash">This event is cancelled. Volunteers aren&apos;t told automatically. <a href={`/app/events/${id}/message`}>Message the {filled} signed up ›</a></p>
+      )}
 
       {ev.status !== "cancelled" && <ShareBar url={publicUrl} />}
 

@@ -61,7 +61,7 @@ export default function SignInForm() {
       </button>
       {state.status === "error" && <p className="ap-error">{state.message}</p>}
       {state.status === "unconfigured" && <p className="ap-muted">{state.message}</p>}
-      <p className="ap-muted">No password to remember. Each sign-in link works once.</p>
+      <p className="ap-muted">No password to remember. Each sign-in link works once. By signing in you agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
     </form>
   );
 }

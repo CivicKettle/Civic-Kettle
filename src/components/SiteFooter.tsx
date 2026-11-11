@@ -6,8 +6,12 @@ export default function SiteFooter() {
       <span>CivicKettle</span>
     </a>
     <p>Less admin, more community impact.</p>
-    <a href="/app">Coordinator sign in</a>
-    <a href="mailto:civickettle@gmail.com">civickettle@gmail.com</a>
+    <nav className="ck-footer-links" aria-label="Footer">
+      <a href="/app">Coordinator sign in</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="mailto:civickettle@gmail.com">civickettle@gmail.com</a>
+    </nav>
     <span className="ck-copyright">© 2026 CivicKettle</span>
   </footer>
   );
