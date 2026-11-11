@@ -4,6 +4,7 @@ import AppShell from "@/components/AppShell";
 import { getOrg, getSession, withCounts, type Event, type Shift, type Signup } from "@/lib/db";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
 import { dateTile, fmtLongDate, fmtRange } from "@/lib/time";
+import { attendance } from "@/lib/attendance";
 
 export const metadata: Metadata = { title: "Overview — CivicKettle" };
 export const dynamic = "force-dynamic";
@@ -69,6 +70,29 @@ export default async function DashboardPage() {
   const understaffed = perEvent.filter((p) => p.capacity > 0 && p.filled / p.capacity < 0.5).length;
   const signupsThisMonth = (monthSignups ?? []).filter((x) => x.status === "confirmed").length;
 
+  // Hours this month: every check-in since the 1st, closed at shift end if nobody checked out.
+  const { data: attended } = await session.supabase
+    .from("signups")
+    .select("shift_id,checked_in_at,checked_out_at")
+    .eq("status", "confirmed")
+    .gte("checked_in_at", monthStart.toISOString());
+  const attendedRows = (attended ?? []) as Pick<Signup, "shift_id" | "checked_in_at" | "checked_out_at">[];
+  let hoursThisMonth = 0;
+  if (attendedRows.length) {
+    const { data: hs } = await session.supabase
+      .from("shifts")
+      .select("id,starts_at,ends_at")
+      .in("id", [...new Set(attendedRows.map((r) => r.shift_id))]);
+    const byId = new Map((hs ?? []).map((x) => [x.id as string, x as Pick<Shift, "starts_at" | "ends_at">]));
+    for (const r of attendedRows) {
+      const sh = byId.get(r.shift_id);
+      if (!sh) continue;
+      const a = attendance(r, sh);
+      if (a.state === "done") hoursThisMonth += a.hours;
+    }
+  }
+  const hoursLabel = Math.round(hoursThisMonth * 10) / 10;
+
   return (
     <AppShell active="overview" orgName={org.name} email={session.email}>
       <div className="ap-top">
@@ -83,7 +107,7 @@ export default async function DashboardPage() {
         <div className="ap-tile"><span className="l">Upcoming events</span><span className="v">{events.length}</span><span className="d">{events[0] ? `Next: ${dateTile(events[0].starts_at, org.time_zone).dow} ${dateTile(events[0].starts_at, org.time_zone).day}` : "Nothing scheduled"}</span></div>
         <div className="ap-tile"><span className="l">Open spots</span><span className="v">{openSpots}</span><span className={understaffed ? "d warn" : "d"}>{understaffed ? `${understaffed} event${understaffed > 1 ? "s" : ""} under half full` : "All events on track"}</span></div>
         <div className="ap-tile"><span className="l">Sign-ups this month</span><span className="v">{signupsThisMonth}</span><span className="d">Confirmed volunteers</span></div>
-        <div className="ap-tile"><span className="l">Hours logged this month</span><span className="v">0</span><span className="d">Check-in arrives next</span></div>
+        <div className="ap-tile"><span className="l">Hours logged this month</span><span className="v">{hoursLabel}</span><span className="d">{attendedRows.length ? `${attendedRows.length} check-in${attendedRows.length === 1 ? "" : "s"}` : "From QR check-ins"}</span></div>
       </div>
 
       <section className="ap-card">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import ShareBar from "@/components/ShareBar";
+import { attendance } from "@/lib/attendance";
 import { getOrg, getSession, withCounts, type Event, type Shift, type Signup } from "@/lib/db";
 import { siteUrl } from "@/lib/supabase/server";
 import { fmtLongDate, fmtRange } from "@/lib/time";
@@ -60,6 +61,7 @@ export default async function EventPage({
           </p>
         </div>
         <div className="ap-actions">
+          {ev.status !== "cancelled" && <a className="ck-button" href={`/app/events/${id}/checkin`}>Check-in and QR code</a>}
           <a className="ap-ghost" href={`/app/events/${id}/edit`}>Edit event</a>
           <form action={`/app/api/events/${id}`} method="post">
             <input type="hidden" name="intent" value={ev.status === "cancelled" ? "restore" : "cancel"} />
@@ -90,7 +92,7 @@ export default async function EventPage({
                 <span className="ap-bar"><i className={pct < 50 ? "low" : undefined} style={{ width: `${pct}%` }} /></span>
                 <div className="ap-people">
                   {people.map((p) => (
-                    <form key={p.id} action={`/app/api/signups/${p.id}/cancel`} method="post" className="ap-person">
+                    <form key={p.id} action={`/app/api/signups/${p.id}/cancel`} method="post" className={`ap-person${attendance(p, s).state !== "none" ? " in" : ""}`} title={attendance(p, s).state !== "none" ? "Checked in" : undefined}>
                       <input type="hidden" name="event_id" value={id} />
                       <i>{initials(p.volunteer_name)}</i>
                       <span>{p.volunteer_name}{p.is_minor ? " · minor" : ""}</span>

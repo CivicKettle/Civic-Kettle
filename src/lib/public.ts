@@ -44,3 +44,17 @@ export async function loadSignupByCancelToken(cancelToken: string) {
   if (!org) return null;
   return { signup, event: ev as Event, shift: sh as Shift, org };
 }
+
+/** Confirmed sign-ups for this event that were made on (or linked to) this device. */
+export async function loadDeviceSignups(eventId: string, tokens: string[]): Promise<Signup[]> {
+  const admin = createAdminClient();
+  if (!admin || tokens.length === 0) return [];
+  const { data } = await admin
+    .from("signups")
+    .select("*")
+    .eq("event_id", eventId)
+    .eq("status", "confirmed")
+    .in("cancel_token", tokens)
+    .order("created_at");
+  return (data ?? []) as Signup[];
+}

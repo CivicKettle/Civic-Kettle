@@ -1479,3 +1479,51 @@ body {
 .ap-share-sub { font-size: 13px; color: #4a514a; }
 .ap-share-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 @media (max-width: 640px) { .ap-share-url { font-size: 16px; } .ap-share-actions { width: 100%; } .ap-share-actions .ck-button { flex: 1; justify-content: center; } }
+
+/* ===== Check-in (coordinator) ===== */
+.ck-button.sm, .ap-ghost.sm { min-height: 40px; padding: 0 14px; font-size: 13px; gap: 8px; cursor: pointer; }
+button.ck-button { font-family: inherit; cursor: pointer; }
+.ap-person.in i { background: var(--ck-green); color: #f7f5ee; }
+.ap-roster { display: grid; margin-top: 10px; }
+.ap-roster-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid #eceae3; }
+.ap-roster-row .who { min-width: 0; font-size: 14px; }
+.ap-roster-row .who strong { font-weight: 500; }
+.ap-roster-row .who .ap-pill { margin-left: 8px; }
+.ap-roster-row .m { margin-top: 2px; font-size: 12px; color: #626b60; }
+.ap-roster-row.in .m, .ap-roster-row.done .m { color: #3f5243; }
+.ap-roster-row.done .who strong { color: #4a514a; }
+.ap-roster-row .acts { display: flex; align-items: center; gap: 12px; flex: none; }
+.ap-qr { justify-items: start; }
+.ap-qr-img { width: 100%; max-width: 240px; padding: 10px; background: #fff; border: 1px solid #e1dfd6; }
+.ap-qr-img svg { display: block; width: 100%; height: auto; }
+.ap-card-h .ap-muted { margin: 0; }
+
+/* ===== Check-in (volunteer) ===== */
+.pv-hi { margin: 0; font-family: var(--font-editorial); font-size: 26px; letter-spacing: -0.02em; line-height: 1.1; }
+.pv-button.big { min-height: 64px; font-size: 18px; width: 100%; }
+.pv-checkin form, .pv-today form { display: grid; }
+.pv-today { border-color: #b9c9b0; background: #e9eee2; }
+
+/* ===== Printable door sign ===== */
+.po { min-height: 100vh; background: #e9e6dc; padding: 24px 16px 48px; }
+.po-bar { display: flex; justify-content: space-between; gap: 12px; max-width: 8.5in; margin: 0 auto 16px; }
+.po-sheet { max-width: 8.5in; margin: 0 auto; padding: 0.7in 0.7in 0.6in; background: #fff; color: #1f2a24; text-align: center; display: grid; justify-items: center; gap: 0; box-shadow: 0 10px 40px -20px rgba(31,42,36,.4); }
+.po-org { margin: 0; font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; color: #4a514a; }
+.po-title { margin: 14px 0 0; font-family: var(--font-editorial); font-size: 54px; font-weight: 400; letter-spacing: -0.03em; line-height: 1.02; }
+.po-meta { margin: 12px 0 0; font-size: 17px; color: #4a514a; }
+.po-qr { width: 4.6in; max-width: 100%; margin: 0.45in 0 0.3in; }
+.po-qr svg { display: block; width: 100%; height: auto; }
+.po-cta { margin: 0; font-size: 34px; font-weight: 500; letter-spacing: -0.03em; }
+.po-sub { margin: 10px 0 0; max-width: 5.6in; font-size: 17px; line-height: 1.45; color: #4a514a; }
+.po-url { margin: 18px 0 0; font-size: 15px; color: #1f2a24; word-break: break-all; }
+.po-foot { margin: 0.45in 0 0; display: flex; align-items: center; gap: 8px; font-size: 13px; color: #626b60; }
+.po-foot svg { width: 20px; height: 20px; stroke: currentColor; }
+@media print {
+  @page { size: letter portrait; margin: 0.4in; }
+  .po { background: #fff; padding: 0; min-height: 0; }
+  .po-bar { display: none; }
+  .po-sheet { box-shadow: none; padding: 0.3in 0.3in 0; }
+}
+
+.pv-card.pv-fields > p { padding: 0; }
+.pv-card.pv-fields > p.pv-note { padding: 10px 12px; }

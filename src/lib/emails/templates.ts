@@ -67,6 +67,9 @@ export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject:
       break;
   }
 
+  const arrive = kind === "morning_of" || kind === "day_before"
+    ? `On arrival, scan the QR code at the event to check in, or open ${eventUrl}`
+    : "";
   const hi = `Hi ${salutation(signup)},`;
   const contact = org.contact_email ? `Questions? Reply to this email or write to ${org.contact_email}.` : "Questions? Reply to this email.";
   const cancelLine = kind === "cancelled" ? `Changed your mind? Sign up again: ${eventUrl}` : `Can't make it? Cancel in one tap: ${cancelUrl}`;
@@ -78,6 +81,7 @@ export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject:
     "",
     ...details.map(([k, v]) => `${k}: ${v}`),
     note ? `\n${note}` : "",
+    arrive ? `\n${arrive}` : "",
     "",
     cancelLine,
     "",
@@ -97,6 +101,7 @@ export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject:
       ${details.map(([k, v]) => `<tr><td style="padding:3px 16px 3px 0;color:#626b60;white-space:nowrap;vertical-align:top">${esc(k)}</td><td style="padding:3px 0"><strong style="font-weight:600">${esc(v)}</strong></td></tr>`).join("")}
     </table>
     ${note ? `<p style="margin:18px 0 0;padding:12px 14px;background:#e9eee2;font-size:14px;line-height:1.55;color:#2b3c30">${esc(note)}</p>` : ""}
+    ${arrive ? `<p style="margin:18px 0 0;font-size:14px;line-height:1.55">On arrival, scan the QR code at the event to check in, or <a href="${eventUrl}" style="color:#2b3c30">open the event page</a>.</p>` : ""}
     <p style="margin:22px 0 0;font-size:14px;line-height:1.55">${kind === "cancelled" ? `Changed your mind? <a href="${eventUrl}" style="color:#2b3c30">Sign up again</a>.` : `Can't make it? <a href="${cancelUrl}" style="color:#2b3c30">Cancel in one tap</a>.`}</p>
     <p style="margin:14px 0 0;font-size:13px;line-height:1.55;color:#626b60">${esc(contact)}</p>
   </td></tr>

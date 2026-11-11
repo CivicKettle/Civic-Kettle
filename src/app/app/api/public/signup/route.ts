@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { normalizePhone } from "@/lib/db";
 import { deliver, loadParts } from "@/lib/emails/deliver";
+import { DEVICE_COOKIE, addTokens, deviceCookieOptions, parseTokens } from "@/lib/device";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,14 @@ function go(request: NextRequest, path: string, error?: string) {
   const url = new URL(path, request.url);
   if (error) url.searchParams.set("error", error);
   return NextResponse.redirect(url, { status: 303 });
+}
+
+/** Redirect to the confirmation page and remember this sign-up on the device. */
+function confirmed(request: NextRequest, path: string, cancelToken: string) {
+  const res = go(request, path);
+  const existing = parseTokens(request.cookies.get(DEVICE_COOKIE)?.value);
+  res.cookies.set(DEVICE_COOKIE, addTokens(existing, [cancelToken]), deviceCookieOptions);
+  return res;
 }
 
 /** Public: a volunteer (or guardian) signs up for a shift. No login. */
@@ -54,14 +63,17 @@ export async function POST(request: NextRequest) {
   if (!shift) return go(request, back, "That shift doesn't exist anymore.");
 
   // Same person, same shift: hand back the existing confirmation instead of a duplicate.
-  const { data: dup } = await admin
+  // Both the name and the email must match, so knowing a name alone reveals nothing.
+  const { data: dups } = await admin
     .from("signups")
     .select("cancel_token")
     .eq("shift_id", shift.id)
     .eq("status", "confirmed")
+    .eq("email", email)
     .ilike("volunteer_name", name)
-    .maybeSingle();
-  if (dup) return go(request, `/v/${token}/done?c=${dup.cancel_token}&again=1`);
+    .limit(1);
+  const dup = dups?.[0];
+  if (dup) return confirmed(request, `/v/${token}/done?c=${dup.cancel_token}&again=1`, dup.cancel_token);
 
   const { count } = await admin.from("signups").select("id", { count: "exact", head: true }).eq("shift_id", shift.id).eq("status", "confirmed");
   if ((count ?? 0) >= shift.capacity) return go(request, back, "That shift just filled up. Pick another if you can.");
@@ -86,5 +98,5 @@ export async function POST(request: NextRequest) {
   const parts = await loadParts(admin, created.id);
   if (parts) await deliver(admin, "confirmation", parts);
 
-  return go(request, `/v/${token}/done?c=${created.cancel_token}`);
+  return confirmed(request, `/v/${token}/done?c=${created.cancel_token}`, created.cancel_token);
 }

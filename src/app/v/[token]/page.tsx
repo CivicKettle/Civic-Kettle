@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
+import { notFound, redirect } from "next/navigation";
 import { KettleMark } from "@/components/AppShell";
 import SignupForm from "@/components/SignupForm";
-import { loadPublicEvent } from "@/lib/public";
+import { checkinWindowOpen } from "@/lib/attendance";
+import { DEVICE_COOKIE, parseTokens } from "@/lib/device";
+import { loadDeviceSignups, loadPublicEvent } from "@/lib/public";
 import { isAdminConfigured } from "@/lib/supabase/admin";
 import { fmtLongDate, fmtRange } from "@/lib/time";
 
@@ -19,10 +22,10 @@ export default async function PublicEventPage({
   searchParams,
 }: {
   params: Promise<{ token: string }>;
-  searchParams: Promise<{ error?: string; shift?: string }>;
+  searchParams: Promise<{ error?: string; shift?: string; signup?: string }>;
 }) {
   const { token } = await params;
-  const { error, shift } = await searchParams;
+  const { error, shift, signup: wantsSignup } = await searchParams;
 
   if (!isAdminConfigured()) {
     return (
@@ -38,6 +41,15 @@ export default async function PublicEventPage({
   const { org, event, shifts } = data;
   const tz = org.time_zone;
   const past = new Date(event.ends_at).getTime() < Date.now();
+
+  // On the day, the same link (and QR code) is the check-in page. A phone that
+  // already holds a sign-up for this event goes straight there.
+  const checkinOpen = checkinWindowOpen(event);
+  if (checkinOpen && !wantsSignup && !error) {
+    const jar = await cookies();
+    const mine = await loadDeviceSignups(event.id, parseTokens(jar.get(DEVICE_COOKIE)?.value));
+    if (mine.length > 0) redirect(`/v/${token}/checkin`);
+  }
 
   return (
     <div className="pv">
@@ -55,6 +67,13 @@ export default async function PublicEventPage({
           </p>
           {event.description && <p className="pv-desc">{event.description}</p>}
         </div>
+
+        {checkinOpen && (
+          <div className="pv-card pv-fields pv-today">
+            <p className="pv-hi">Here to volunteer today?</p>
+            <a className="pv-button big" href={`/v/${token}/checkin`}>Check in</a>
+          </div>
+        )}
 
         {event.status === "cancelled" ? (
           <div className="pv-card"><h2>This event has been cancelled</h2><p className="pv-muted">Sorry about that. {org.contact_email ? <>Questions: <a href={`mailto:${org.contact_email}`}>{org.contact_email}</a>.</> : null}</p></div>
