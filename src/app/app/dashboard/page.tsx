@@ -73,10 +73,10 @@ export default async function DashboardPage() {
   // Hours this month: every check-in since the 1st, closed at shift end if nobody checked out.
   const { data: attended } = await session.supabase
     .from("signups")
-    .select("shift_id,checked_in_at,checked_out_at")
+    .select("*")
     .eq("status", "confirmed")
     .gte("checked_in_at", monthStart.toISOString());
-  const attendedRows = (attended ?? []) as Pick<Signup, "shift_id" | "checked_in_at" | "checked_out_at">[];
+  const attendedRows = (attended ?? []) as Signup[];
   let hoursThisMonth = 0;
   if (attendedRows.length) {
     const { data: hs } = await session.supabase
@@ -88,10 +88,12 @@ export default async function DashboardPage() {
       const sh = byId.get(r.shift_id);
       if (!sh) continue;
       const a = attendance(r, sh);
-      if (a.state === "done") hoursThisMonth += a.hours;
+      // A coordinator's edit on the Hours page wins over the check-in times.
+      if (r.hours_override !== null && r.hours_override !== undefined) hoursThisMonth += Number(r.hours_override);
+      else if (a.state === "done") hoursThisMonth += a.hours;
     }
   }
-  const hoursLabel = Math.round(hoursThisMonth * 10) / 10;
+  const hoursLabel = Math.round(hoursThisMonth * 100) / 100;
 
   return (
     <AppShell active="overview" orgName={org.name} email={session.email}>

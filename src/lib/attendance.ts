@@ -32,7 +32,12 @@ export function attendance(
   }
   if (!outAt) return { state: "in", inAt };
   const ms = Math.max(0, new Date(outAt).getTime() - new Date(inAt).getTime());
-  return { state: "done", inAt, outAt, auto, hours: Math.round((ms / 3600000) * 100) / 100 };
+  return { state: "done", inAt, outAt, auto, hours: roundHours(ms / 3600000) };
+}
+
+/** Hours are kept to the nearest quarter hour, so every page, total and export agrees. */
+export function roundHours(h: number): number {
+  return Math.round(h * 4) / 4;
 }
 
 export function canSelfCheckIn(shift: Pick<Shift, "starts_at" | "ends_at">, now: number = Date.now()): boolean {
@@ -53,6 +58,6 @@ export function checkinWindowOpen(event: Pick<Event, "starts_at" | "ends_at" | "
 }
 
 export function fmtHours(h: number): string {
-  const rounded = Math.round(h * 10) / 10;
-  return `${rounded % 1 === 0 ? rounded.toFixed(0) : rounded.toFixed(1)} hr${rounded === 1 ? "" : "s"}`;
+  const r = Math.round(h * 100) / 100;
+  return `${String(r)} hr${r === 1 ? "" : "s"}`;
 }

@@ -35,6 +35,13 @@ export async function POST(request: NextRequest, ctx: { params: Promise<{ id: st
     return go(request, `/app/events/${id}`, error?.message);
   }
 
+  if (intent === "notes") {
+    const notes = String(form.get("summary_notes") || "").trim().slice(0, 4000) || null;
+    const { error } = await session.supabase.from("events").update({ summary_notes: notes }).eq("id", id);
+    const msg = error && /summary_notes/.test(error.message) ? "Notes need the latest database setup (v4). Run it in Supabase, then try again." : error?.message;
+    return go(request, `/app/events/${id}/summary`, msg);
+  }
+
   const parsed = parseEventForm(form, org.time_zone);
   if (!parsed.ok) return go(request, `/app/events/${id}/edit`, parsed.error);
   const { shifts, ...event } = parsed.data;

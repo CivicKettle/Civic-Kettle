@@ -62,6 +62,7 @@ export default async function EventPage({
         </div>
         <div className="ap-actions">
           {ev.status !== "cancelled" && <a className="ck-button" href={`/app/events/${id}/checkin`}>Check-in and QR code</a>}
+          <a className="ap-ghost" href={`/app/events/${id}/summary`}>Summary</a>
           <a className="ap-ghost" href={`/app/events/${id}/edit`}>Edit event</a>
           <form action={`/app/api/events/${id}`} method="post">
             <input type="hidden" name="intent" value={ev.status === "cancelled" ? "restore" : "cancel"} />

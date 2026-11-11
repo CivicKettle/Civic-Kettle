@@ -1527,3 +1527,51 @@ button.ck-button { font-family: inherit; cursor: pointer; }
 
 .pv-card.pv-fields > p { padding: 0; }
 .pv-card.pv-fields > p.pv-note { padding: 10px 12px; }
+
+/* ===== Hours and summaries ===== */
+.ap-range { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.ap-range label { display: grid; gap: 5px; font-size: 12px; font-weight: 500; color: #30372f; }
+.ap-range input { min-height: 40px; padding: 0 10px; border: 1px solid #cfccc0; border-radius: 4px; background: #fffdf8; font: inherit; font-size: 14px; }
+.ap-range-presets { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+.ap-range-presets a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border: 1px solid var(--ck-rule); border-radius: 999px; font-size: 13px; color: #4a514a; }
+.ap-range-presets a.on { border-color: var(--ck-green); background: #e9eee2; color: var(--ck-ink); }
+.ap-hrow { display: grid; grid-template-columns: minmax(0, 1fr) 90px auto; gap: 14px; align-items: center; padding: 12px 18px; border-bottom: 1px solid #eceae3; font-size: 14px; }
+.ap-hrow:last-child { border-bottom: 0; }
+.ap-hrow .who strong { font-weight: 500; }
+.ap-hrow .who .ap-pill { margin-left: 8px; }
+.ap-hrow .m { margin-top: 2px; font-size: 12px; color: #626b60; }
+.ap-hrow .m a { color: #485449; text-decoration: underline; text-underline-offset: 3px; }
+.ap-hrow .hrs { font-size: 15px; font-weight: 500; text-align: right; white-space: nowrap; }
+.ap-hrow .acts { display: flex; align-items: center; gap: 14px; justify-content: flex-end; }
+.ap-edit { position: relative; }
+.ap-edit summary { cursor: pointer; font-size: 13px; color: #485449; text-decoration: underline; text-underline-offset: 3px; list-style: none; }
+.ap-edit summary::-webkit-details-marker { display: none; }
+.ap-edit[open] form { position: absolute; right: 0; top: 26px; z-index: 5; display: grid; gap: 8px; width: 240px; padding: 14px; border: 1px solid var(--ck-rule); background: #fffdf8; box-shadow: 0 12px 30px -18px rgba(31,42,36,.5); }
+.ap-edit label { display: grid; gap: 5px; font-size: 12px; font-weight: 500; }
+.ap-edit input { min-height: 40px; padding: 0 10px; border: 1px solid #cfccc0; border-radius: 4px; background: #fff; font: inherit; font-size: 15px; }
+.ap-table-wrap { overflow-x: auto; }
+.ap-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ap-table th { padding: 10px 18px; text-align: left; font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #626b60; border-bottom: 1px solid #e5e4dc; white-space: nowrap; }
+.ap-table td { padding: 11px 18px; border-bottom: 1px solid #eceae3; vertical-align: top; }
+.ap-table tbody tr:last-child td { border-bottom: 0; }
+.ap-table tfoot td { border-top: 1px solid #d5d3c9; border-bottom: 0; font-weight: 500; background: #f4f2eb; }
+.ap-table .n { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ap-table strong { font-weight: 500; }
+.ap-table .m { font-size: 12px; color: #626b60; margin-top: 2px; }
+.ap-table .ap-pill { margin-left: 8px; }
+.ap-row strong { font-weight: 500; }
+.ap-row .ap-pill.amber { margin-left: 8px; }
+@media (max-width: 640px) {
+  .ap-hrow { grid-template-columns: minmax(0, 1fr) auto; }
+  .ap-hrow .acts { grid-column: 1 / -1; justify-content: flex-start; }
+  .ap-edit[open] form { left: 0; right: auto; }
+  .ap-range-presets { margin-left: 0; }
+}
+@media print {
+  .ap-side, .ap-noprint, .ap-flash { display: none !important; }
+  .ap-shell { display: block; background: #fff; }
+  .ap-main { padding: 0; }
+  .ap-card, .ap-tile { break-inside: avoid; }
+  .ap-grid-main { grid-template-columns: 1fr 1fr; }
+  textarea { border: 0 !important; resize: none; padding: 0 !important; background: transparent !important; }
+}
