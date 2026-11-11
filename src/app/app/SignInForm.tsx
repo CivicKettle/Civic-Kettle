@@ -8,8 +8,11 @@ type State = {
   email?: string;
 };
 
-export default function SignInForm() {
-  const [state, setState] = useState<State>({ status: "idle" });
+const LINK_ERROR =
+  "That sign-in link has expired or was already used. Each link works once, and only the newest one works. Enter your email to get a fresh link, then open it in this same browser window.";
+
+export default function SignInForm({ linkError = false }: { linkError?: boolean }) {
+  const [state, setState] = useState<State>(linkError ? { status: "error", message: LINK_ERROR } : { status: "idle" });
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -34,8 +37,8 @@ export default function SignInForm() {
       <div className="ap-card ap-notice" role="status">
         <h2>Check your email</h2>
         <p>
-          We sent a sign-in link to <strong>{state.email}</strong>. Open it on this device and
-          you&apos;ll land in your workspace. The link expires in an hour.
+          We sent a sign-in link to <strong>{state.email}</strong>. Open it in this same browser and
+          you&apos;ll land in your workspace. The link works once and expires in an hour.
         </p>
       </div>
     );

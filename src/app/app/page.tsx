@@ -25,7 +25,8 @@ async function RedirectIfSignedIn() {
   return null;
 }
 
-export default function SignInPage() {
+export default async function SignInPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const { error } = await searchParams;
   return (
     <div className="ck-site">
       <SiteHeader />
@@ -40,7 +41,7 @@ export default function SignInPage() {
             Sign in with the email you used when your organization joined CivicKettle.
           </p>
         </div>
-        <SignInForm />
+        <SignInForm linkError={error === "link"} />
       </main>
       <SiteFooter />
     </div>
