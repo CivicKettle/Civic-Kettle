@@ -1,155 +1,173 @@
+import QRCode from "qrcode";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 
-export default function Home() {
+/** Sample sign-ups for the illustration at the top of the page. */
+const SHEET = [
+  { name: "Setup", time: "8:00 to 9:00 AM", people: ["Priya N.", "Marcus L."], open: 0 },
+  { name: "Planting", time: "9:00 AM to 12:00 PM", people: ["Ana O.", "Ben W.", "Dee S.", "Fay L.", "Jun K.", "Sam R.", "Tess B."], open: 1 },
+  { name: "Cleanup", time: "12:00 to 1:00 PM", people: ["Eli S.", "Noor A.", "Cy P."], open: 3 },
+];
+
+const initials = (n: string) => n.split(" ").map((w) => w[0]).join("");
+
+export default async function Home() {
+  // A real code: scanning it opens this site.
+  const qr = await QRCode.toString("https://civickettle.com", { type: "svg", margin: 0, color: { dark: "#252b25", light: "#0000" } });
+  let chip = 0;
+
   return (
     <div className="ck-site">
       <SiteHeader />
-<main id="top" className="ck-page">
-    <section className="ck-hero" aria-labelledby="hero-title">
-      <div className="ck-hero-copy">
-        <p className="ck-kicker">Operations for community organizations</p>
-        <h1 id="hero-title">Volunteer sign-ups, shifts and hours in one place.</h1>
-        <p className="ck-tagline">Less admin, more community impact.</p>
-        <p className="ck-intro">CivicKettle brings volunteer scheduling, automatic event reminders, QR check-in, hour tracking, and event summaries into one simple workspace.</p>
-        <div className="ck-hero-action">
-          <a className="ck-button" href="#contact">Ask about CivicKettle <span aria-hidden="true">↓</span></a>
-          <span className="ck-price-note">Plans from $19/month</span>
-        </div>
-        <p className="ck-audience">For small charities, community organizations, and local nonprofits.</p>
-      </div>
-
-      <div className="ck-preview" role="img" aria-label="Illustrative CivicKettle workspace with a sample volunteer event, shifts, reminders, logged hours, and hours summary.">
-        <div className="ck-preview-caption"><span>Workspace preview</span><span>Sample organization</span></div>
-        <div className="ck-window">
-          <div className="ck-window-bar">
-            <span className="ck-window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span>CivicKettle</span>
-            <span className="ck-window-status">Sample data</span>
-          </div>
-          <div className="ck-dashboard">
-            <aside className="ck-sidebar" aria-hidden="true">
-              <div className="ck-mini-brand">
-                <svg aria-hidden="true" className="ck-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15.5h17v10.1a7.4 7.4 0 0 1-7.4 7.4h-2.2a7.4 7.4 0 0 1-7.4-7.4V15.5Z"/><path d="M29 18h2.1a4.3 4.3 0 0 1 0 8.6H29M12 19H9.5a3.3 3.3 0 0 0-3.3 3.3v1.2M16 11.5c0-2.1 1.5-2.7 1.5-4.8M23 11.5c0-2.1 1.5-2.7 1.5-4.8"/><path d="M20.5 22c1.8-3.3 5.4-2.8 6.1-2.6-.2 3.6-2.6 5.5-6.1 5.4"/></svg>
-                <span>CivicKettle</span>
+      <main id="top">
+        <section className="hm-hero" aria-labelledby="hero-title">
+          <div className="hm-wrap hm-hero-grid">
+            <div className="hm-hero-copy">
+              <h1 id="hero-title">Volunteer sign{"\u2011"}ups, shifts and hours in one place.</h1>
+              <p className="hm-lede">Share one link. Volunteers pick a shift, get reminded, scan in at the door, and their hours add up on their own.</p>
+              <div className="hm-hero-action">
+                <a className="hm-cta" href="#contact">Get started</a>
+                <a className="hm-quiet" href="#workflow">See how it works</a>
               </div>
-              <p className="ck-org-name">MAPLE STREET<br />COMMUNITY GARDEN</p>
-              <div className="ck-side-link ck-side-link-active"><span>◦</span> Overview</div>
-              <div className="ck-side-link"><span>□</span> Events</div>
-              <div className="ck-side-link"><span>⌁</span> Volunteers</div>
-              <div className="ck-side-link"><span>↗</span> Hours</div>
-            </aside>
+              <p className="hm-audience">$19 a month. Made for small charities, community groups and local nonprofits.</p>
+            </div>
 
-            <div className="ck-dashboard-main">
-              <div className="ck-dashboard-heading">
-                <div>
-                  <p className="ck-ui-label">SATURDAY, MAY 18</p>
-                  <h2>Your week at a glance</h2>
-                </div>
-                <span className="ck-avatar">MG</span>
-              </div>
-
-              <div className="ck-event">
-                <div className="ck-event-heading">
+            <div className="hm-stage" role="img" aria-label="Illustration with sample data: a sign-up sheet for a garden day filling with volunteer names, the same event on a volunteer's phone, and a door sign with a code to scan for check-in.">
+              <div className="hm-sheet" aria-hidden="true">
+                <div className="hm-sheet-top">
                   <div>
-                    <p className="ck-ui-label">UPCOMING EVENT</p>
-                    <h3>Neighborhood garden day</h3>
+                    <p className="hm-sheet-org">Maple Street Community Garden</p>
+                    <p className="hm-sheet-title">Neighborhood garden day</p>
+                    <p className="hm-sheet-date">Saturday, May 18</p>
                   </div>
-                  <div className="ck-date-stamp"><span>SAT</span><strong>18</strong></div>
+                  <p className="hm-sheet-count"><strong>12</strong> of 16 spots filled</p>
                 </div>
-                <div className="ck-event-stats">
-                  <div><strong>12 / 16</strong><span>Volunteer spots</span></div>
-                  <div><strong>3</strong><span>Open shifts</span></div>
-                  <div><strong>28 hrs</strong><span>Logged this month</span></div>
-                </div>
-                <div className="ck-capacity"><span></span></div>
-                <div className="ck-reminder">
-                  <span className="ck-reminder-dot"></span>
-                  <span className="ck-reminder-title">Event reminder</span>
-                  <span className="ck-reminder-copy">Scheduled for Friday</span>
+                {SHEET.map((s) => (
+                  <div className="hm-shift" key={s.name}>
+                    <p className="hm-shift-h"><strong>{s.name}</strong><span>{s.time}</span><em>{s.open === 0 ? "Full" : `${s.open} open`}</em></p>
+                    <div className="hm-chips">
+                      {s.people.map((n) => (
+                        <span className="hm-chip" key={n} style={{ ["--i" as string]: chip++ }}><i>{initials(n)}</i>{n}</span>
+                      ))}
+                      {Array.from({ length: s.open }, (_, k) => <span className="hm-chip hm-chip-open" key={k}>Open spot</span>)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="hm-phone" aria-hidden="true">
+                <div className="hm-phone-screen">
+                  <p className="hm-phone-org">Maple Street Community Garden</p>
+                  <p className="hm-phone-title">Neighborhood garden day</p>
+                  <p className="hm-phone-date">Saturday, May 18</p>
+                  <div className="hm-opt hm-opt-full"><span className="hm-radio" /><span><strong>Setup</strong>8:00 AM</span><em>Full</em></div>
+                  <div className="hm-opt hm-opt-on"><span className="hm-radio" /><span><strong>Planting</strong>9:00 AM</span><em>1 spot left</em></div>
+                  <div className="hm-opt"><span className="hm-radio" /><span><strong>Cleanup</strong>12:00 PM</span><em>3 spots left</em></div>
+                  <span className="hm-phone-btn">Sign me up</span>
+                  <p className="hm-phone-fine">No account needed</p>
                 </div>
               </div>
 
-              <div className="ck-summary-row">
-                <div className="ck-summary">
-                  <div className="ck-summary-heading"><span>THIS WEEK</span><span>›</span></div>
-                  <p><span>Upcoming events</span><strong>3</strong></p>
-                  <p><span>Volunteer sign-ups</span><strong>24</strong></p>
-                </div>
-                <div className="ck-summary ck-giving">
-                  <div className="ck-summary-heading"><span>HOURS SUMMARY</span><span>›</span></div>
-                  <div className="ck-giving-total">128 hrs</div>
-                  <p><span>31 volunteers</span><span className="ck-giving-period">This month</span></p>
-                </div>
+              <div className="hm-door" aria-hidden="true">
+                <div className="hm-door-qr" dangerouslySetInnerHTML={{ __html: qr }} />
+                <p><strong>Scan to check in</strong>Neighborhood garden day</p>
               </div>
-              <p className="ck-demo-note">Illustrative sample workspace</p>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <section className="ck-workflow" id="workflow" aria-labelledby="workflow-title">
-      <div className="ck-section-intro">
-        <p className="ck-kicker">The work, connected</p>
-        <h2 id="workflow-title">From first sign-up to final summary.</h2>
-        <p>Keep the moving parts of a community event together, so your team can spend more energy on the people and purpose behind it.</p>
-      </div>
-      <div className="ck-workflow-list">
-        <article className="ck-workflow-row">
-          <span className="ck-step">01</span>
-          <h3>Collect sign-ups</h3>
-          <p>Give volunteers one clear place to join an event and choose a shift.</p>
-          <span className="ck-row-note">VOLUNTEER SIGN-UPS</span>
-        </article>
-        <article className="ck-workflow-row">
-          <span className="ck-step">02</span>
-          <h3>Coordinate the day</h3>
-          <p>Organize the schedule and send automatic reminders before each event.</p>
-          <span className="ck-row-note">SCHEDULING + REMINDERS</span>
-        </article>
-        <article className="ck-workflow-row">
-          <span className="ck-step">03</span>
-          <h3>Keep track of time</h3>
-          <p>Volunteers scan a QR code at the door; hours log themselves from check-in to check-out.</p>
-          <span className="ck-row-note">QR CHECK-IN + HOURS</span>
-        </article>
-        <article className="ck-workflow-row">
-          <span className="ck-step">04</span>
-          <h3>See what happened</h3>
-          <p>Get a summary of who came, hours logged and no-shows the morning after.</p>
-          <span className="ck-row-note">EVENT SUMMARIES</span>
-        </article>
-      </div>
-    </section>
+        <section className="hm-section hm-wrap" id="workflow" aria-labelledby="workflow-title">
+          <div className="hm-head">
+            <h2 id="workflow-title">One Saturday, start to finish.</h2>
+            <p>Here is what a single event looks like when the sign-up sheet, the reminder texts and the hours spreadsheet are the same thing.</p>
+          </div>
+          <ol className="hm-days">
+            <li>
+              <p className="hm-when">Monday</p>
+              <div className="hm-vig">
+                <p className="hm-link"><span>civickettle.com/v/4f2a9c81</span><b>Copy link</b></p>
+                <p className="hm-vig-note">Text it, email it, or print it on a flyer.</p>
+              </div>
+              <h3>Share one link</h3>
+              <p>Volunteers pick a shift in under a minute, with no account to create. A parent can sign up a child under 18.</p>
+            </li>
+            <li>
+              <p className="hm-when">Friday, 6 pm</p>
+              <div className="hm-vig">
+                <p className="hm-mail-from">Maple Street Community Garden</p>
+                <p className="hm-mail-subject">Tomorrow: Neighborhood garden day, Planting</p>
+                <p className="hm-vig-note">Can&apos;t make it? Cancel in one tap.</p>
+              </div>
+              <h3>Reminders send themselves</h3>
+              <p>Everyone gets an email the day before and the morning of. When someone cancels, the spot reopens right away.</p>
+            </li>
+            <li>
+              <p className="hm-when">Saturday, 8:45 am</p>
+              <div className="hm-vig hm-roster">
+                <p><span className="hm-tick" />Priya Nair<em>In at 8:52</em></p>
+                <p><span className="hm-tick" />Marcus Lee<em>In at 8:58</em></p>
+                <p><span className="hm-tick hm-tick-off" />Ana Ortiz<em>Not here yet</em></p>
+              </div>
+              <h3>Scan in at the door</h3>
+              <p>Tape up the sign. Volunteers scan the code to check in and out, and you watch the roster fill on your phone.</p>
+            </li>
+            <li>
+              <p className="hm-when">Saturday night</p>
+              <div className="hm-vig hm-tiles">
+                <p><strong>14</strong>showed up</p>
+                <p><strong>41.5</strong>hours</p>
+                <p><strong>2</strong>no-shows</p>
+              </div>
+              <h3>Hours and a summary, done</h3>
+              <p>Approve everyone&apos;s hours with one click, see who came and who didn&apos;t, and export it for your records.</p>
+            </li>
+          </ol>
+        </section>
 
-    <section className="ck-fit" aria-labelledby="fit-title">
-      <div className="ck-fit-label">
-        <span className="ck-fit-mark"><svg aria-hidden="true" className="ck-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15.5h17v10.1a7.4 7.4 0 0 1-7.4 7.4h-2.2a7.4 7.4 0 0 1-7.4-7.4V15.5Z"/><path d="M29 18h2.1a4.3 4.3 0 0 1 0 8.6H29M12 19H9.5a3.3 3.3 0 0 0-3.3 3.3v1.2M16 11.5c0-2.1 1.5-2.7 1.5-4.8M23 11.5c0-2.1 1.5-2.7 1.5-4.8"/><path d="M20.5 22c1.8-3.3 5.4-2.8 6.1-2.6-.2 3.6-2.6 5.5-6.1 5.4"/></svg></span>
-        <p className="ck-kicker">Made for small teams</p>
-      </div>
-      <div className="ck-fit-copy">
-        <h2 id="fit-title">Good work deserves a simpler back office.</h2>
-        <p>CivicKettle is designed for small charities, community organizations, and local nonprofits that bring people together to make a difference.</p>
-      </div>
-      <p className="ck-fit-tagline">Less admin,<br />more community impact.</p>
-    </section>
+        <section className="hm-section hm-wrap hm-swap" aria-labelledby="swap-title">
+          <div className="hm-head">
+            <h2 id="swap-title">Less admin, more community impact.</h2>
+            <p>CivicKettle does one job: it takes the paperwork around volunteers off the person who organizes them.</p>
+          </div>
+          <dl className="hm-swap-list">
+            <div><dt>The clipboard at the door</dt><dd>A code volunteers scan with their own phone</dd></div>
+            <div><dt>The group text the night before</dt><dd>Reminders that go out without you</dd></div>
+            <div><dt>Guessing who will show up</dt><dd>A roster that updates as people sign up and cancel</dd></div>
+            <div><dt>The spreadsheet of hours</dt><dd>Hours counted from check-in to check-out, ready to export</dd></div>
+          </dl>
+        </section>
 
-    <section className="ck-pricing" id="plans" aria-labelledby="pricing-title">
-      <div className="ck-pricing-copy">
-        <p className="ck-kicker">Straightforward monthly plans</p>
-        <h2 id="pricing-title">Room in the budget.<br />More room for the mission.</h2>
-        <p>Plans range from <strong>$19–$59 per month.</strong> Get in touch for current plan details and to find the right fit for your organization.</p>
-      </div>
-      <a className="ck-button ck-button-light" href="#contact">Ask about plans <span aria-hidden="true">↓</span></a>
-    </section>
-    <section className="ck-contact" id="contact" aria-labelledby="contact-title">
-      <div className="ck-contact-copy">
-        <p className="ck-kicker">Founding organizations</p>
-        <h2 id="contact-title">We're starting with a small group.</h2>
-        <p>CivicKettle is onboarding a handful of founding organizations first, so every workspace is set up with you, not handed over. Tell us about your group and we'll be in touch within a day or two.</p>
-        <p className="ck-contact-alt">Prefer email? <a href="mailto:civickettle@gmail.com">civickettle@gmail.com</a></p>
-      </div>
+        <section className="hm-wrap" id="plans" aria-labelledby="pricing-title">
+          <div className="hm-ticket">
+            <div className="hm-ticket-stub">
+              <p className="hm-price"><strong>$19</strong><span>a month</span></p>
+              <p>One plan for your whole organization.</p>
+            </div>
+            <div className="hm-ticket-body">
+              <h2 id="pricing-title">Everything on this page is included.</h2>
+              <ul>
+                <li>Sign-up pages for every event</li>
+                <li>Email reminders and messages</li>
+                <li>Check-in by scanning a code</li>
+                <li>Hours with approval and export</li>
+                <li>A summary after each event</li>
+                <li>Room for your co-coordinators</li>
+              </ul>
+              <div className="hm-ticket-foot">
+                <a className="ck-button" href="#contact">Get started</a>
+                <span>Nothing is charged until you&apos;ve agreed to start.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="ck-contact hm-wrap hm-contact" id="contact" aria-labelledby="contact-title">
+          <div className="ck-contact-copy">
+            <h2 id="contact-title">Bring CivicKettle to your organization.</h2>
+            <p>Tell us a little about your group. We&apos;ll email you within a day or two to get your workspace ready.</p>
+            <p className="ck-contact-alt">Prefer email? <a href="mailto:civickettle@gmail.com">civickettle@gmail.com</a></p>
+            <p className="ck-contact-alt">Already use CivicKettle? <a href="/app">Sign in</a></p>
+          </div>
       <form className="ck-form" name="founding-org" method="POST" action="/app/api/inquiry">
                 <p className="ck-hidden"><label>Leave this empty: <input name="bot-field" /></label></p>
         <div className="ck-form-row">
@@ -199,11 +217,11 @@ export default function Home() {
           <label htmlFor="f-pain">What's the most annoying part? <span>Optional</span></label>
           <textarea id="f-pain" name="biggest_pain" rows={3}></textarea>
         </div>
-        <button className="ck-button" type="submit">Request a founding spot <span aria-hidden="true">↗</span></button>
-        <p className="ck-form-note">No payment, no commitment. We'll reply from civickettle@gmail.com.</p>
+        <button className="ck-button" type="submit">Request a workspace <span aria-hidden="true">↗</span></button>
+        <p className="ck-form-note">No payment and no commitment. We reply from civickettle@gmail.com.</p>
       </form>
-    </section>
-  </main>
+        </section>
+      </main>
       <SiteFooter />
     </div>
   );
