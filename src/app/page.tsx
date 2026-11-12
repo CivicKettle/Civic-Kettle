@@ -1,7 +1,7 @@
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import StartForm from "@/components/StartForm";
-import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_HREF, FOUNDER } from "@/lib/contact";
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_HREF, FOUNDER, LOCATION } from "@/lib/contact";
 import { TRIAL_DAYS } from "@/lib/pricing";
 
 /** Sample sign-ups for the illustration at the top of the page. */
@@ -148,7 +148,7 @@ export default function Home() {
               <p>Small nonprofits and community groups run on volunteers, but the tools for organizing them are usually a paper sign-in sheet, a group text and a spreadsheet. Things slip through. People forget their shift, nobody is sure who showed up, and hours never get written down. The software that fixes this is mostly built and priced for big organizations.</p>
               <h3>Why I started it</h3>
               <p>The people who organize volunteers are usually volunteers themselves. They shouldn&apos;t have to spend their evenings chasing sign-ups, sending reminders one at a time and adding up hours. I started CivicKettle so that part takes a few minutes, and so a small group with no budget and no tech person can start using it the day they find it.</p>
-              <p className="hm-about-sign"><strong>{FOUNDER}</strong>creator of CivicKettle</p>
+              <p className="hm-about-sign"><strong>{FOUNDER}</strong>creator of CivicKettle, based in {LOCATION}</p>
             </div>
             <div className="hm-about-reach">
               <h3>Reach a real person</h3>
@@ -160,7 +160,7 @@ export default function Home() {
           </div>
 
           <dl className="hm-faq" aria-label="Common questions">
-            <div><dt>Is this a real product?</dt><dd>Yes. CivicKettle is new. It was started in 2026 and is run by one person, not a big company. You can try all of it free for {TRIAL_DAYS} days without entering a card.</dd></div>
+            <div><dt>Is this a real product?</dt><dd>Yes. CivicKettle is new. It was started in 2026 and is run by one person in {LOCATION}, not a big company. You can try all of it free for {TRIAL_DAYS} days without entering a card.</dd></div>
             <div><dt>What does it cost?</dt><dd>Volunteers never pay. Organizations use it free for {TRIAL_DAYS} days, then it is $19 a month. Nothing is charged automatically.</dd></div>
             <div><dt>Will you ever ask volunteers for money or a password?</dt><dd>No. Volunteers sign up with a name and an email. There is no account to create and nothing to pay. If a message in our name asks a volunteer to pay or log in, it isn&apos;t from us.</dd></div>
             <div><dt>What happens to volunteers&apos; information?</dt><dd>It goes to the organization they signed up with. It is never sold, given to advertisers or used for ads, and it is deleted on request. The details are in the <a href="/privacy">Privacy Policy</a>.</dd></div>

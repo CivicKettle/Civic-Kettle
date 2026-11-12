@@ -14,7 +14,7 @@ export default function SiteFooter() {
       <a href="/terms">Terms</a>
       <a href="mailto:civickettle@gmail.com">civickettle@gmail.com</a>
     </nav>
-    <span className="ck-copyright">© 2026 CivicKettle, made by Desmond Flores</span>
+    <span className="ck-copyright">© 2026 CivicKettle, made by Desmond Flores in Orange County, California</span>
   </footer>
   );
 }

@@ -106,7 +106,7 @@ export default function PrivacyPage() {
       <p>If this policy changes in a way that matters, we&apos;ll update the date at the top and tell coordinators by email before the change takes effect.</p>
 
       <h2>Contact</h2>
-      <p>CivicKettle is run by Desmond Flores.<br />Email <a href={`mailto:${CONTACT}`}>{CONTACT}</a><br />Call or text <a href="tel:+19492593625">(949) 259-3625</a></p>
+      <p>CivicKettle is run by Desmond Flores, based in Orange County, California.<br />Email <a href={`mailto:${CONTACT}`}>{CONTACT}</a><br />Call or text <a href="tel:+19492593625">(949) 259-3625</a></p>
     </LegalPage>
   );
 }
