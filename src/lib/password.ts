@@ -16,3 +16,23 @@ export function passwordErrorMessage(message: string): string {
         ? "That password is too easy to guess. Try a longer one."
         : message;
 }
+
+type PasswordClient = {
+  auth: { updateUser: (attrs: { password?: string; data?: Record<string, unknown> }) => Promise<{ error: { message: string; code?: string } | null }> };
+};
+
+/**
+ * Save the password an account is created with, and record that it has one.
+ * If the person types the password they already have (they set one before
+ * passwords were required), that counts: we just record that it exists.
+ * Returns a message to show, or null when it worked.
+ */
+export async function saveFirstPassword(supabase: PasswordClient, password: string): Promise<string | null> {
+  const { error } = await supabase.auth.updateUser({ password, data: { has_password: true } });
+  if (!error) return null;
+  if (error.code === "same_password" || /different from the old/i.test(error.message)) {
+    const { error: flagError } = await supabase.auth.updateUser({ data: { has_password: true } });
+    return flagError ? passwordErrorMessage(flagError.message) : null;
+  }
+  return passwordErrorMessage(error.message);
+}

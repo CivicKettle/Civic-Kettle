@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSession } from "@/lib/db";
-import { passwordErrorMessage, passwordProblem } from "@/lib/password";
+import { passwordErrorMessage, passwordProblem, saveFirstPassword } from "@/lib/password";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +11,7 @@ function go(request: NextRequest, params: Record<string, string>, path = "/app/s
   return NextResponse.redirect(url, { status: 303 });
 }
 
-/** A signed-in coordinator sets or changes their own password. Optional: the emailed link keeps working. */
+/** A signed-in coordinator sets or changes their own password. */
 export async function POST(request: NextRequest) {
   const session = await getSession();
   if (!session) return NextResponse.redirect(new URL("/app", request.url), { status: 303 });
@@ -23,10 +23,13 @@ export async function POST(request: NextRequest) {
   const problem = passwordProblem(password, again);
   if (problem) return fromSetup ? go(request, { error: problem }, "/app/setup") : go(request, { pwError: problem });
 
-  const { error } = await session.supabase.auth.updateUser({ password, data: { has_password: true } });
-  if (error) {
-    const msg = passwordErrorMessage(error.message);
-    return fromSetup ? go(request, { error: msg }, "/app/setup") : go(request, { pwError: msg });
+  // First-time setup accepts the password the account already has; Settings is for changing it.
+  if (fromSetup || !session.hasPassword) {
+    const msg = await saveFirstPassword(session.supabase, password);
+    if (msg) return fromSetup ? go(request, { error: msg }, "/app/setup") : go(request, { pwError: msg });
+    return fromSetup ? go(request, {}, "/app/dashboard") : go(request, { pw: "1" });
   }
-  return fromSetup ? go(request, {}, "/app/dashboard") : go(request, { pw: "1" });
+  const { error } = await session.supabase.auth.updateUser({ password, data: { has_password: true } });
+  if (error) return go(request, { pwError: passwordErrorMessage(error.message) });
+  return go(request, { pw: "1" });
 }

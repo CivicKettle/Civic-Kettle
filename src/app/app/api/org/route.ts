@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getOrg, getSession, slugify } from "@/lib/db";
 import { TIME_ZONES } from "@/lib/time";
-import { passwordErrorMessage, passwordProblem } from "@/lib/password";
+import { passwordProblem, saveFirstPassword } from "@/lib/password";
 
 export const dynamic = "force-dynamic";
 
@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
       const password = String(form.get("password") || "");
       const problem = passwordProblem(password, String(form.get("password_again") || ""));
       if (problem) return back(request, "/app/setup", problem);
-      const { error: pwError } = await session.supabase.auth.updateUser({ password, data: { has_password: true } });
-      if (pwError) return back(request, "/app/setup", passwordErrorMessage(pwError.message));
+      const pwError = await saveFirstPassword(session.supabase, password);
+      if (pwError) return back(request, "/app/setup", pwError);
     }
 
     const base = slugify(name);

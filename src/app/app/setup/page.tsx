@@ -42,7 +42,7 @@ export default async function SetupPage({ searchParams }: { searchParams: Promis
         <p className="ap-muted">
           {needsOrg
             ? "Your organization's name is what volunteers see on sign-up pages and reminders. You can change it later in Settings."
-            : `You're joining ${org!.name}. Choose a password so you can sign in from any device.`}
+            : `Choose a password for signing in to ${org!.name} from any device. If you already set one before, type it here.`}
         </p>
         {needsOrg ? (
           <form id="setup-form" action="/app/api/org" method="post" className="ap-form">
