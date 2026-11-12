@@ -34,7 +34,7 @@ export default function PrivacyPage() {
       </ul>
       <h3>If you coordinate volunteers</h3>
       <ul>
-        <li>Your email address, which is how you sign in.</li>
+        <li>Your email address and a password, which are how you sign in. The password is stored in scrambled form, so nobody at CivicKettle can read it.</li>
         <li>Your organization&apos;s name, time zone and contact email.</li>
         <li>The events, shifts, notes and messages you create.</li>
       </ul>

@@ -1,12 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSession } from "@/lib/db";
+import { passwordErrorMessage, passwordProblem } from "@/lib/password";
 
 export const dynamic = "force-dynamic";
 
-function go(request: NextRequest, params: Record<string, string>) {
-  const url = new URL("/app/settings", request.url);
+function go(request: NextRequest, params: Record<string, string>, path = "/app/settings") {
+  const url = new URL(path, request.url);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
-  url.hash = "password";
+  if (path === "/app/settings") url.hash = "password";
   return NextResponse.redirect(url, { status: 303 });
 }
 
@@ -17,20 +18,15 @@ export async function POST(request: NextRequest) {
   const form = await request.formData();
   const password = String(form.get("password") || "");
   const again = String(form.get("password_again") || "");
-  if (password.length < 8) return go(request, { pwError: "Use at least 8 characters." });
-  if (password.length > 72) return go(request, { pwError: "Keep it under 72 characters." });
-  if (password !== again) return go(request, { pwError: "The two passwords don't match." });
+  // During first-time setup the form sends people on to the dashboard, and errors back to setup.
+  const fromSetup = String(form.get("from") || "") === "setup";
+  const problem = passwordProblem(password, again);
+  if (problem) return fromSetup ? go(request, { error: problem }, "/app/setup") : go(request, { pwError: problem });
 
-  const { error } = await session.supabase.auth.updateUser({ password });
+  const { error } = await session.supabase.auth.updateUser({ password, data: { has_password: true } });
   if (error) {
-    const msg = /different from the old/i.test(error.message)
-      ? "That's already your password."
-      : /reauth|recent/i.test(error.message)
-        ? "For safety, sign out, sign back in with an emailed link, then set the password."
-        : /weak|should contain|at least/i.test(error.message)
-          ? "That password is too easy to guess. Try a longer one."
-          : error.message;
-    return go(request, { pwError: msg });
+    const msg = passwordErrorMessage(error.message);
+    return fromSetup ? go(request, { error: msg }, "/app/setup") : go(request, { pwError: msg });
   }
-  return go(request, { pw: "1" });
+  return fromSetup ? go(request, {}, "/app/dashboard") : go(request, { pw: "1" });
 }

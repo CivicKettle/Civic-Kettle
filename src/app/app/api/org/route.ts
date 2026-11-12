@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getOrg, getSession, slugify } from "@/lib/db";
 import { TIME_ZONES } from "@/lib/time";
+import { passwordErrorMessage, passwordProblem } from "@/lib/password";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,15 @@ export async function POST(request: NextRequest) {
     if (name.length < 2) return back(request, "/app/setup", "Give the organization a name.");
     const existing = await getOrg(session);
     if (existing) return back(request, "/app/dashboard");
+
+    // A new account chooses its password here, before the workspace is made.
+    if (!session.hasPassword) {
+      const password = String(form.get("password") || "");
+      const problem = passwordProblem(password, String(form.get("password_again") || ""));
+      if (problem) return back(request, "/app/setup", problem);
+      const { error: pwError } = await session.supabase.auth.updateUser({ password, data: { has_password: true } });
+      if (pwError) return back(request, "/app/setup", passwordErrorMessage(pwError.message));
+    }
 
     const base = slugify(name);
     for (let attempt = 0; attempt < 5; attempt++) {

@@ -16,7 +16,7 @@ export default async function InquiriesPage() {
   const session = await getSession();
   if (!session) redirect("/app");
   const org = await getOrg(session);
-  if (!org) redirect("/app/setup");
+  if (!org || !session.hasPassword) redirect("/app/setup");
   const { data } = await session.supabase.from("inquiries").select("*").order("created_at", { ascending: false }).limit(200);
   const rows = (data ?? []) as Inquiry[];
 

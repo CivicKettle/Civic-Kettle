@@ -19,7 +19,7 @@ export default async function HoursPage({
   const session = await getSession();
   if (!session) redirect("/app");
   const org = await getOrg(session);
-  if (!org) redirect("/app/setup");
+  if (!org || !session.hasPassword) redirect("/app/setup");
   const q = await searchParams;
   const tz = org.time_zone;
   const range = parseRange(q.from, q.to, tz);

@@ -199,10 +199,10 @@ export function buildBroadcast(ctx: {
 /** Invitation for a second coordinator to join an organization's workspace. */
 export function buildInvite(ctx: { orgName: string; invitedBy: string; email: string; siteUrl: string }): { subject: string; html: string; text: string } {
   const { orgName, invitedBy, email, siteUrl } = ctx;
-  const signIn = `${siteUrl}/app`;
+  const signIn = `${siteUrl}/app?new=1&email=${encodeURIComponent(email)}`;
   const subject = `You've been added as a coordinator for ${orgName}`;
   const lead = `${invitedBy} added you as a volunteer coordinator for ${orgName} on CivicKettle, where the team keeps its sign-ups, check-ins and volunteer hours.`;
-  const how = `To get in, sign in with this email address (${email}). There's no password: you'll be emailed a sign-in link.`;
+  const how = `To get in, open the link below and ask for a sign-in link at this email address (${email}). When you open that link you'll choose a password, and after that you sign in with your email and password.`;
   const text = ["Hi,", "", lead, "", how, "", `Sign in: ${signIn}`, "", "If you weren't expecting this, you can ignore it and nothing will happen.", "", `CivicKettle. ${siteUrl}`].join("\n");
   const html = `<!doctype html><html><body style="margin:0;background:#f2f0e9;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#252b25">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f2f0e9"><tr><td align="center" style="padding:28px 16px">
@@ -212,7 +212,7 @@ export function buildInvite(ctx: { orgName: string; invitedBy: string; email: st
     <p style="margin:0 0 14px;font-size:16px">Hi,</p>
     <p style="margin:0 0 14px;font-size:16px;line-height:1.55">${esc(lead)}</p>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.55">${esc(how)}</p>
-    <p style="margin:0">${button(signIn, "Sign in to CivicKettle")}</p>
+    <p style="margin:0">${button(signIn, "Get started")}</p>
     <p style="margin:20px 0 0;font-size:13px;line-height:1.55;color:#626b60">If you weren't expecting this, you can ignore it and nothing will happen.</p>
   </td></tr>
   <tr><td style="padding:14px 4px 0;font-size:12px;color:#8a8d83;line-height:1.5"><a href="${siteUrl}" style="color:#626b60">CivicKettle</a></td></tr>

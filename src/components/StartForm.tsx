@@ -30,7 +30,7 @@ export default function StartForm({ tone = "dark", id }: { tone?: "dark" | "ligh
     return (
       <div className={`hm-start hm-start-${tone} hm-start-done`} role="status">
         <strong>Check your email.</strong>
-        <span>We sent a link to {state.email}. Open it in this browser and you&apos;re in.</span>
+        <span>We sent a link to {state.email}. Open it in this browser, choose a password, and you&apos;re in.</span>
       </div>
     );
   }
@@ -46,7 +46,7 @@ export default function StartForm({ tone = "dark", id }: { tone?: "dark" | "ligh
       {state.status === "error" ? (
         <p className="hm-start-error" role="alert">{state.message}</p>
       ) : (
-        <p className="hm-start-note">Free for {TRIAL_DAYS} days, no card needed. We&apos;ll email you a link to get in.</p>
+        <p className="hm-start-note">Free for {TRIAL_DAYS} days, no card needed. We&apos;ll email you a link, then you choose a password.</p>
       )}
     </form>
   );

@@ -14,7 +14,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
   const session = await getSession();
   if (!session) redirect("/app");
   const org = await getOrg(session);
-  if (!org) redirect("/app/setup");
+  if (!org || !session.hasPassword) redirect("/app/setup");
 
   const { data: evs } = await session.supabase
     .from("events")

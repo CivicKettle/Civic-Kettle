@@ -25,8 +25,8 @@ async function RedirectIfSignedIn() {
   return null;
 }
 
-export default async function SignInPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  const { error } = await searchParams;
+export default async function SignInPage({ searchParams }: { searchParams: Promise<{ error?: string; new?: string; email?: string }> }) {
+  const { error, new: isNew, email } = await searchParams;
   return (
     <div className="ck-site">
       <SiteHeader />
@@ -38,10 +38,10 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
           <p className="ck-kicker">Coordinator sign-in</p>
           <h1>Your workspace.</h1>
           <p className="ck-intro">
-            Enter your email and we&apos;ll send you a link. New to CivicKettle? The same link sets up your workspace.
+            Sign in with your email and password. If you forgot the password, we can email you a sign-in link.
           </p>
         </div>
-        <SignInForm linkError={error === "link"} />
+        <SignInForm linkError={error === "link"} startWithLink={Boolean(isNew)} defaultEmail={(email || "").slice(0, 200)} />
       </main>
       <SiteFooter />
     </div>

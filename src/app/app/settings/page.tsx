@@ -17,7 +17,7 @@ export default async function SettingsPage({
   const session = await getSession();
   if (!session) redirect("/app");
   const org = await getOrg(session);
-  if (!org) redirect("/app/setup");
+  if (!org || !session.hasPassword) redirect("/app/setup");
   const q = await searchParams;
   const { error } = q;
   const [role, team, invites] = await Promise.all([getRole(session, org.id), loadTeam(session, org), loadInvites(session, org)]);
@@ -108,11 +108,11 @@ export default async function SettingsPage({
         )}
       </section>
       <section className="ap-card ap-narrow" id="password">
-        <div className="ap-card-h"><h2>Password</h2><span className="ap-muted">Optional</span></div>
-        {q.pw && <p className="ap-flash ap-flash-in">Password saved. You can now sign in with your email and password, or keep using the emailed link.</p>}
+        <div className="ap-card-h"><h2>Change password</h2></div>
+        {q.pw && <p className="ap-flash ap-flash-in">Password changed.</p>}
         {q.pwError && <p className="ap-error ap-error-top ap-flash-in">{decodeURIComponent(q.pwError)}</p>}
         <form action="/app/api/password" method="post" className="ap-card-b ap-form">
-          <p className="ap-muted">You sign in with a link sent to {session.email}. Set a password here if you&apos;d rather type one. It&apos;s yours alone; other coordinators set their own.</p>
+          <p className="ap-muted">You sign in as {session.email}. Your password is yours alone; other coordinators have their own.</p>
           <label htmlFor="pw-new">New password <span>At least 8 characters</span></label>
           <input id="pw-new" name="password" type="password" required minLength={8} maxLength={72} autoComplete="new-password" />
           <label htmlFor="pw-again">Type it again</label>

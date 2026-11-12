@@ -59,6 +59,8 @@ export type Session = {
   supabase: SupabaseClient;
   userId: string;
   email: string;
+  /** Every coordinator account needs a password. False until they create one. */
+  hasPassword: boolean;
 };
 
 /** The signed-in coordinator, or null (not configured / not signed in). */
@@ -68,7 +70,8 @@ export async function getSession(): Promise<Session | null> {
     if (!supabase) return null;
     const { data } = await supabase.auth.getUser();
     if (!data.user) return null;
-    return { supabase, userId: data.user.id, email: data.user.email ?? "" };
+    const hasPassword = (data.user.user_metadata as { has_password?: boolean } | null)?.has_password === true;
+    return { supabase, userId: data.user.id, email: data.user.email ?? "", hasPassword };
   } catch {
     return null;
   }

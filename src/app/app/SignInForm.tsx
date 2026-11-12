@@ -11,10 +11,10 @@ type State = {
 const LINK_ERROR =
   "That sign-in link has expired or was already used. Each link works once, and only the newest one works. Enter your email to get a fresh link, then open it in this same browser window.";
 
-export default function SignInForm({ linkError = false }: { linkError?: boolean }) {
+export default function SignInForm({ linkError = false, startWithLink = false, defaultEmail = "" }: { linkError?: boolean; startWithLink?: boolean; defaultEmail?: string }) {
   const [state, setState] = useState<State>(linkError ? { status: "error", message: LINK_ERROR } : { status: "idle" });
 
-  const [usePassword, setUsePassword] = useState(false);
+  const [usePassword, setUsePassword] = useState(!linkError && !startWithLink);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -64,7 +64,7 @@ export default function SignInForm({ linkError = false }: { linkError?: boolean 
         required
         autoComplete="email"
         placeholder="you@yourorganization.org"
-        defaultValue={state.email}
+        defaultValue={state.email ?? defaultEmail}
       />
       {usePassword && (
         <>
@@ -77,11 +77,11 @@ export default function SignInForm({ linkError = false }: { linkError?: boolean 
         {!pending && <span aria-hidden="true">↗</span>}
       </button>
       <button className="ap-link ap-switch-mode" type="button" onClick={() => setUsePassword(!usePassword)}>
-        {usePassword ? "Email me a sign-in link instead" : "Use my password instead"}
+        {usePassword ? "Forgot it, or no password yet? Email me a sign-in link" : "Use my password instead"}
       </button>
       {state.status === "error" && <p className="ap-error">{state.message}</p>}
       {state.status === "unconfigured" && <p className="ap-muted">{state.message}</p>}
-      <p className="ap-muted">{usePassword ? "Passwords are optional. You set one in Settings after signing in." : "No password needed. Each sign-in link works once."} By signing in you agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
+      <p className="ap-muted">{usePassword ? "New to CivicKettle? Start from the homepage and you'll choose a password there." : "The link signs you in once. Open it in this same browser."} By signing in you agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
     </form>
   );
 }
