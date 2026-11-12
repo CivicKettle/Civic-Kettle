@@ -87,7 +87,7 @@ export default function TermsPage() {
       <p>These terms are governed by the laws of the State of California, USA.</p>
 
       <h2>Contact</h2>
-      <p>CivicKettle is run by Desmond Flores, based in Orange County, California.<br />Email <a href={`mailto:${CONTACT}`}>{CONTACT}</a><br />Call or text <a href="tel:+19492593625">(949) 259-3625</a></p>
+      <p>CivicKettle is based in Orange County, California.<br />Email <a href={`mailto:${CONTACT}`}>{CONTACT}</a><br />Call or text <a href="tel:+19492593625">(949) 259-3625</a></p>
     </LegalPage>
   );
 }

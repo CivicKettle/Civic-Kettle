@@ -19,7 +19,11 @@ export default function StartForm({ tone = "dark", id }: { tone?: "dark" | "ligh
     try {
       const res = await fetch("/app/api/signin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
       const data = (await res.json()) as { status?: string; message?: string };
-      if (data.status === "sent") setState({ status: "sent", email });
+      if (data.status === "sent") {
+        setState({ status: "sent", email });
+        // Count the sign-up for analytics, without the email address. Only if analytics is switched on.
+        if (process.env.NEXT_PUBLIC_POSTHOG_KEY) void import("posthog-js").then(({ default: posthog }) => { if (posthog.__loaded) posthog.capture("trial_email_submitted", { form: id }); });
+      }
       else setState({ status: "error", email, message: data.message || "That didn't work. Try again in a moment." });
     } catch {
       setState({ status: "error", email, message: "Couldn't reach the server. Try again in a moment." });
