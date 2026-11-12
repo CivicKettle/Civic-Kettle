@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CivicKettle — Less admin, more community impact.",
+  title: "CivicKettle: volunteer sign-ups, reminders and hours for small nonprofits",
   description:
     "Simple volunteer sign-ups, shifts, reminders and hour tracking for small charities, community organizations, and local nonprofits.",
 };

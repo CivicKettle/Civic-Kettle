@@ -22,8 +22,9 @@ export default function Home() {
         <section className="hm-hero" aria-labelledby="hero-title">
           <div className="hm-wrap hm-hero-grid">
             <div className="hm-hero-copy">
-              <h1 id="hero-title">Volunteer sign{"\u2011"}ups, shifts and hours in one place.</h1>
-              <p className="hm-lede">Share one link. Volunteers pick a shift, get reminded, and check in at the door. Their hours add up on their own.</p>
+              <p className="hm-eyebrow">Volunteer sign-ups and scheduling for small nonprofits</p>
+              <h1 id="hero-title">Organizing volunteers shouldn&apos;t be another full{"\u2011"}time job.</h1>
+              <p className="hm-lede">Create an event and share one link. Volunteers pick a shift, get reminded, and check in at the door. You see who&apos;s coming, and their hours add up on their own.</p>
               <StartForm id="start-top" tone="dark" />
             </div>
 
@@ -50,6 +51,44 @@ export default function Home() {
                 ))}
               </div>
 
+            </div>
+          </div>
+        </section>
+
+        <section className="hm-section hm-wrap" aria-labelledby="sides-title">
+          <h2 className="hm-h2" id="sides-title">Organizers set it up. Volunteers just open a link.</h2>
+          <div className="hm-sides">
+            <div className="hm-side">
+              <h3>If you organize volunteers</h3>
+              <ul>
+                <li>Create an event and its shifts in a couple of minutes.</li>
+                <li>Share one link by text, email or flyer.</li>
+                <li>See who&apos;s coming, check people in, and export their hours.</li>
+              </ul>
+              <p className="hm-side-foot">Free for {TRIAL_DAYS} days, then $19 a month.</p>
+            </div>
+            <div className="hm-side hm-side-vol">
+              <div>
+                <h3>If you volunteer</h3>
+                <ul>
+                  <li>Open the link your organizer sent. There&apos;s no app to download and no account to make.</li>
+                  <li>Pick a shift and enter your name and email.</li>
+                  <li>Get reminders, and cancel in one tap if your plans change.</li>
+                </ul>
+                <p className="hm-side-foot">Always free.</p>
+              </div>
+              <div className="hm-phone" role="img" aria-label="Illustration: the sign-up page on a volunteer's phone, with three shifts to choose from and a Sign me up button.">
+                <div className="hm-phone-screen" aria-hidden="true">
+                  <p className="hm-phone-org">Maple Street Community Garden</p>
+                  <p className="hm-phone-title">Neighborhood garden day</p>
+                  <p className="hm-phone-date">Saturday, May 18</p>
+                  <div className="hm-opt hm-opt-full"><span className="hm-radio" /><span><strong>Setup</strong>8:00 AM</span><em>Full</em></div>
+                  <div className="hm-opt hm-opt-on"><span className="hm-radio" /><span><strong>Planting</strong>9:00 AM</span><em>1 spot left</em></div>
+                  <div className="hm-opt"><span className="hm-radio" /><span><strong>Cleanup</strong>12:00 PM</span><em>3 spots left</em></div>
+                  <span className="hm-phone-btn">Sign me up</span>
+                  <p className="hm-phone-fine">No account needed</p>
+                </div>
+              </div>
             </div>
           </div>
         </section>

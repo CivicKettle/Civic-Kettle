@@ -1650,7 +1650,7 @@ button.ck-button { font-family: inherit; cursor: pointer; }
 .hm-hero { background: var(--ck-green); color: #f4f2e9; }
 .hm-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: clamp(36px, 5vw, 80px); padding-block: clamp(56px, 7vw, 100px) clamp(84px, 9vw, 132px); }
 .hm-hero-copy { max-width: 520px; }
-.hm-hero h1 { margin: 0; font-family: var(--font-display); font-size: clamp(42px, 4.3vw, 62px); font-weight: 400; letter-spacing: -0.055em; line-height: 1.02; text-wrap: balance; }
+.hm-hero h1 { margin: 0; font-family: var(--font-display); font-size: clamp(40px, 4vw, 58px); font-weight: 400; letter-spacing: -0.055em; line-height: 1.02; text-wrap: balance; }
 .hm-lede { margin: 26px 0 0; max-width: 30em; color: #d5dacb; font-size: 18px; line-height: 1.55; }
 .hm-hero-action { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; margin-top: 32px; }
 .hm-cta { display: inline-flex; align-items: center; min-height: 52px; padding: 0 26px; border-radius: 4px; background: var(--ck-marigold); color: #23291f; font-size: 16px; font-weight: 500; transition: background-color 150ms ease; }
@@ -1789,3 +1789,36 @@ button.ck-button { font-family: inherit; cursor: pointer; }
 }
 
 .ap-plan { margin: 0; font-size: 14px; line-height: 1.6; color: #3d443c; }
+
+/* Homepage: what it is, and who does what */
+.hm-eyebrow { margin: 0 0 18px; color: var(--ck-marigold); font-size: 15px; font-weight: 500; }
+.hm-sides { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(16px, 2vw, 28px); }
+.hm-side { padding: clamp(24px, 3vw, 40px); border: 1px solid var(--ck-rule); border-radius: 8px; background: var(--ck-surface); }
+.hm-side-vol { display: flex; align-items: center; justify-content: space-between; gap: clamp(20px, 3vw, 44px); background: #e9eee2; border-color: #c6d2bd; }
+.hm-side h3 { font-size: 20px; font-weight: 500; letter-spacing: -0.025em; }
+.hm-side ul { display: grid; gap: 12px; margin: 18px 0 0; padding: 0; list-style: none; color: #3d443c; font-size: 16px; line-height: 1.5; }
+.hm-side li { position: relative; padding-left: 26px; }
+.hm-side li::before { content: ""; position: absolute; left: 4px; top: 5px; width: 6px; height: 11px; border: solid var(--ck-green); border-width: 0 2px 2px 0; transform: rotate(42deg); }
+.hm-side-foot { margin-top: 22px; padding-top: 16px; border-top: 1px solid rgba(43, 60, 48, 0.18); font-size: 15px; font-weight: 500; }
+.hm-phone { flex: none; width: 200px; padding: 8px; border-radius: 26px; background: #171d18; box-shadow: 0 24px 50px -20px rgba(6, 12, 8, 0.8); }
+.hm-phone-screen { padding: 18px 12px 14px; border-radius: 19px; background: var(--ck-paper); color: var(--ck-ink); }
+.hm-phone-org { color: #6a7067; font-size: 9px; }
+.hm-phone-title { margin-top: 3px; font-family: var(--font-editorial); font-size: 19px; line-height: 1.05; letter-spacing: -0.02em; }
+.hm-phone-date { margin: 3px 0 10px; color: #4a514a; font-size: 10px; }
+.hm-opt { display: flex; align-items: center; gap: 8px; margin-top: 5px; padding: 7px 8px; border: 1px solid #dcd9ce; border-radius: 5px; background: #fbf9f3; font-size: 10px; color: #626b60; }
+.hm-opt strong { display: block; font-size: 11px; color: var(--ck-ink); }
+.hm-opt em { margin-left: auto; font-style: normal; font-size: 9px; white-space: nowrap; }
+.hm-radio { flex: none; width: 12px; height: 12px; border: 1.5px solid #a9ad9f; border-radius: 50%; }
+.hm-opt-on { border-color: var(--ck-green); background: #eef1e6; }
+.hm-opt-on .hm-radio { border-color: var(--ck-green); background: radial-gradient(var(--ck-green) 0 3px, transparent 3.5px); }
+.hm-opt-full { opacity: 0.55; }
+.hm-phone-btn { display: grid; place-items: center; height: 32px; margin-top: 10px; border-radius: 5px; background: var(--ck-green); color: #f7f5ee; font-size: 11px; font-weight: 500; }
+.hm-phone-fine { margin-top: 7px; color: #8a8d83; font-size: 8.5px; text-align: center; }
+@media (max-width: 1020px) {
+  .hm-sides { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .hm-side-vol { flex-direction: column; align-items: stretch; }
+  .hm-phone { align-self: center; }
+}
+.hm-side:not(.hm-side-vol) { display: flex; flex-direction: column; justify-content: center; }
