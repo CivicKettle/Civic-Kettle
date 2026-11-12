@@ -1788,5 +1788,6 @@ button.ck-button { font-family: inherit; cursor: pointer; }
 .hm-questions a { color: #3d4c3c; border-bottom: 1px solid #aeb4a8; }
 @media (max-width: 640px) {
   .hm-start-row { flex-direction: column; }
+  .hm-start input { flex: none; width: 100%; }
   .hm-start button { width: 100%; }
 }
