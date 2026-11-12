@@ -165,6 +165,7 @@ export default function Home() {
             <div><dt>Will you ever ask volunteers for money or a password?</dt><dd>No. Volunteers sign up with a name and an email. There is no account to create and nothing to pay. If a message in our name asks a volunteer to pay or log in, it isn&apos;t from us.</dd></div>
             <div><dt>What happens to volunteers&apos; information?</dt><dd>It goes to the organization they signed up with. It is never sold, given to advertisers or used for ads, and it is deleted on request. The details are in the <a href="/privacy">Privacy Policy</a>.</dd></div>
             <div><dt>Will volunteers get spam?</dt><dd>No. They get a confirmation and reminders for shifts they chose, plus messages from their organizer about those events. Every email has a link to turn them off.</dd></div>
+            <div><dt>How do I cancel?</dt><dd>Open Settings and press the Cancel subscription button. There is no contract, no phone call and no email to send. During the free trial there is nothing to cancel, because we never ask for a card.</dd></div>
             <div><dt>Can I leave and take my records?</dt><dd>Yes. You can export your volunteers, events and hours as spreadsheet files at any time, and ask for your workspace to be deleted.</dd></div>
           </dl>
         </section>
@@ -173,7 +174,7 @@ export default function Home() {
           <div className="hm-ticket" id="contact">
             <div className="hm-ticket-stub">
               <p className="hm-price"><strong>$19</strong><span>a month</span></p>
-              <p>After a {TRIAL_DAYS}-day free trial. One plan, everything included.</p>
+              <p>After a {TRIAL_DAYS}-day free trial. One plan, everything included. No card to start, no contract, cancel any time.</p>
             </div>
             <div className="hm-ticket-body">
               <h2 id="pricing-title">Try it free for {TRIAL_DAYS} days.</h2>

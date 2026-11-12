@@ -1980,3 +1980,9 @@ button.ck-button { font-family: inherit; cursor: pointer; }
 .ap-waiting-k { font-size: 12px; color: #626b60; }
 .ap-person.wait { border: 1px dashed #c9a24a; background: transparent; color: #5a4a1e; }
 .ap-person.wait i { background: #f6e7c1; color: #5a4a1e; }
+
+/* Settings: plan card and cancelling */
+.ap-plan-cancel { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 16px; padding-top: 16px; border-top: 1px solid #eceae3; }
+.ap-plan-cancel .ap-muted { margin: 0; }
+.ap-cancel p { margin: 0 0 14px; font-size: 15px; line-height: 1.6; color: #3d443c; max-width: 60ch; }
+.ap-cancel .ck-button { margin-top: 6px; }

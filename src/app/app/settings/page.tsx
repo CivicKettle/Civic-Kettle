@@ -49,7 +49,13 @@ export default async function SettingsPage({
       {trial && (
         <section className="ap-card ap-narrow">
           <div className="ap-card-h"><h2>Plan</h2><span className="ap-muted">{trial.state === "active" ? "Free trial" : "Trial ended"}</span></div>
-          <div className="ap-card-b"><p className="ap-plan">{trialLine(trial)}</p></div>
+          <div className="ap-card-b">
+            <p className="ap-plan">{trialLine(trial)}</p>
+            <div className="ap-plan-cancel">
+              <a className="ck-button danger" href="/app/settings/cancel">Cancel subscription</a>
+              <span className="ap-muted">One button. No phone call, no email.</span>
+            </div>
+          </div>
         </section>
       )}
 
