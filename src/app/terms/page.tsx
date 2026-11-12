@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import LegalPage from "@/components/LegalPage";
+import { TRIAL_DAYS } from "@/lib/pricing";
 
 export const metadata: Metadata = {
   title: "Terms of Use — CivicKettle",
@@ -28,7 +29,7 @@ export default function TermsPage() {
 
       <h2>Cost</h2>
       <p>
-        Volunteers never pay to use CivicKettle. A new organization can use CivicKettle free for 30 days. After that it costs $19 a month.
+        Volunteers never pay to use CivicKettle. A new organization can use CivicKettle free for {TRIAL_DAYS} days. After that it costs $19 a month.
         Nothing is charged automatically: we don&apos;t ask for a card to start, and an organization is not charged unless it has agreed to continue.
       </p>
 

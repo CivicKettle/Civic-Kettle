@@ -1,6 +1,7 @@
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import StartForm from "@/components/StartForm";
+import { TRIAL_DAYS } from "@/lib/pricing";
 
 /** Sample sign-ups for the illustration at the top of the page. */
 const SHEET = [
@@ -102,10 +103,10 @@ export default function Home() {
           <div className="hm-ticket" id="contact">
             <div className="hm-ticket-stub">
               <p className="hm-price"><strong>$19</strong><span>a month</span></p>
-              <p>After a 30-day free trial. One plan, everything included.</p>
+              <p>After a {TRIAL_DAYS}-day free trial. One plan, everything included.</p>
             </div>
             <div className="hm-ticket-body">
-              <h2 id="pricing-title">Try it free for 30 days.</h2>
+              <h2 id="pricing-title">Try it free for {TRIAL_DAYS} days.</h2>
               <StartForm id="start-bottom" tone="light" />
             </div>
           </div>

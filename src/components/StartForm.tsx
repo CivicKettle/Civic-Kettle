@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { TRIAL_DAYS } from "@/lib/pricing";
 
 type State = { status: "idle" | "sending" | "sent" | "error"; message?: string; email?: string };
 
@@ -45,7 +46,7 @@ export default function StartForm({ tone = "dark", id }: { tone?: "dark" | "ligh
       {state.status === "error" ? (
         <p className="hm-start-error" role="alert">{state.message}</p>
       ) : (
-        <p className="hm-start-note">Free for 30 days, no card needed. We&apos;ll email you a link to get in.</p>
+        <p className="hm-start-note">Free for {TRIAL_DAYS} days, no card needed. We&apos;ll email you a link to get in.</p>
       )}
     </form>
   );

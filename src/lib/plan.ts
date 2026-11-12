@@ -1,9 +1,6 @@
 import type { Organization, Session } from "@/lib/db";
+import { PRICE, TRIAL_DAYS } from "@/lib/pricing";
 import { fmtDate } from "@/lib/time";
-
-/** New organizations use CivicKettle free for this many days. */
-export const TRIAL_DAYS = 30;
-export const PRICE = "$19 a month";
 
 export type Trial = { state: "active" | "ended"; daysLeft: number; endsOn: string };
 
@@ -29,5 +26,5 @@ export async function trialFor(session: Session, org: Organization): Promise<Tri
 export function trialLine(t: Trial): string {
   return t.state === "active"
     ? `Free trial: ${t.daysLeft} day${t.daysLeft === 1 ? "" : "s"} left, until ${t.endsOn}. After that CivicKettle is ${PRICE}. Nothing is charged automatically.`
-    : `Your free trial ended on ${t.endsOn}. To keep going at ${PRICE}, write to civickettle@gmail.com.`;
+    : `Your free trial ended on ${t.endsOn}. CivicKettle is ${PRICE}. Paying isn't set up yet, so nothing changes for you right now.`;
 }

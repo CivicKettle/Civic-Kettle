@@ -107,7 +107,7 @@ export default async function DashboardPage() {
         <a className="ck-button" href="/app/events/new">New event <span aria-hidden="true">+</span></a>
       </div>
 
-      {trial && <p className={trial.state === "active" ? "ap-flash" : "ap-error ap-error-top"}>{trialLine(trial)}</p>}
+      {trial && <p className="ap-flash">{trialLine(trial)}</p>}
 
       <div className="ap-tiles">
         <div className="ap-tile"><span className="l">Upcoming events</span><span className="v">{events.length}</span><span className="d">{events[0] ? `Next: ${dateTile(events[0].starts_at, org.time_zone).dow} ${dateTile(events[0].starts_at, org.time_zone).day}` : "Nothing scheduled"}</span></div>
