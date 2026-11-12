@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getOrg, getSession } from "@/lib/db";
-import { parseEventForm, repeatDates, type Repeat } from "@/lib/eventForm";
+import { parseEventForm, reminderChoice, repeatDates, type Repeat } from "@/lib/eventForm";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +40,12 @@ export async function POST(request: NextRequest) {
     if (shiftErr) {
       await session.supabase.from("events").delete().eq("id", created.id);
       return createdIds.length ? go(request, "/app/events", `Created ${createdIds.length} of ${dates.length} events, then stopped: ${shiftErr.message}`) : go(request, "/app/events/new", shiftErr.message);
+    }
+    // Reminder choices are saved only when one is turned off, so creating an
+    // event never depends on that part of the database being up to date.
+    const choice = reminderChoice(form);
+    if (choice && !(choice.remind_day_before && choice.remind_morning_of)) {
+      await session.supabase.from("events").update(choice).eq("id", created.id);
     }
     createdIds.push(created.id);
   }

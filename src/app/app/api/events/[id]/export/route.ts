@@ -1,3 +1,4 @@
+import { arrivedOnTime } from "@/lib/attendance";
 import { NextResponse, type NextRequest } from "next/server";
 import { getOrg, getSession, slugify, type Event, type Shift, type Signup } from "@/lib/db";
 import { toCsv, toEntry } from "@/lib/hours";
@@ -25,7 +26,7 @@ export async function GET(request: NextRequest, ctx: { params: Promise<{ id: str
   const now = Date.now();
 
   const rows: (string | number | null)[][] = [
-    ["Volunteer", "Email", "Mobile", "Minor", "Guardian", "Guardian mobile", "Shift", "Date", "Shift time", "Status", "Checked in", "Checked out", "Hours", "Approved"],
+    ["Volunteer", "Email", "Mobile", "Minor", "Guardian", "Guardian mobile", "Shift", "Date", "Shift time", "Status", "Said yes the day before", "Checked in", "On time", "Checked out", "Hours", "Approved"],
   ];
   for (const s of (su ?? []) as Signup[]) {
     const shift = shifts.find((x) => x.id === s.shift_id);
@@ -37,7 +38,9 @@ export async function GET(request: NextRequest, ctx: { params: Promise<{ id: str
       s.volunteer_name, s.email, s.phone, s.is_minor ? "Yes" : "No", s.guardian_name, s.guardian_phone,
       shift.name, utcToZonedInputs(shift.starts_at, tz).date, `${fmtTime(shift.starts_at, tz)} to ${fmtTime(shift.ends_at, tz)}`,
       status,
+      s.status === "confirmed" ? (s.attending_confirmed_at ? "Yes" : "No") : "",
       e.a.state !== "none" ? fmtTime(e.a.inAt, tz) : "",
+      e.a.state !== "none" ? (arrivedOnTime(s, shift) ? "Yes" : "No") : "",
       e.a.state === "done" ? fmtTime(e.a.outAt, tz) : "",
       s.status === "confirmed" ? e.hours : null,
       e.approved ? "Yes" : "No",

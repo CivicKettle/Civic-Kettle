@@ -1,5 +1,6 @@
 import type { Event, Organization, Session, Shift, Signup } from "@/lib/db";
 import { loadOptouts, normEmail } from "@/lib/emails/optout";
+import { arrivedOnTime } from "@/lib/attendance";
 import { toEntry } from "@/lib/hours";
 
 export type VolunteerShift = {
@@ -21,6 +22,8 @@ export type Volunteer = {
   emailOff: boolean;
   events: number;
   attended: number;
+  /** Of the shifts they came to, how many they checked in to on time. */
+  onTime: number;
   noShows: number;
   upcoming: number;
   hours: number;
@@ -61,6 +64,7 @@ export async function loadVolunteers(session: Session, org: Organization, now: n
       emailOff: optouts.has(normEmail(s.email)),
       events: 0,
       attended: 0,
+      onTime: 0,
       noShows: 0,
       upcoming: 0,
       hours: 0,
@@ -89,6 +93,7 @@ export async function loadVolunteers(session: Session, org: Organization, now: n
     if (status !== "Cancelled" && status !== "Waiting list") p.eventIds.add(event.id);
     if (status === "Attended" || status === "On shift") {
       p.attended++;
+      if (arrivedOnTime(s, shift)) p.onTime++;
       p.hours += e.hours ?? 0;
       if (!p.lastAt || shift.starts_at > p.lastAt) p.lastAt = shift.starts_at;
     }

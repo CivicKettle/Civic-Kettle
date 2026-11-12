@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import PrintButton from "@/components/PrintButton";
-import { fmtHours } from "@/lib/attendance";
+import { fmtHours, arrivedOnTime, minutesLate, ON_TIME_GRACE_MIN } from "@/lib/attendance";
 import { getOrg, getSession, type Event, type Shift, type Signup } from "@/lib/db";
 import { sumHours, toEntry } from "@/lib/hours";
 import { fmtLongDate, fmtRange, fmtTime } from "@/lib/time";
@@ -49,6 +49,9 @@ export default async function EventSummaryPage({
   const capacity = shifts.reduce((t, s) => t + s.capacity, 0);
   const showRate = confirmed.length ? Math.round((attended.length / confirmed.length) * 100) : 0;
   const unapproved = attended.filter((e) => e.hours !== null && !e.approved).length;
+  const saidYes = confirmed.filter((s) => s.attending_confirmed_at);
+  const onTime = attended.filter((e) => arrivedOnTime(e.signup, e.shift));
+  const onTimeRate = attended.length ? Math.round((onTime.length / attended.length) * 100) : 0;
 
   return (
     <AppShell active="events" orgName={org.name} email={session.email}>
@@ -73,9 +76,11 @@ export default async function EventSummaryPage({
         <p className="ap-flash">{started ? "This event is under way. The numbers below update as people check in and out." : "This event hasn't happened yet. The summary fills in on the day."}</p>
       )}
 
-      <div className="ap-tiles">
+      <div className="ap-tiles six">
         <div className="ap-tile"><span className="l">Signed up</span><span className="v">{confirmed.length}</span><span className="d">of {capacity} spots{cancelled.length ? ` · ${cancelled.length} cancelled` : ""}</span></div>
+        <div className="ap-tile"><span className="l">Said yes the day before</span><span className="v">{saidYes.length}</span><span className="d">{confirmed.length ? `of ${confirmed.length} signed up` : "No sign-ups"}</span></div>
         <div className="ap-tile"><span className="l">Showed up</span><span className="v">{attended.length}</span><span className="d">{confirmed.length ? `${showRate}% of sign-ups` : "No sign-ups"}</span></div>
+        <div className="ap-tile"><span className="l">On time</span><span className="v">{onTime.length}</span><span className={attended.length && onTime.length < attended.length ? "d warn" : "d"}>{attended.length ? `${onTimeRate}% of those who came, within ${ON_TIME_GRACE_MIN} min of start` : "No check-ins yet"}</span></div>
         <div className="ap-tile"><span className="l">No-shows</span><span className="v">{noShows.length}</span><span className={noShows.length ? "d warn" : "d"}>{ended ? (noShows.length ? "Signed up, never checked in" : "Everyone came") : "Counted as shifts end"}</span></div>
         <div className="ap-tile"><span className="l">Hours</span><span className="v">{sumHours(attended)}</span><span className={unapproved ? "d warn" : "d"}>{unapproved ? `${unapproved} awaiting approval` : attended.some((e) => e.hours !== null) ? "All approved" : "From check-ins"}</span></div>
       </div>
@@ -120,6 +125,7 @@ export default async function EventSummaryPage({
                 <div className="m">
                   {e.shift.name} · {e.a.state === "done" ? `${fmtTime(e.a.inAt, tz)} to ${fmtTime(e.a.outAt, tz)}${e.a.auto ? " (closed at shift end)" : ""}` : e.a.state === "in" ? `In at ${fmtTime(e.a.inAt, tz)}` : ""}
                   {e.edited ? " · edited" : ""}
+                  {arrivedOnTime(e.signup, e.shift) === false ? <span className="ap-late"> · {minutesLate(e.signup, e.shift)} min late</span> : ""}
                 </div>
               </div>
               <span className={`ap-pill${e.approved ? "" : " sent"}`}>{e.hours === null ? "On shift" : fmtHours(e.hours)}</span>

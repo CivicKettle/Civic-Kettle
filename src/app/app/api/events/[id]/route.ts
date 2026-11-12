@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getOrg, getSession, type Shift } from "@/lib/db";
-import { parseEventForm } from "@/lib/eventForm";
+import { parseEventForm, reminderChoice } from "@/lib/eventForm";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { promoteEvent } from "@/lib/waitlist";
 
@@ -50,6 +50,13 @@ export async function POST(request: NextRequest, ctx: { params: Promise<{ id: st
 
   const { error } = await session.supabase.from("events").update(event).eq("id", id);
   if (error) return go(request, `/app/events/${id}/edit`, error.message);
+  const choice = reminderChoice(form);
+  if (choice) {
+    const { error: choiceError } = await session.supabase.from("events").update(choice).eq("id", id);
+    if (choiceError && !(choice.remind_day_before && choice.remind_morning_of)) {
+      return go(request, `/app/events/${id}/edit`, "Everything else was saved, but the reminder choice wasn't. The database needs its latest update (step 8).");
+    }
+  }
 
   // Reconcile shifts: update the ones with ids, insert new ones, delete the ones removed
   // (only if they have no confirmed sign-ups).

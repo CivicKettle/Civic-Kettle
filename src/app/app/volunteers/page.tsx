@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import AppShell from "@/components/AppShell";
-import { fmtHours } from "@/lib/attendance";
+import { fmtHours, ON_TIME_GRACE_MIN } from "@/lib/attendance";
 import { getOrg, getSession } from "@/lib/db";
 import { fmtDate } from "@/lib/time";
 import { filterAndSort, loadVolunteers, type VolunteerSort } from "@/lib/volunteers";
@@ -28,6 +28,9 @@ export default async function VolunteersPage({ searchParams }: { searchParams: P
   const everyone = await loadVolunteers(session, org);
   const rows = filterAndSort(everyone, q, sort);
   const totalHours = Math.round(everyone.reduce((t, v) => t + v.hours, 0) * 100) / 100;
+  const came = everyone.reduce((t, v) => t + v.attended, 0);
+  const missed = everyone.reduce((t, v) => t + v.noShows, 0);
+  const punctual = everyone.reduce((t, v) => t + v.onTime, 0);
   const link = (s: VolunteerSort) => `/app/volunteers?sort=${s}${q ? `&q=${encodeURIComponent(q)}` : ""}`;
   const pill = (status: string) => (status === "No-show" || status === "Waiting list" ? "ap-pill amber" : status === "Cancelled" ? "ap-pill sent" : "ap-pill");
 
@@ -46,8 +49,8 @@ export default async function VolunteersPage({ searchParams }: { searchParams: P
 
       <div className="ap-tiles">
         <div className="ap-tile"><span className="l">Volunteers</span><span className="v">{everyone.length}</span><span className="d">Everyone who has signed up</span></div>
-        <div className="ap-tile"><span className="l">Showed up at least once</span><span className="v">{everyone.filter((v) => v.attended > 0).length}</span><span className="d">Checked in to a shift</span></div>
-        <div className="ap-tile"><span className="l">Signed up for something ahead</span><span className="v">{everyone.filter((v) => v.upcoming > 0).length}</span><span className="d">Upcoming shifts</span></div>
+        <div className="ap-tile"><span className="l">Show-up rate</span><span className="v">{came + missed ? `${Math.round((came / (came + missed)) * 100)}%` : "0%"}</span><span className={missed ? "d warn" : "d"}>{came + missed ? `${came} of ${came + missed} past shifts${missed ? `, ${missed} no-show${missed === 1 ? "" : "s"}` : ""}` : "No past shifts yet"}</span></div>
+        <div className="ap-tile"><span className="l">On time</span><span className="v">{came ? `${Math.round((punctual / came) * 100)}%` : "0%"}</span><span className="d">{came ? `${punctual} of ${came} check-ins within ${ON_TIME_GRACE_MIN} min of start` : "No check-ins yet"}</span></div>
         <div className="ap-tile"><span className="l">Hours, all time</span><span className="v">{totalHours}</span><span className="d">From check-ins</span></div>
       </div>
 
@@ -69,7 +72,7 @@ export default async function VolunteersPage({ searchParams }: { searchParams: P
         {everyone.length === 0 && <div className="ap-empty"><p>Nobody yet. People appear here the moment they sign up for one of your events.</p><a className="ck-button sm" href="/app/events">Go to events</a></div>}
         {everyone.length > 0 && rows.length === 0 && <div className="ap-empty"><p>No one matches that search.</p></div>}
         {rows.length > 0 && (
-          <div className="ap-vhead" aria-hidden="true"><span>Volunteer</span><span>Events</span><span>Showed up</span><span>No-shows</span><span>Hours</span><span>Last or next shift</span></div>
+          <div className="ap-vhead" aria-hidden="true"><span>Volunteer</span><span>Events</span><span>Showed up</span><span>On time</span><span>No-shows</span><span>Hours</span><span>Last or next shift</span></div>
         )}
         {rows.map((v) => (
           <details className="ap-vrow" key={v.key}>
@@ -85,6 +88,7 @@ export default async function VolunteersPage({ searchParams }: { searchParams: P
               </span>
               <span className="n" data-l="Events">{v.events}</span>
               <span className="n" data-l="Showed up">{v.attended}</span>
+              <span className="n" data-l="On time">{v.attended ? `${v.onTime} of ${v.attended}` : ""}</span>
               <span className="n" data-l="No-shows">{v.noShows || ""}</span>
               <span className="n" data-l="Hours">{v.hours || ""}</span>
               <span className="when" data-l="Shift">{v.nextAt ? `Next ${fmtDate(v.nextAt, tz)}` : v.lastAt ? `Last ${fmtDate(v.lastAt, tz, { year: "numeric" })}` : "Not yet"}</span>

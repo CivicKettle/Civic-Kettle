@@ -21,9 +21,10 @@ export async function GET(request: NextRequest, ctx: { params: Promise<{ id: str
     .maybeSingle();
   if (!ev) return new NextResponse("Not found", { status: 404 });
 
+  const inline = request.nextUrl.searchParams.get("inline") === "1";
   const png = await QRCode.toBuffer(`${siteUrl()}/v/${ev.public_token}`, {
     type: "png",
-    width: 1200,
+    width: inline ? 360 : 1200,
     margin: 2,
     errorCorrectionLevel: "M",
     color: { dark: "#1f2a24", light: "#ffffff" },
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest, ctx: { params: Promise<{ id: str
   return new NextResponse(new Uint8Array(png), {
     headers: {
       "Content-Type": "image/png",
-      "Content-Disposition": `attachment; filename="civickettle-qr-${slugify(ev.title)}.png"`,
+      ...(inline ? {} : { "Content-Disposition": `attachment; filename="civickettle-qr-${slugify(ev.title)}.png"` }),
       "Cache-Control": "private, no-store",
     },
   });

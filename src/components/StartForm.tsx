@@ -46,7 +46,7 @@ export default function StartForm({ tone = "dark", id }: { tone?: "dark" | "ligh
       {state.status === "error" ? (
         <p className="hm-start-error" role="alert">{state.message}</p>
       ) : (
-        <p className="hm-start-note">Free for {TRIAL_DAYS} days, no card needed. We&apos;ll email you a link, then you choose a password.</p>
+        <p className="hm-start-note">{TRIAL_DAYS} day free trial</p>
       )}
     </form>
   );

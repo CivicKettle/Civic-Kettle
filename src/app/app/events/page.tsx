@@ -85,8 +85,11 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
       <ShareBar
         url={`${siteUrl()}/o/${org.slug}`}
         label="Your organization's page"
-        sub="One link that lists every upcoming event. Put it on your website or social profile so volunteers can see everything you need help with."
+        sub="One link and one QR code that list every upcoming event. Put them on your website, a flyer or a social profile so volunteers can see everything you need help with."
         openLabel="Open the page"
+        qrSrc="/app/api/org/qr"
+        qrDownload="/app/api/org/qr?download=1"
+        shareTitle={`Volunteer with ${org.name}`}
       />
       <List items={upcoming} title="Upcoming" />
       {past.length > 0 && <List items={past} title="Past" />}

@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 // The picture that shows when someone shares a CivicKettle link in a text,
 // an email or on social media.
-export const alt = "CivicKettle: volunteer sign-ups, reminders and hours for small nonprofits";
+export const alt = "CivicKettle: volunteer sign-ups, reminders and hours for local nonprofits";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -23,7 +23,7 @@ export default function Image() {
           <div style={{ display: "flex", fontSize: 46, fontWeight: 600, letterSpacing: -1.5 }}>CivicKettle</div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-          <div style={{ display: "flex", fontSize: 30, color: "#e3b04b" }}>Volunteer sign-ups and scheduling for small nonprofits</div>
+          <div style={{ display: "flex", fontSize: 30, color: "#e3b04b" }}>Volunteer sign-ups, reminders and hours for local nonprofits</div>
           <div style={{ display: "flex", fontSize: 66, lineHeight: 1.06, letterSpacing: -2.5, maxWidth: 1040 }}>Organizing volunteers shouldn&apos;t be another full-time job.</div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 28, color: "#c9d0c1" }}>

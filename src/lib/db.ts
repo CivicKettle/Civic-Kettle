@@ -22,6 +22,9 @@ export type Event = {
   status: "draft" | "published" | "cancelled";
   public_token: string;
   summary_notes?: string | null;
+  /** Which automatic reminders go out. Missing means on. */
+  remind_day_before?: boolean;
+  remind_morning_of?: boolean;
   created_at: string;
 };
 
@@ -49,6 +52,8 @@ export type Signup = {
   cancel_token: string;
   checked_in_at: string | null;
   checked_out_at: string | null;
+  /** When the volunteer tapped "Yes, I'll be there" in the day-before email. */
+  attending_confirmed_at?: string | null;
   /** Coordinator's correction, in hours. Null means "use the check-in and check-out times". */
   hours_override?: number | null;
   hours_approved_at?: string | null;

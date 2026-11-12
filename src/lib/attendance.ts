@@ -5,7 +5,22 @@ export const CHECKIN_OPENS_MIN = 60;
 /** Self check-out is accepted this long after a shift ends; after that the shift end is used. */
 export const CHECKOUT_GRACE_MIN = 120;
 
+/** Checking in up to this many minutes after a shift starts still counts as on time. */
+export const ON_TIME_GRACE_MIN = 5;
+
 const MIN = 60 * 1000;
+
+/** Did they check in by the start of the shift (with a few minutes' grace)? Null if they never checked in. */
+export function arrivedOnTime(signup: Pick<Signup, "checked_in_at">, shift: Pick<Shift, "starts_at">): boolean | null {
+  if (!signup.checked_in_at) return null;
+  return new Date(signup.checked_in_at).getTime() <= new Date(shift.starts_at).getTime() + ON_TIME_GRACE_MIN * MIN;
+}
+
+/** How many whole minutes after the start they checked in. Zero if on time. */
+export function minutesLate(signup: Pick<Signup, "checked_in_at">, shift: Pick<Shift, "starts_at">): number {
+  if (!signup.checked_in_at) return 0;
+  return Math.max(0, Math.round((new Date(signup.checked_in_at).getTime() - new Date(shift.starts_at).getTime()) / MIN));
+}
 
 export type Attendance =
   | { state: "none" }

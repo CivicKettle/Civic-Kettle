@@ -25,7 +25,8 @@ export async function runReminders(kind: "day_before" | "morning_of") {
 
   const eventIds = [...new Set(shifts.map((s) => s.event_id))];
   const { data: evRaw } = await admin.from("events").select("*").in("id", eventIds).eq("status", "published");
-  const events = (evRaw ?? []) as Event[];
+  // A coordinator can turn either reminder off for an event. Missing means on.
+  const events = ((evRaw ?? []) as Event[]).filter((e) => (kind === "day_before" ? e.remind_day_before !== false : e.remind_morning_of !== false));
   const orgIds = [...new Set(events.map((e) => e.org_id))];
   const { data: orgRaw } = await admin.from("organizations").select("id,name,time_zone,contact_email").in("id", orgIds);
   const orgs = new Map((orgRaw ?? []).map((o) => [o.id, o]));

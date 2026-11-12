@@ -80,7 +80,7 @@ export default async function EventPage({
         <p className="ap-flash">This event is cancelled. Volunteers aren&apos;t told automatically. <a href={`/app/events/${id}/message`}>Message the {filled} signed up ›</a></p>
       )}
 
-      {ev.status !== "cancelled" && <ShareBar url={publicUrl} />}
+      {ev.status !== "cancelled" && <ShareBar url={publicUrl} qrSrc={`/app/api/events/${id}/qr?inline=1`} qrDownload={`/app/api/events/${id}/qr`} shareTitle={`Volunteer: ${ev.title}`} />}
 
       <div className="ap-grid-main">
         <section className="ap-card">
@@ -93,15 +93,15 @@ export default async function EventPage({
               <div className="ap-shift" key={s.id}>
                 <div className="ap-shift-h">
                   <h3>{s.name}</h3>
-                  <span className="t">{fmtRange(s.starts_at, s.ends_at, tz)} · {s.confirmed} of {s.capacity}{s.open === 0 ? " · Full" : ""}{waiting.length ? ` · ${waiting.length} waiting` : ""}</span>
+                  <span className="t">{fmtRange(s.starts_at, s.ends_at, tz)} · {s.confirmed} of {s.capacity}{s.open === 0 ? " · Full" : ""}{waiting.length ? ` · ${waiting.length} waiting` : ""}{people.some((p) => p.attending_confirmed_at) ? ` · ${people.filter((p) => p.attending_confirmed_at).length} said yes` : ""}</span>
                 </div>
                 <span className="ap-bar"><i className={pct < 50 ? "low" : undefined} style={{ width: `${pct}%` }} /></span>
                 <div className="ap-people">
                   {people.map((p) => (
-                    <form key={p.id} action={`/app/api/signups/${p.id}/cancel`} method="post" className={`ap-person${attendance(p, s).state !== "none" ? " in" : ""}`} title={attendance(p, s).state !== "none" ? "Checked in" : undefined}>
+                    <form key={p.id} action={`/app/api/signups/${p.id}/cancel`} method="post" className={`ap-person${attendance(p, s).state !== "none" ? " in" : p.attending_confirmed_at ? " yes" : ""}`} title={attendance(p, s).state !== "none" ? "Checked in" : p.attending_confirmed_at ? "Said yes to the day-before reminder" : undefined}>
                       <input type="hidden" name="event_id" value={id} />
                       <i>{initials(p.volunteer_name)}</i>
-                      <span>{p.volunteer_name}{p.is_minor ? " · minor" : ""}</span>
+                      <span>{p.volunteer_name}{p.is_minor ? " · minor" : ""}{p.attending_confirmed_at && attendance(p, s).state === "none" ? <b className="ap-yes"> ✓ confirmed</b> : null}</span>
                       <button type="submit" aria-label={`Cancel ${p.volunteer_name}'s sign-up`} title="Cancel this sign-up">×</button>
                     </form>
                   ))}

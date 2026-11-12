@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
   const day = (iso: string | null) => (iso ? utcToZonedInputs(iso, tz).date : "");
   const people = filterAndSort(await loadVolunteers(session, org), "", "name");
   const rows: (string | number | null)[][] = [
-    ["Volunteer", "Email", "Phone", "Minor", "Guardian", "Emails", "Events", "Showed up", "No-shows", "Upcoming shifts", "Hours", "First signed up", "Last shift", "Next shift"],
+    ["Volunteer", "Email", "Phone", "Minor", "Guardian", "Emails", "Events", "Showed up", "On time", "No-shows", "Upcoming shifts", "Hours", "First signed up", "Last shift", "Next shift"],
     ...people.map((v) => [
       v.name,
       v.email,
@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
       v.emailOff ? "Off" : "On",
       v.events,
       v.attended,
+      v.onTime,
       v.noShows,
       v.upcoming,
       v.hours,

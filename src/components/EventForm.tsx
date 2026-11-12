@@ -62,6 +62,14 @@ export default function EventForm({ tz, event, shifts = [], error }: Props) {
 
         <label htmlFor="notes">Note for the morning-of reminder <span>Optional</span></label>
         <input id="notes" name="notes_for_volunteers" type="text" maxLength={200} defaultValue={event?.notes_for_volunteers ?? ""} placeholder="Park on Stonehill, not in the lot." />
+
+        <fieldset className="ap-reminders">
+          <legend>Automatic emails to volunteers</legend>
+          <input type="hidden" name="reminders_present" value="1" />
+          <label className="ap-check"><input type="checkbox" checked disabled readOnly /><span><strong>When they sign up</strong> A confirmation with the details. Always sent.</span></label>
+          <label className="ap-check"><input type="checkbox" name="remind_day_before" defaultChecked={event?.remind_day_before !== false} /><span><strong>The day before</strong> A reminder that asks them to confirm they&apos;re coming.</span></label>
+          <label className="ap-check"><input type="checkbox" name="remind_morning_of" defaultChecked={event?.remind_morning_of !== false} /><span><strong>The morning of</strong> A last reminder with your note above.</span></label>
+        </fieldset>
       </div>
 
       <div className="ap-card ap-form">

@@ -65,6 +65,12 @@ export function parseEventForm(form: FormData, tz: string): { ok: true; data: Pa
   };
 }
 
+/** Which automatic reminders the form asked for, or null if the form didn't include the choice. */
+export function reminderChoice(form: FormData): { remind_day_before: boolean; remind_morning_of: boolean } | null {
+  if (!form.get("reminders_present")) return null;
+  return { remind_day_before: form.get("remind_day_before") !== null, remind_morning_of: form.get("remind_morning_of") !== null };
+}
+
 export type Repeat = "none" | "weekly" | "biweekly" | "monthly";
 
 /**

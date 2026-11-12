@@ -52,6 +52,7 @@ export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject:
   const eventUrl = `${siteUrl}/v/${event.public_token}`;
   const offUrl = unsubscribeUrl(siteUrl, signup.cancel_token);
   const mineUrl = `${siteUrl}/v/mine/${signup.cancel_token}`;
+  const confirmUrl = `${siteUrl}/v/confirm/${signup.cancel_token}`;
   const when = `${fmtLongDate(shift.starts_at, tz)}, ${fmtRange(shift.starts_at, shift.ends_at, tz)}`;
 
   const details = [
@@ -72,7 +73,7 @@ export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject:
       break;
     case "day_before":
       subject = `Tomorrow: ${event.title}, ${shift.name}`;
-      lead = `A quick reminder that ${who === "you" ? "you're" : `${signup.volunteer_name} is`} volunteering tomorrow with ${org.name}.`;
+      lead = `A quick reminder that ${who === "you" ? "you're" : `${signup.volunteer_name} is`} volunteering tomorrow with ${org.name}. Please let them know ${who === "you" ? "you're" : `${signup.volunteer_name} is`} coming.`;
       note = event.description || "";
       break;
     case "morning_of":
@@ -111,6 +112,7 @@ export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject:
     note ? `\n${note}` : "",
     arrive ? `\n${arrive}` : "",
     "",
+    kind === "day_before" ? `Confirm ${who === "you" ? "you're" : `${signup.volunteer_name} is`} coming: ${confirmUrl}` : "",
     cancelLine,
     `See or change all your shifts: ${mineUrl}`,
     kind === "cancelled" || kind === "waitlist" ? "" : `Add to your calendar: ${siteUrl}/v/ics/${signup.cancel_token}`,
@@ -132,9 +134,10 @@ export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject:
       ${details.map(([k, v]) => `<tr><td style="padding:3px 16px 3px 0;color:#626b60;white-space:nowrap;vertical-align:top">${esc(k)}</td><td style="padding:3px 0"><strong style="font-weight:600">${esc(v)}</strong></td></tr>`).join("")}
     </table>
     ${note ? `<p style="margin:18px 0 0;padding:12px 14px;background:#e9eee2;font-size:14px;line-height:1.55;color:#2b3c30">${esc(note)}</p>` : ""}
+    ${kind === "day_before" ? `<p style="margin:22px 0 0">${button(confirmUrl, who === "you" ? "Yes, I'll be there" : `Yes, ${esc(signup.volunteer_name.split(" ")[0])} will be there`)}</p>` : ""}
     ${arrive ? `<p style="margin:18px 0 0;font-size:14px;line-height:1.55">On arrival, scan the QR code at the event to check in, or <a href="${eventUrl}" style="color:#2b3c30">open the event page</a>.</p>` : ""}
     <p style="margin:24px 0 10px;font-size:14px;line-height:1.55;color:#4a514a">${kind === "cancelled" ? "Changed your mind?" : kind === "waitlist" ? "Don't want to wait?" : "Plans change? Switch shifts or cancel, no login needed."}</p>
-    <p style="margin:0">${kind === "cancelled" ? button(eventUrl, "Sign up again") + button(mineUrl, "See my shifts", "outline") : kind === "waitlist" ? button(mineUrl, "See my shifts") + button(cancelUrl, "Leave the waiting list", "danger") : button(mineUrl, "See or change my shifts") + button(`${siteUrl}/v/ics/${signup.cancel_token}`, "Add to calendar", "outline") + button(cancelUrl, "Cancel this shift", "danger")}</p>
+    <p style="margin:0">${kind === "cancelled" ? button(eventUrl, "Sign up again") + button(mineUrl, "See my shifts", "outline") : kind === "waitlist" ? button(mineUrl, "See my shifts") + button(cancelUrl, "Leave the waiting list", "danger") : kind === "day_before" ? button(mineUrl, "See or change my shifts", "outline") + button(cancelUrl, "Cancel this shift", "danger") : button(mineUrl, "See or change my shifts") + button(`${siteUrl}/v/ics/${signup.cancel_token}`, "Add to calendar", "outline") + button(cancelUrl, "Cancel this shift", "danger")}</p>
     <p style="margin:14px 0 0;font-size:13px;line-height:1.55;color:#626b60">${esc(contact)}</p>
   </td></tr>
   <tr><td style="padding:14px 4px 0;font-size:12px;color:#8a8d83;line-height:1.5">Sent by <a href="${siteUrl}" style="color:#626b60">CivicKettle</a> on behalf of ${esc(org.name)}, because of a volunteer sign-up. <a href="${offUrl}" style="color:#626b60">Stop reminder emails and messages from ${esc(org.name)}</a>.</td></tr>
