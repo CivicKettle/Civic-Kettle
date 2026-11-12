@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: { params: Promise<{ token: string }> }): Promise<Metadata> {
   const { token } = await params;
   const data = await loadPublicEvent(token);
-  return { title: data ? `${data.event.title} — ${data.org.name}` : "Volunteer sign-up — CivicKettle" };
+  return { title: data ? `${data.event.title} | ${data.org.name}` : "Volunteer sign-up | CivicKettle" };
 }
 
 export default async function PublicEventPage({

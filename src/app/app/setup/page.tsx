@@ -5,7 +5,7 @@ import { KettleMark } from "@/components/AppShell";
 import { getOrg, getSession } from "@/lib/db";
 import { TIME_ZONES } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Finish setting up — CivicKettle" };
+export const metadata: Metadata = { title: "Finish setting up | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 /**

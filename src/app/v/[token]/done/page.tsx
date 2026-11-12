@@ -7,7 +7,7 @@ import { loadSignupByCancelToken } from "@/lib/public";
 import { siteUrl } from "@/lib/supabase/server";
 import { fmtLongDate, fmtRange } from "@/lib/time";
 
-export const metadata: Metadata = { title: "You're signed up — CivicKettle" };
+export const metadata: Metadata = { title: "You're signed up | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 export default async function DonePage({

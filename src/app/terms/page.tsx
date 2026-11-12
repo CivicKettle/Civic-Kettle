@@ -3,7 +3,7 @@ import LegalPage from "@/components/LegalPage";
 import { TRIAL_DAYS } from "@/lib/pricing";
 
 export const metadata: Metadata = {
-  title: "Terms of Use — CivicKettle",
+  title: "Terms of Use | CivicKettle",
   description: "The terms for organizations and volunteers using CivicKettle.",
 };
 

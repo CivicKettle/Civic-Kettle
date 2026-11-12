@@ -7,7 +7,7 @@ import { getOrg, getSession, type Event, type Shift, type Signup } from "@/lib/d
 import { sumHours, toEntry } from "@/lib/hours";
 import { fmtLongDate, fmtRange, fmtTime } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Event summary — CivicKettle" };
+export const metadata: Metadata = { title: "Event summary | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 export default async function EventSummaryPage({

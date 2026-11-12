@@ -7,7 +7,7 @@ import { DEVICE_COOKIE, parseTokens } from "@/lib/device";
 import { loadDeviceSignups, loadPublicEvent } from "@/lib/public";
 import { fmtLongDate, fmtRange, fmtTime } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Check in — CivicKettle" };
+export const metadata: Metadata = { title: "Check in | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 export default async function CheckinPage({

@@ -5,7 +5,7 @@ import { fmtHours } from "@/lib/attendance";
 import { loadMine } from "@/lib/mine";
 import { fmtLongDate, fmtRange } from "@/lib/time";
 
-export const metadata: Metadata = { title: "My shifts — CivicKettle", robots: { index: false } };
+export const metadata: Metadata = { title: "My shifts | CivicKettle", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
 export default async function MyShiftsPage({

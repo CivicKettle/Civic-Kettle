@@ -6,7 +6,7 @@ import { getOrg, getSession } from "@/lib/db";
 import { fmtDate } from "@/lib/time";
 import { loadVolunteers } from "@/lib/volunteers";
 
-export const metadata: Metadata = { title: "Delete records — CivicKettle" };
+export const metadata: Metadata = { title: "Delete records | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 export default async function DeleteVolunteerPage({ searchParams }: { searchParams: Promise<{ key?: string; error?: string }> }) {

@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const data = await loadOrgPage(slug);
   return data
     ? { title: `Volunteer with ${data.org.name}`, description: `Upcoming events from ${data.org.name} that need volunteers. Pick one and sign up, no account needed.` }
-    : { title: "Volunteer events — CivicKettle" };
+    : { title: "Volunteer events | CivicKettle" };
 }
 
 /** One link for everything an organization needs help with. */

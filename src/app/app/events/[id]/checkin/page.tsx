@@ -8,7 +8,7 @@ import { getOrg, getSession, type Event, type Shift, type Signup } from "@/lib/d
 import { siteUrl } from "@/lib/supabase/server";
 import { fmtLongDate, fmtRange, fmtTime } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Check-in — CivicKettle" };
+export const metadata: Metadata = { title: "Check-in | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 export default async function EventCheckinPage({ params }: { params: Promise<{ id: string }> }) {

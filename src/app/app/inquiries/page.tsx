@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import { getOrg, getSession } from "@/lib/db";
 
-export const metadata: Metadata = { title: "Inquiries — CivicKettle" };
+export const metadata: Metadata = { title: "Inquiries | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 type Inquiry = {

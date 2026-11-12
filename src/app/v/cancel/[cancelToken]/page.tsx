@@ -4,7 +4,7 @@ import { KettleMark } from "@/components/AppShell";
 import { loadSignupByCancelToken } from "@/lib/public";
 import { fmtLongDate, fmtRange } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Cancel sign-up — CivicKettle" };
+export const metadata: Metadata = { title: "Cancel sign-up | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 export default async function CancelPage({

@@ -6,7 +6,7 @@ import { getOrg, getSession, withCounts, type Event, type Shift, type Signup } f
 import { siteUrl } from "@/lib/supabase/server";
 import { dateTile, fmtDate, fmtRange } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Events — CivicKettle" };
+export const metadata: Metadata = { title: "Events | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 export default async function EventsPage({ searchParams }: { searchParams: Promise<{ created?: string; error?: string }> }) {

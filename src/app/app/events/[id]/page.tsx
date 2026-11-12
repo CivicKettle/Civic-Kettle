@@ -7,7 +7,7 @@ import { getOrg, getSession, withCounts, type Event, type Shift, type Signup } f
 import { siteUrl } from "@/lib/supabase/server";
 import { fmtLongDate, fmtRange } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Event — CivicKettle" };
+export const metadata: Metadata = { title: "Event | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 function initials(name: string): string {

@@ -6,7 +6,7 @@ import SiteFooter from "@/components/SiteFooter";
 import { createClient } from "@/lib/supabase/server";
 import SignInForm from "./SignInForm";
 
-export const metadata: Metadata = { title: "Sign in — CivicKettle" };
+export const metadata: Metadata = { title: "Sign in | CivicKettle" };
 
 export const dynamic = "force-dynamic";
 

@@ -8,7 +8,7 @@ import { loadEntries } from "@/lib/hoursData";
 import { parseRange, presets } from "@/lib/range";
 import { fmtDate, fmtTime } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Hours — CivicKettle" };
+export const metadata: Metadata = { title: "Hours | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 export default async function HoursPage({

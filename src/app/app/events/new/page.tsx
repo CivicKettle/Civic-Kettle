@@ -4,7 +4,7 @@ import AppShell from "@/components/AppShell";
 import EventForm from "@/components/EventForm";
 import { getOrg, getSession } from "@/lib/db";
 
-export const metadata: Metadata = { title: "New event — CivicKettle" };
+export const metadata: Metadata = { title: "New event | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 export default async function NewEventPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {

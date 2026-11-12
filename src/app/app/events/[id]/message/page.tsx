@@ -7,7 +7,7 @@ import { getOrg, getSession, type Event, type Shift, type Signup } from "@/lib/d
 import { loadOptouts } from "@/lib/emails/optout";
 import { fmtDate, fmtLongDate, fmtRange, fmtTime } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Message volunteers — CivicKettle" };
+export const metadata: Metadata = { title: "Message volunteers | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 export default async function MessagePage({

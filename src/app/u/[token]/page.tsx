@@ -5,7 +5,7 @@ import { loadOptouts, normEmail } from "@/lib/emails/optout";
 import { loadSignupByCancelToken } from "@/lib/public";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-export const metadata: Metadata = { title: "Email settings — CivicKettle", robots: { index: false } };
+export const metadata: Metadata = { title: "Email settings | CivicKettle", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
 export default async function UnsubscribePage({

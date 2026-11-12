@@ -4,7 +4,7 @@ import AppShell from "@/components/AppShell";
 import EventForm from "@/components/EventForm";
 import { getOrg, getSession, type Event, type Shift } from "@/lib/db";
 
-export const metadata: Metadata = { title: "Edit event — CivicKettle" };
+export const metadata: Metadata = { title: "Edit event | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 export default async function EditEventPage({

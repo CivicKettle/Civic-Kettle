@@ -7,7 +7,7 @@ import { getOrg, getSession, type Event } from "@/lib/db";
 import { siteUrl } from "@/lib/supabase/server";
 import { fmtLongDate, fmtRange } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Door sign — CivicKettle" };
+export const metadata: Metadata = { title: "Door sign | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 export default async function PosterPage({ params }: { params: Promise<{ id: string }> }) {

@@ -6,7 +6,7 @@ import { getOrg, getSession } from "@/lib/db";
 import { fmtDate } from "@/lib/time";
 import { filterAndSort, loadVolunteers, type VolunteerSort } from "@/lib/volunteers";
 
-export const metadata: Metadata = { title: "Volunteers — CivicKettle" };
+export const metadata: Metadata = { title: "Volunteers | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 const SORTS: { key: VolunteerSort; label: string }[] = [

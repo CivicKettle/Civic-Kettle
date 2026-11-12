@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalPage from "@/components/LegalPage";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — CivicKettle",
+  title: "Privacy Policy | CivicKettle",
   description: "What CivicKettle collects about volunteers and coordinators, why, who sees it, and how to have it removed.",
 };
 

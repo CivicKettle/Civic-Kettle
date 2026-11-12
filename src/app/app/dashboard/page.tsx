@@ -7,7 +7,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/server";
 import { dateTile, fmtLongDate, fmtRange } from "@/lib/time";
 import { attendance } from "@/lib/attendance";
 
-export const metadata: Metadata = { title: "Overview — CivicKettle" };
+export const metadata: Metadata = { title: "Overview | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {

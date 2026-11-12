@@ -6,7 +6,7 @@ import { trialFor, trialLine } from "@/lib/plan";
 import { loadInvites, loadTeam } from "@/lib/team";
 import { fmtDate, TIME_ZONES } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Settings — CivicKettle" };
+export const metadata: Metadata = { title: "Settings | CivicKettle" };
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage({
