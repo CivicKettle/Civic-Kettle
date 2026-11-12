@@ -1940,3 +1940,32 @@ button.ck-button { font-family: inherit; cursor: pointer; }
 .pv-switch[open] summary { border-style: solid; background: #e9eee2; }
 .pv-textlink { justify-self: center; padding: 6px 0; color: #485449; font-size: 15px; text-decoration: underline; text-underline-offset: 3px; }
 .pv-event-go { background: var(--ck-green); }
+
+/* Homepage: who is behind it, and straight answers */
+.hm-sample { margin-top: 12px; color: #aebaa5; font-size: 13px; text-align: center; }
+.hm-about { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); gap: clamp(16px, 2vw, 28px); align-items: start; }
+.hm-about-note { padding: clamp(24px, 3vw, 40px); border: 1px solid var(--ck-rule); border-radius: 8px; background: var(--ck-surface); }
+.hm-about h3 { font-size: 20px; font-weight: 500; letter-spacing: -0.025em; }
+.hm-about-note h3:not(:first-child) { margin-top: 28px; }
+.hm-about-note p { margin-top: 10px; max-width: 62ch; color: #3d443c; font-size: 16px; line-height: 1.6; }
+.hm-about-sign { margin-top: 24px !important; padding-top: 18px; border-top: 1px solid var(--ck-rule); color: #626b60 !important; font-size: 14px !important; }
+.hm-about-sign strong { display: block; font-family: var(--font-editorial); font-size: 26px; font-weight: 400; letter-spacing: -0.02em; line-height: 1.1; color: var(--ck-ink); }
+.hm-about-reach { display: grid; gap: 12px; padding: clamp(24px, 3vw, 40px); border-radius: 8px; background: var(--ck-green); color: #f4f2e9; }
+.hm-about-reach > p { color: #d5dacb; font-size: 16px; line-height: 1.55; }
+.hm-reach { display: grid; gap: 2px; padding: 14px 16px; border-radius: 6px; background: rgba(244, 242, 233, 0.1); color: #f4f2e9; overflow-wrap: anywhere; }
+.hm-reach:hover { background: rgba(244, 242, 233, 0.17); }
+.hm-reach:focus-visible { outline: 3px solid var(--ck-marigold); outline-offset: 3px; }
+.hm-reach span { color: var(--ck-marigold); font-size: 13px; font-weight: 500; }
+.hm-reach strong { font-size: 19px; font-weight: 500; letter-spacing: -0.02em; }
+.hm-about-fine { color: #aebaa5 !important; font-size: 14px !important; }
+.hm-faq { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 clamp(24px, 4vw, 64px); margin: clamp(36px, 4.5vw, 56px) 0 0; border-top: 1px solid var(--ck-rule); }
+.hm-faq > div { padding: 22px 0; border-bottom: 1px solid var(--ck-rule); }
+.hm-faq dt { font-size: 17px; font-weight: 500; letter-spacing: -0.02em; }
+.hm-faq dd { margin: 8px 0 0; max-width: 56ch; color: #4a514a; font-size: 15px; line-height: 1.6; }
+.hm-faq a { color: var(--ck-green); text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 1020px) {
+  .hm-about { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .hm-faq { grid-template-columns: 1fr; }
+}

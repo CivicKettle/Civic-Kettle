@@ -9,6 +9,7 @@ export default function SiteHeader() {
     </a>
     <nav className="ck-nav" aria-label="Main navigation">
       <a href="/#workflow">How it works</a>
+      <a href="/#about">About</a>
       <a href="/#plans">Price</a>
       <a href="/app">Sign in</a>
     </nav>

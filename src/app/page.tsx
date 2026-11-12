@@ -1,6 +1,7 @@
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import StartForm from "@/components/StartForm";
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_HREF, FOUNDER } from "@/lib/contact";
 import { TRIAL_DAYS } from "@/lib/pricing";
 
 /** Sample sign-ups for the illustration at the top of the page. */
@@ -51,6 +52,7 @@ export default function Home() {
                 ))}
               </div>
 
+              <p className="hm-sample">An example event with made-up names. Yours shows your own shifts and volunteers.</p>
             </div>
           </div>
         </section>
@@ -138,6 +140,35 @@ export default function Home() {
           </ol>
         </section>
 
+        <section className="hm-section hm-wrap" id="about" aria-labelledby="about-title">
+          <h2 className="hm-h2" id="about-title">Who&apos;s behind CivicKettle.</h2>
+          <div className="hm-about">
+            <div className="hm-about-note">
+              <h3>The problem</h3>
+              <p>Small nonprofits and community groups run on volunteers, but the tools for organizing them are usually a paper sign-in sheet, a group text and a spreadsheet. Things slip through. People forget their shift, nobody is sure who showed up, and hours never get written down. The software that fixes this is mostly built and priced for big organizations.</p>
+              <h3>Why I started it</h3>
+              <p>The people who organize volunteers are usually volunteers themselves. They shouldn&apos;t have to spend their evenings chasing sign-ups, sending reminders one at a time and adding up hours. I started CivicKettle so that part takes a few minutes, and so a small group with no budget and no tech person can start using it the day they find it.</p>
+              <p className="hm-about-sign"><strong>{FOUNDER}</strong>creator of CivicKettle</p>
+            </div>
+            <div className="hm-about-reach">
+              <h3>Reach a real person</h3>
+              <p>If something goes wrong, or you just have a question, contact me directly.</p>
+              <a className="hm-reach" href={`mailto:${CONTACT_EMAIL}`}><span>Email</span><strong>{CONTACT_EMAIL}</strong></a>
+              <a className="hm-reach" href={CONTACT_PHONE_HREF}><span>Call or text</span><strong>{CONTACT_PHONE}</strong></a>
+              <p className="hm-about-fine">I answer within a day or two.</p>
+            </div>
+          </div>
+
+          <dl className="hm-faq" aria-label="Common questions">
+            <div><dt>Is this a real product?</dt><dd>Yes. CivicKettle is new. It was started in 2026 and is run by one person, not a big company. You can try all of it free for {TRIAL_DAYS} days without entering a card.</dd></div>
+            <div><dt>What does it cost?</dt><dd>Volunteers never pay. Organizations use it free for {TRIAL_DAYS} days, then it is $19 a month. Nothing is charged automatically.</dd></div>
+            <div><dt>Will you ever ask volunteers for money or a password?</dt><dd>No. Volunteers sign up with a name and an email. There is no account to create and nothing to pay. If a message in our name asks a volunteer to pay or log in, it isn&apos;t from us.</dd></div>
+            <div><dt>What happens to volunteers&apos; information?</dt><dd>It goes to the organization they signed up with. It is never sold, given to advertisers or used for ads, and it is deleted on request. The details are in the <a href="/privacy">Privacy Policy</a>.</dd></div>
+            <div><dt>Will volunteers get spam?</dt><dd>No. They get a confirmation and reminders for shifts they chose, plus messages from their organizer about those events. Every email has a link to turn them off.</dd></div>
+            <div><dt>Can I leave and take my records?</dt><dd>Yes. You can export your volunteers, events and hours as spreadsheet files at any time, and ask for your workspace to be deleted.</dd></div>
+          </dl>
+        </section>
+
         <section className="hm-wrap hm-last" id="plans" aria-labelledby="pricing-title">
           <div className="hm-ticket" id="contact">
             <div className="hm-ticket-stub">
@@ -149,7 +180,7 @@ export default function Home() {
               <StartForm id="start-bottom" tone="light" />
             </div>
           </div>
-          <p className="hm-questions">Questions? Write to <a href="mailto:civickettle@gmail.com">civickettle@gmail.com</a>. Already use CivicKettle? <a href="/app">Sign in</a>. By starting you agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
+          <p className="hm-questions">Questions? Write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> or call <a href={CONTACT_PHONE_HREF}>{CONTACT_PHONE}</a>. Already use CivicKettle? <a href="/app">Sign in</a>. By starting you agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
         </section>
       </main>
       <SiteFooter />
