@@ -12,10 +12,11 @@ export default async function CancelPage({
   searchParams,
 }: {
   params: Promise<{ cancelToken: string }>;
-  searchParams: Promise<{ done?: string }>;
+  searchParams: Promise<{ done?: string; mine?: string }>;
 }) {
   const { cancelToken } = await params;
-  const { done } = await searchParams;
+  const { done, mine: mineRaw } = await searchParams;
+  const mine = mineRaw && /^[a-f0-9]{16,64}$/i.test(mineRaw) ? mineRaw : null;
   const data = await loadSignupByCancelToken(cancelToken);
   if (!data) notFound();
   const { signup, event, shift, org } = data;
@@ -47,9 +48,10 @@ export default async function CancelPage({
           ) : (
             <form action="/app/api/public/cancel" method="post" className="pv-fields">
               <input type="hidden" name="cancel_token" value={cancelToken} />
+              {mine && <input type="hidden" name="mine" value={mine} />}
               <p className="pv-note">No hard feelings. Cancelling frees the spot right away so someone else can take it.</p>
               <button className="pv-button danger" type="submit">Yes, cancel my sign-up</button>
-              <a className="pv-link" href={`/v/${event.public_token}`}>Keep it, take me back ›</a>
+              <a className="pv-link" href={mine ? `/v/mine/${mine}` : `/v/${event.public_token}`}>Keep it, take me back ›</a>
             </form>
           )}
         </div>

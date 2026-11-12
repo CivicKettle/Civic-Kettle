@@ -85,6 +85,7 @@ export default async function PublicEventPage({
       </main>
       <footer className="pv-foot">
         {org.contact_email && <span>Questions? <a href={`mailto:${org.contact_email}`}>{org.contact_email}</a></span>}
+        {org.slug && <span><a href={`/o/${org.slug}`}>More from {org.name}</a></span>}
         <span>Sign-ups by <a href="/">CivicKettle</a></span>
       </footer>
     </div>

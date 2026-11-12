@@ -23,5 +23,9 @@ export async function POST(request: NextRequest) {
     const parts = await loadParts(admin, updated.id);
     if (parts) await deliver(admin, "cancelled", parts);
   }
+  const mine = String(form.get("mine") || "");
+  if (/^[a-f0-9]{16,64}$/i.test(mine)) {
+    return NextResponse.redirect(new URL(`/v/mine/${mine}?cancelled=1`, request.url), { status: 303 });
+  }
   return NextResponse.redirect(new URL(`/v/cancel/${cancelToken}?done=1`, request.url), { status: 303 });
 }

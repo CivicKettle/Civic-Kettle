@@ -50,6 +50,7 @@ export default async function DonePage({
             <p className="pv-muted">Guardian on file: {signup.guardian_name}{signup.guardian_phone ? `, ${signup.guardian_phone}` : ""}.</p>
           )}
           <p className="pv-fine">{signup.email ? `A confirmation is on its way to ${signup.email}, and reminders follow the day before and the morning of.` : "This page is your confirmation."} On the day, scan the QR code at the event to check in.</p>
+          <a className="pv-link" href={`/v/mine/${signup.cancel_token}`}>See or change all my shifts ›</a>
           <a className="pv-link" href={`/v/${token}`}>Sign up someone else ›</a>
         </div>
       </main>

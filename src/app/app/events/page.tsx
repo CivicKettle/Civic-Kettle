@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import AppShell from "@/components/AppShell";
+import ShareBar from "@/components/ShareBar";
 import { getOrg, getSession, withCounts, type Event, type Shift, type Signup } from "@/lib/db";
+import { siteUrl } from "@/lib/supabase/server";
 import { dateTile, fmtDate, fmtRange } from "@/lib/time";
 
 export const metadata: Metadata = { title: "Events — CivicKettle" };
@@ -76,6 +78,13 @@ export default async function EventsPage() {
         </div>
         <a className="ck-button" href="/app/events/new">New event <span aria-hidden="true">+</span></a>
       </div>
+
+      <ShareBar
+        url={`${siteUrl()}/o/${org.slug}`}
+        label="Your organization's page"
+        sub="One link that lists every upcoming event. Put it on your website or social profile so volunteers can see everything you need help with."
+        openLabel="Open the page"
+      />
       <List items={upcoming} title="Upcoming" />
       {past.length > 0 && <List items={past} title="Past" />}
     </AppShell>
