@@ -30,7 +30,7 @@ export default async function MyShiftsPage({
         <span className="pv-org">{org.name}</span>
       </header>
       <main className="pv-body">
-        <div>
+        <div className="pv-hero">
           <p className="pv-kicker">My shifts</p>
           <h1 className="pv-h1">Your shifts with {org.name}</h1>
           <p className="pv-meta">{data.email}</p>
@@ -79,7 +79,7 @@ export default async function MyShiftsPage({
                     </form>
                   </details>
                 )}
-                <a className="pv-link" href={`/v/cancel/${r.signup.cancel_token}?mine=${token}`}>Cancel this shift</a>
+                <a className="pv-link danger" href={`/v/cancel/${r.signup.cancel_token}?mine=${token}`}>Cancel this shift</a>
               </div>
             )}
           </div>
@@ -87,8 +87,8 @@ export default async function MyShiftsPage({
 
         <div className="pv-mine-more">
           {data.pastShifts > 0 && <p>So far with {org.name}: {data.pastShifts} {data.pastShifts === 1 ? "shift" : "shifts"}, {fmtHours(data.pastHours)}.</p>}
-          {upcoming.length > 0 && <a className="pv-link" href={`/o/${org.slug}`}>See everything {org.name} needs help with ›</a>}
-          <a className="pv-link" href={`/u/${token}`}>Email settings ›</a>
+          {upcoming.length > 0 && <a className="pv-link" href={`/o/${org.slug}`}>See everything {org.name} needs help with</a>}
+          <a className="pv-textlink" href={`/u/${token}`}>Email settings</a>
         </div>
       </main>
       <footer className="pv-foot">

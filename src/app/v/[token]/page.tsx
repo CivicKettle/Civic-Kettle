@@ -58,7 +58,7 @@ export default async function PublicEventPage({
         <span className="pv-org">{org.name}</span>
       </header>
       <main className="pv-body">
-        <div>
+        <div className="pv-hero">
           <p className="pv-kicker">Volunteer sign-up</p>
           <h1 className="pv-h1">{event.title}</h1>
           <p className="pv-meta">

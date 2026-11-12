@@ -29,7 +29,7 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
         <span className="pv-org">{org.name}</span>
       </header>
       <main className="pv-body">
-        <div>
+        <div className="pv-hero">
           <p className="pv-kicker">Volunteer</p>
           <h1 className="pv-h1">{org.name}</h1>
           <p className="pv-meta">

@@ -22,7 +22,7 @@ export default async function DonePage({
   if (!data || data.event.public_token !== token) notFound();
   const { signup, event, shift, org } = data;
   const tz = org.time_zone;
-  const cancelUrl = `${siteUrl()}/v/cancel/${signup.cancel_token}`;
+  const mineUrl = `${siteUrl()}/v/mine/${signup.cancel_token}`;
   const who = signup.is_minor ? signup.volunteer_name : "You're";
 
   return (
@@ -32,7 +32,7 @@ export default async function DonePage({
         <span className="pv-org">{org.name}</span>
       </header>
       <main className="pv-body">
-        <div>
+        <div className="pv-hero">
           <p className="pv-kicker">{again ? "Already on the list" : "Confirmed"}</p>
           <h1 className="pv-h1">{signup.is_minor ? `${who} is signed up.` : "You're signed up."}</h1>
           <p className="pv-meta">
@@ -43,15 +43,16 @@ export default async function DonePage({
           </p>
         </div>
         <div className="pv-card pv-fields">
-          <p className="pv-note">Plans change? Use the button below, now or later. Copy the link if you want to keep it somewhere. No login needed.</p>
-          <a className="pv-button ghost" href={`/v/cancel/${signup.cancel_token}`}>Cancel this sign-up</a>
-          <CopyField value={cancelUrl} />
+          <p className="pv-note">Plans change? Switch to another shift or cancel from your shifts page, now or later. No login needed.</p>
+          <a className="pv-button" href={`/v/mine/${signup.cancel_token}`}>See or change my shifts</a>
+          <a className="pv-link" href={`/v/${token}`}>Sign up someone else</a>
+          <a className="pv-link danger" href={`/v/cancel/${signup.cancel_token}`}>Cancel this sign-up</a>
+          <p className="pv-muted">Keep this link to get back to your shifts any time:</p>
+          <CopyField value={mineUrl} />
           {signup.is_minor && signup.guardian_name && (
             <p className="pv-muted">Guardian on file: {signup.guardian_name}{signup.guardian_phone ? `, ${signup.guardian_phone}` : ""}.</p>
           )}
           <p className="pv-fine">{signup.email ? `A confirmation is on its way to ${signup.email}, and reminders follow the day before and the morning of.` : "This page is your confirmation."} On the day, scan the QR code at the event to check in.</p>
-          <a className="pv-link" href={`/v/mine/${signup.cancel_token}`}>See or change all my shifts ›</a>
-          <a className="pv-link" href={`/v/${token}`}>Sign up someone else ›</a>
         </div>
       </main>
       <footer className="pv-foot">

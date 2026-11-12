@@ -30,7 +30,7 @@ export default async function CancelPage({
         <span className="pv-org">{org.name}</span>
       </header>
       <main className="pv-body">
-        <div>
+        <div className="pv-hero">
           <p className="pv-kicker">{cancelled ? "Cancelled" : "Cancel sign-up"}</p>
           <h1 className="pv-h1">{cancelled ? (done ? "Done. Your spot is open for someone else." : "This sign-up was already cancelled.") : `Can't make it, ${signup.volunteer_name.split(" ")[0]}?`}</h1>
           <p className="pv-meta">
@@ -51,7 +51,7 @@ export default async function CancelPage({
               {mine && <input type="hidden" name="mine" value={mine} />}
               <p className="pv-note">No hard feelings. Cancelling frees the spot right away so someone else can take it.</p>
               <button className="pv-button danger" type="submit">Yes, cancel my sign-up</button>
-              <a className="pv-link" href={mine ? `/v/mine/${mine}` : `/v/${event.public_token}`}>Keep it, take me back ›</a>
+              <a className="pv-link" href={mine ? `/v/mine/${mine}` : `/v/${event.public_token}`}>Keep it, take me back</a>
             </form>
           )}
         </div>

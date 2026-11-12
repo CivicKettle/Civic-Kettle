@@ -12,6 +12,22 @@ export type MessageContext = {
   siteUrl: string;
 };
 
+/** A button that survives email apps: a padded link, no images. */
+function button(href: string, label: string, kind: "solid" | "outline" | "danger" = "solid"): string {
+  const style =
+    kind === "solid"
+      ? "background:#2b3c30;color:#f7f5ee;border:1.5px solid #2b3c30"
+      : kind === "danger"
+        ? "background:#faf8f2;color:#a64d32;border:1.5px solid #a64d32"
+        : "background:#faf8f2;color:#2b3c30;border:1.5px solid #2b3c30";
+  return `<a href="${href}" style="display:inline-block;margin:0 8px 8px 0;padding:12px 18px;border-radius:4px;font-size:15px;font-weight:600;text-decoration:none;${style}">${label}</a>`;
+}
+
+/** The green band at the top of every email, with the organization's name. */
+function band(name: string): string {
+  return `<tr><td style="background:#2b3c30;border-bottom:4px solid #e3b04b;padding:16px 28px;font-size:15px;font-weight:600;color:#f4f2e9">${esc(name)}</td></tr>`;
+}
+
 function esc(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 }
@@ -98,8 +114,8 @@ export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject:
   const html = `<!doctype html><html><body style="margin:0;background:#f2f0e9;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#252b25">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f2f0e9"><tr><td align="center" style="padding:28px 16px">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px">
-  <tr><td style="padding:0 4px 14px;font-size:13px;color:#626b60">${esc(org.name)}</td></tr>
-  <tr><td style="background:#faf8f2;border:1px solid #d5d3c9;padding:28px 28px 24px">
+  ${band(org.name)}
+  <tr><td style="background:#faf8f2;border:1px solid #d5d3c9;border-top:0;padding:28px 28px 24px">
     <p style="margin:0 0 14px;font-size:16px">${esc(hi)}</p>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.55">${esc(lead)}</p>
     <table role="presentation" cellspacing="0" cellpadding="0" style="font-size:15px;line-height:1.5">
@@ -107,7 +123,8 @@ export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject:
     </table>
     ${note ? `<p style="margin:18px 0 0;padding:12px 14px;background:#e9eee2;font-size:14px;line-height:1.55;color:#2b3c30">${esc(note)}</p>` : ""}
     ${arrive ? `<p style="margin:18px 0 0;font-size:14px;line-height:1.55">On arrival, scan the QR code at the event to check in, or <a href="${eventUrl}" style="color:#2b3c30">open the event page</a>.</p>` : ""}
-    <p style="margin:22px 0 0;font-size:14px;line-height:1.55">${kind === "cancelled" ? `Changed your mind? <a href="${eventUrl}" style="color:#2b3c30">Sign up again</a>.` : `Can't make it? <a href="${cancelUrl}" style="color:#2b3c30">Cancel in one tap</a>.`} <a href="${mineUrl}" style="color:#2b3c30">See or change all your shifts</a>.</p>
+    <p style="margin:24px 0 10px;font-size:14px;line-height:1.55;color:#4a514a">${kind === "cancelled" ? "Changed your mind?" : "Plans change? Switch shifts or cancel, no login needed."}</p>
+    <p style="margin:0">${kind === "cancelled" ? button(eventUrl, "Sign up again") + button(mineUrl, "See my shifts", "outline") : button(mineUrl, "See or change my shifts") + button(cancelUrl, "Cancel this shift", "danger")}</p>
     <p style="margin:14px 0 0;font-size:13px;line-height:1.55;color:#626b60">${esc(contact)}</p>
   </td></tr>
   <tr><td style="padding:14px 4px 0;font-size:12px;color:#8a8d83;line-height:1.5">Sent by <a href="${siteUrl}" style="color:#626b60">CivicKettle</a> on behalf of ${esc(org.name)}, because of a volunteer sign-up. <a href="${offUrl}" style="color:#626b60">Stop reminder emails and messages from ${esc(org.name)}</a>.</td></tr>
@@ -154,11 +171,12 @@ export function buildBroadcast(ctx: {
   const html = `<!doctype html><html><body style="margin:0;background:#f2f0e9;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#252b25">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f2f0e9"><tr><td align="center" style="padding:28px 16px">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px">
-  <tr><td style="padding:0 4px 14px;font-size:13px;color:#626b60">${esc(org.name)}</td></tr>
-  <tr><td style="background:#faf8f2;border:1px solid #d5d3c9;padding:28px 28px 24px">
+  ${band(org.name)}
+  <tr><td style="background:#faf8f2;border:1px solid #d5d3c9;border-top:0;padding:28px 28px 24px">
     <p style="margin:0 0 14px;font-size:16px">${esc(hi)}</p>
     ${paragraphs.map((p) => `<p style="margin:0 0 14px;font-size:16px;line-height:1.55">${esc(p).replace(/\n/g, "<br>")}</p>`).join("")}
-    <p style="margin:18px 0 0;padding:12px 14px;background:#e9eee2;font-size:14px;line-height:1.55;color:#2b3c30">${esc(about)}<br><a href="${eventUrl}" style="color:#2b3c30">Open the event page</a> or <a href="${siteUrl}/v/mine/${signup.cancel_token}" style="color:#2b3c30">see your shifts</a></p>
+    <p style="margin:18px 0 0;padding:12px 14px;background:#e9eee2;font-size:14px;line-height:1.55;color:#2b3c30">${esc(about)}</p>
+    <p style="margin:16px 0 0">${button(`${siteUrl}/v/mine/${signup.cancel_token}`, "See or change my shifts")}${button(eventUrl, "Open the event page", "outline")}</p>
     <p style="margin:14px 0 0;font-size:13px;line-height:1.55;color:#626b60">${esc(contact)}</p>
   </td></tr>
   <tr><td style="padding:14px 4px 0;font-size:12px;color:#8a8d83;line-height:1.5">Sent by ${esc(org.name)} through <a href="${siteUrl}" style="color:#626b60">CivicKettle</a>, because of a volunteer sign-up. <a href="${offUrl}" style="color:#626b60">Stop reminder emails and messages from ${esc(org.name)}</a>.</td></tr>
@@ -179,12 +197,12 @@ export function buildInvite(ctx: { orgName: string; invitedBy: string; email: st
   const html = `<!doctype html><html><body style="margin:0;background:#f2f0e9;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#252b25">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f2f0e9"><tr><td align="center" style="padding:28px 16px">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px">
-  <tr><td style="padding:0 4px 14px;font-size:13px;color:#626b60">${esc(orgName)}</td></tr>
-  <tr><td style="background:#faf8f2;border:1px solid #d5d3c9;padding:28px 28px 24px">
+  ${band(orgName)}
+  <tr><td style="background:#faf8f2;border:1px solid #d5d3c9;border-top:0;padding:28px 28px 24px">
     <p style="margin:0 0 14px;font-size:16px">Hi,</p>
     <p style="margin:0 0 14px;font-size:16px;line-height:1.55">${esc(lead)}</p>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.55">${esc(how)}</p>
-    <p style="margin:0"><a href="${signIn}" style="display:inline-block;padding:13px 20px;background:#2b3c30;color:#f7f5ee;text-decoration:none;font-size:15px;border-radius:4px">Sign in to CivicKettle</a></p>
+    <p style="margin:0">${button(signIn, "Sign in to CivicKettle")}</p>
     <p style="margin:20px 0 0;font-size:13px;line-height:1.55;color:#626b60">If you weren't expecting this, you can ignore it and nothing will happen.</p>
   </td></tr>
   <tr><td style="padding:14px 4px 0;font-size:12px;color:#8a8d83;line-height:1.5"><a href="${siteUrl}" style="color:#626b60">CivicKettle</a></td></tr>

@@ -1858,3 +1858,85 @@ button.ck-button { font-family: inherit; cursor: pointer; }
   .pv-event { grid-template-columns: auto minmax(0, 1fr); }
   .pv-event-go { grid-column: 1 / -1; text-align: center; }
 }
+
+/* =====================================================================
+   One look everywhere: green bands, marigold accents, plain labels,
+   and actions that look like buttons. Overrides the older rules above.
+   ===================================================================== */
+
+/* Labels in sentence case, like the homepage */
+.ck-kicker, .pv-kicker { text-transform: none; letter-spacing: 0; font-size: 13px; font-weight: 500; color: #5a6b52; }
+.ap-org { text-transform: none; letter-spacing: 0; font-size: 12px; }
+.ap-table th, .ap-vhead { text-transform: none; letter-spacing: 0; font-size: 12px; }
+
+/* --- Sign-in and first-time setup --- */
+.ap-auth { background: var(--ck-green); box-shadow: 0 0 0 100vmax var(--ck-green); clip-path: inset(0 -100vmax); color: #f4f2e9; }
+.ap-auth .ck-kicker { color: var(--ck-marigold); }
+.ap-auth-copy h1 { font-family: var(--font-display); font-size: clamp(40px, 4.4vw, 60px); letter-spacing: -0.055em; color: #f4f2e9; }
+.ap-auth .ck-intro { color: #d5dacb; }
+.ap-auth .ap-card { border: 0; border-radius: 6px; color: var(--ck-ink); box-shadow: 0 30px 60px -30px rgba(10, 18, 12, 0.7); }
+.ap-center { background: var(--ck-green); }
+.ap-center .ap-brand { color: #f4f2e9; }
+.ap-center .ap-card { border: 0; border-radius: 6px; box-shadow: 0 30px 60px -30px rgba(10, 18, 12, 0.7); }
+
+/* --- Workspace: green sidebar, marigold marker --- */
+.ap-side { background: var(--ck-green); border-right: 0; color: #f4f2e9; }
+.ap-side .ap-brand { color: #f4f2e9; }
+.ap-side .ap-org { color: #aebaa5; }
+.ap-nav a { color: #c9d0c1; }
+.ap-nav a:hover { background: rgba(244, 242, 233, 0.07); color: #fff; }
+.ap-nav a.on { background: rgba(244, 242, 233, 0.12); color: #fff; box-shadow: inset 3px 0 0 var(--ck-marigold); }
+.ap-side a:focus-visible, .ap-side button:focus-visible { outline: 3px solid var(--ck-marigold); outline-offset: 2px; }
+.ap-side-foot { color: #aebaa5; }
+.ap-side-foot .ap-link { color: #f4f2e9; }
+.ap-side-foot .ap-link:hover { color: var(--ck-marigold); }
+
+/* The link to share: the one loud thing on an event */
+.ap-share { border: 0; border-radius: 8px; padding: 22px 26px; background: var(--ck-green); color: #f4f2e9; }
+.ap-share-k { text-transform: none; letter-spacing: 0; font-size: 13px; font-weight: 500; color: var(--ck-marigold); }
+.ap-share-url { color: #f4f2e9; text-decoration-color: #7f9478; }
+.ap-share-url:hover { color: #fff; }
+.ap-share-sub { color: #c9d0c1; }
+.ap-share .ck-button { border-color: var(--ck-marigold); background: var(--ck-marigold); color: #23291f; }
+.ap-share .ck-button:hover { border-color: #f0c468; background: #f0c468; }
+.ap-share .ap-ghost { border-color: #7f9478; color: #f4f2e9; }
+.ap-share .ap-ghost:hover { border-color: #f4f2e9; }
+.ap-share a:focus-visible, .ap-share button:focus-visible { outline: 3px solid var(--ck-marigold); outline-offset: 3px; }
+
+/* Names on a shift look like the sign-up sheet on the homepage */
+.ap-person { border-color: transparent; background: #f6e7c1; color: #3a3320; }
+.ap-person i { background: var(--ck-green); color: #f4f2e9; }
+.ap-person button { color: #7a6a3a; }
+.ap-person.in { background: var(--ck-green); color: #f4f2e9; }
+.ap-person.in i { background: var(--ck-marigold); color: #23291f; }
+.ap-person.in button { color: #c9d0c1; }
+.ap-person.open { border-color: #c9c5b7; background: transparent; color: #7a7d73; }
+.ap-person.open i { background: #ece9df; color: #7a7d73; }
+.ap-bar i { background: var(--ck-green); }
+.ap-bar i.low { background: var(--ck-marigold); }
+
+/* --- Volunteer pages: green top, paper body --- */
+.pv-head { max-width: none; padding: 16px max(20px, calc(50% - 300px)); background: var(--ck-green); color: #f4f2e9; }
+.pv-org { color: #c9d0c1; }
+.pv-hero { margin-top: -8px; padding: 12px 0 28px; background: var(--ck-green); box-shadow: 0 0 0 100vmax var(--ck-green); clip-path: inset(0 -100vmax); color: #f4f2e9; }
+.pv-hero .pv-kicker { color: var(--ck-marigold); }
+.pv-hero .pv-h1 { color: #f4f2e9; }
+.pv-hero .pv-meta, .pv-hero .pv-desc { color: #d5dacb; }
+.pv-hero .pv-meta strong { color: #f4f2e9; }
+.pv-body { gap: 18px; }
+
+/* Actions are buttons: solid for the main one, outlined for the rest, rust for cancelling */
+.pv-link, .pv-switch summary {
+  display: flex; align-items: center; justify-content: center; justify-self: stretch;
+  min-height: 50px; padding: 0 16px; border: 1.5px solid var(--ck-green); border-radius: 4px;
+  background: transparent; color: var(--ck-green); font-size: 16px; font-weight: 500; text-align: center; text-decoration: none; cursor: pointer;
+}
+.pv-link:hover, .pv-switch summary:hover { background: #e9eee2; }
+.pv-link.danger { border-color: var(--ck-rust); color: var(--ck-rust); }
+.pv-link.danger:hover { background: #f7e9e3; }
+.pv-link:focus-visible, .pv-switch summary:focus-visible, .pv-button:focus-visible { outline: 3px solid #798c65; outline-offset: 3px; }
+.pv-mine-actions .pv-link, .pv-mine-more .pv-link { justify-self: stretch; }
+.pv-mine-more { justify-items: stretch; }
+.pv-switch[open] summary { border-style: solid; background: #e9eee2; }
+.pv-textlink { justify-self: center; padding: 6px 0; color: #485449; font-size: 15px; text-decoration: underline; text-underline-offset: 3px; }
+.pv-event-go { background: var(--ck-green); }

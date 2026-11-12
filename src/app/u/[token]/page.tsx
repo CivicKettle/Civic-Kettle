@@ -31,7 +31,7 @@ export default async function UnsubscribePage({
         <span className="pv-org">{org.name}</span>
       </header>
       <main className="pv-body">
-        <div>
+        <div className="pv-hero">
           <p className="pv-kicker">Email settings</p>
           <h1 className="pv-h1">{off ? `Emails from ${org.name} are off.` : `Stop emails from ${org.name}?`}</h1>
           <p className="pv-meta">{signup.email}</p>
@@ -46,7 +46,7 @@ export default async function UnsubscribePage({
                 {q.done ? "Done. " : ""}No more reminder emails or messages from {org.name} will go to this address. Your sign-ups haven&apos;t changed, and you&apos;ll still get a confirmation when you sign up for something or cancel.
               </p>
               <button className="pv-button" type="submit">Turn emails back on</button>
-              <a className="pv-link" href={`/v/cancel/${signup.cancel_token}`}>Cancel my sign-up for {event.title} instead ›</a>
+              <a className="pv-link" href={`/v/cancel/${signup.cancel_token}`}>Cancel my sign-up for {event.title} instead</a>
             </form>
           ) : (
             <form action={action} method="post" className="pv-fields">
@@ -56,7 +56,7 @@ export default async function UnsubscribePage({
                 {q.on ? "Emails are back on. " : ""}This stops the day-before and morning-of reminders, and any messages {org.name} sends about its events. Your sign-ups stay as they are, and you&apos;ll still get a confirmation when you sign up for something or cancel.
               </p>
               <button className="pv-button danger" type="submit">Stop these emails</button>
-              <a className="pv-link" href={`/v/${event.public_token}`}>Keep them, take me to the event ›</a>
+              <a className="pv-link" href={`/v/${event.public_token}`}>Keep them, take me to the event</a>
             </form>
           )}
         </div>

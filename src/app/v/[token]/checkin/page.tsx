@@ -37,7 +37,7 @@ export default async function CheckinPage({
         <span className="pv-org">{org.name}</span>
       </header>
       <main className="pv-body">
-        <div>
+        <div className="pv-hero">
           <p className="pv-kicker">Check in</p>
           <h1 className="pv-h1">{event.title}</h1>
           <p className="pv-meta">
@@ -53,7 +53,7 @@ export default async function CheckinPage({
         ) : !open && !ended ? (
           <div className="pv-card pv-fields">
             <p className="pv-note">Check-in opens at {fmtTime(opensAt, tz)} on {fmtLongDate(event.starts_at, tz)}. Come back to this page then, or scan the code at the event.</p>
-            <a className="pv-link" href={`/v/${token}?signup=1`}>Not signed up yet? Sign up ›</a>
+            <a className="pv-link" href={`/v/${token}?signup=1`}>Not signed up yet? Sign up</a>
           </div>
         ) : mine.length > 0 ? (
           <>
@@ -99,7 +99,7 @@ export default async function CheckinPage({
                 </div>
               );
             })}
-            <a className="pv-link" href={`/v/${token}?signup=1`}>Sign up someone else ›</a>
+            <a className="pv-link" href={`/v/${token}?signup=1`}>Sign up someone else</a>
           </>
         ) : (
           <form action="/app/api/public/find" method="post" className="pv-card pv-fields">
@@ -109,7 +109,7 @@ export default async function CheckinPage({
             <label>Email or mobile<input name="who" type="text" required autoComplete="email" inputMode="email" placeholder="you@example.com" /></label>
             {flags.notfound && <p className="pv-error">No sign-up found for that. Check the spelling, or see the coordinator.</p>}
             <button className="pv-button" type="submit">Find me</button>
-            {!ended && <a className="pv-link" href={`/v/${token}?signup=1`}>Not signed up yet? Sign up now ›</a>}
+            {!ended && <a className="pv-link" href={`/v/${token}?signup=1`}>Not signed up yet? Sign up now</a>}
           </form>
         )}
       </main>
