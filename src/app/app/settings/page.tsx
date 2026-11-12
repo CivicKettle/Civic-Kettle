@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import { getOrg, getRole, getSession } from "@/lib/db";
+import { trialFor, trialLine } from "@/lib/plan";
 import { loadInvites, loadTeam } from "@/lib/team";
 import { fmtDate, TIME_ZONES } from "@/lib/time";
 
@@ -21,6 +22,7 @@ export default async function SettingsPage({
   const { error } = q;
   const [role, team, invites] = await Promise.all([getRole(session, org.id), loadTeam(session, org), loadInvites(session, org)]);
   const owner = role === "owner";
+  const trial = await trialFor(session, org);
 
   return (
     <AppShell active="settings" orgName={org.name} email={session.email}>
@@ -43,6 +45,13 @@ export default async function SettingsPage({
         {error && <p className="ap-error">{decodeURIComponent(error)}</p>}
         <button className="ck-button" type="submit">Save <span aria-hidden="true">↗</span></button>
       </form>
+
+      {trial && (
+        <section className="ap-card ap-narrow">
+          <div className="ap-card-h"><h2>Plan</h2><span className="ap-muted">{trial.state === "active" ? "Free trial" : "Trial ended"}</span></div>
+          <div className="ap-card-b"><p className="ap-plan">{trialLine(trial)}</p></div>
+        </section>
+      )}
 
       <section className="ap-card ap-narrow" id="team">
         <div className="ap-card-h"><h2>Team</h2><span className="ap-muted">{team.length} {team.length === 1 ? "coordinator" : "coordinators"}</span></div>

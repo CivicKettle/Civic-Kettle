@@ -102,14 +102,14 @@ export default function Home() {
           <div className="hm-ticket" id="contact">
             <div className="hm-ticket-stub">
               <p className="hm-price"><strong>$19</strong><span>a month</span></p>
-              <p>One plan. Everything included.</p>
+              <p>After a 30-day free trial. One plan, everything included.</p>
             </div>
             <div className="hm-ticket-body">
-              <h2 id="pricing-title">Set up your first event in a few minutes.</h2>
+              <h2 id="pricing-title">Try it free for 30 days.</h2>
               <StartForm id="start-bottom" tone="light" />
             </div>
           </div>
-          <p className="hm-questions">Questions? Write to <a href="mailto:civickettle@gmail.com">civickettle@gmail.com</a>. Already use CivicKettle? <a href="/app">Sign in</a>. By getting started you agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
+          <p className="hm-questions">Questions? Write to <a href="mailto:civickettle@gmail.com">civickettle@gmail.com</a>. Already use CivicKettle? <a href="/app">Sign in</a>. By starting you agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
         </section>
       </main>
       <SiteFooter />

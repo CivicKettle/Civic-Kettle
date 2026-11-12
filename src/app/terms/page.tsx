@@ -28,7 +28,8 @@ export default function TermsPage() {
 
       <h2>Cost</h2>
       <p>
-        Volunteers never pay to use CivicKettle. Organizations are not charged anything unless they have agreed to a plan and a price with us first.
+        Volunteers never pay to use CivicKettle. A new organization can use CivicKettle free for 30 days. After that it costs $19 a month.
+        Nothing is charged automatically: we don&apos;t ask for a card to start, and an organization is not charged unless it has agreed to continue.
       </p>
 
       <h2>If you coordinate volunteers</h2>

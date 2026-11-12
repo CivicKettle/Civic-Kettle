@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import AppShell from "@/components/AppShell";
+import { trialFor, trialLine } from "@/lib/plan";
 import { getOrg, getSession, withCounts, type Event, type Shift, type Signup } from "@/lib/db";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
 import { dateTile, fmtLongDate, fmtRange } from "@/lib/time";
@@ -94,6 +95,7 @@ export default async function DashboardPage() {
     }
   }
   const hoursLabel = Math.round(hoursThisMonth * 100) / 100;
+  const trial = await trialFor(session, org);
 
   return (
     <AppShell active="overview" orgName={org.name} email={session.email}>
@@ -104,6 +106,8 @@ export default async function DashboardPage() {
         </div>
         <a className="ck-button" href="/app/events/new">New event <span aria-hidden="true">+</span></a>
       </div>
+
+      {trial && <p className={trial.state === "active" ? "ap-flash" : "ap-error ap-error-top"}>{trialLine(trial)}</p>}
 
       <div className="ap-tiles">
         <div className="ap-tile"><span className="l">Upcoming events</span><span className="v">{events.length}</span><span className="d">{events[0] ? `Next: ${dateTile(events[0].starts_at, org.time_zone).dow} ${dateTile(events[0].starts_at, org.time_zone).day}` : "Nothing scheduled"}</span></div>

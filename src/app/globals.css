@@ -1787,3 +1787,5 @@ button.ck-button { font-family: inherit; cursor: pointer; }
   .hm-start input { flex: none; width: 100%; }
   .hm-start button { width: 100%; }
 }
+
+.ap-plan { margin: 0; font-size: 14px; line-height: 1.6; color: #3d443c; }

@@ -40,12 +40,12 @@ export default function StartForm({ tone = "dark", id }: { tone?: "dark" | "ligh
       <div className="hm-start-row">
         <label className="ck-hidden" htmlFor={id}>Your email</label>
         <input id={id} name="email" type="email" required autoComplete="email" inputMode="email" placeholder="Your email" defaultValue={state.email} />
-        <button type="submit" disabled={sending}>{sending ? "Sending…" : "Get started"}</button>
+        <button type="submit" disabled={sending}>{sending ? "Sending…" : "Start free trial"}</button>
       </div>
       {state.status === "error" ? (
         <p className="hm-start-error" role="alert">{state.message}</p>
       ) : (
-        <p className="hm-start-note">We&apos;ll email you a link. Open it and you&apos;re in. No password, no card.</p>
+        <p className="hm-start-note">Free for 30 days, no card needed. We&apos;ll email you a link to get in.</p>
       )}
     </form>
   );

@@ -7,6 +7,7 @@ export type Organization = {
   slug: string;
   time_zone: string;
   contact_email: string | null;
+  created_at?: string;
 };
 
 export type Event = {
@@ -91,7 +92,7 @@ export async function getOrg(session: Session): Promise<Organization | null> {
   if (!orgId) return null;
   const { data: org } = await session.supabase
     .from("organizations")
-    .select("id,name,slug,time_zone,contact_email")
+    .select("id,name,slug,time_zone,contact_email,created_at")
     .eq("id", orgId)
     .maybeSingle();
   return (org as Organization) ?? null;
