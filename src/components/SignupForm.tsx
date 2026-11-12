@@ -19,7 +19,8 @@ export default function SignupForm({ token, shifts, tz, error, prefillShift }: P
   const firstOpen = shifts.find((s) => s.open > 0)?.id;
   const [shift, setShift] = useState<string>(prefillShift && shifts.some((s) => s.id === prefillShift && s.open > 0) ? prefillShift : firstOpen ?? "");
   const [adult, setAdult] = useState<"" | "yes" | "no">("");
-  const allFull = !firstOpen;
+  const picked = shifts.find((s) => s.id === shift);
+  const joiningWaitlist = Boolean(picked && picked.open === 0);
 
   return (
     <form action="/app/api/public/signup" method="post" className="pv-form">
@@ -30,17 +31,17 @@ export default function SignupForm({ token, shifts, tz, error, prefillShift }: P
         {shifts.map((s) => {
           const full = s.open === 0;
           return (
-            <label key={s.id} className={`pv-opt${full ? " full" : ""}`}>
-              <input type="radio" name="shift_id" value={s.id} disabled={full} checked={shift === s.id} onChange={() => setShift(s.id)} required />
+            <label key={s.id} className={`pv-opt${full ? " waitable" : ""}`}>
+              <input type="radio" name="shift_id" value={s.id} checked={shift === s.id} onChange={() => setShift(s.id)} required />
               <span className="t"><b>{s.name}</b><span>{fmt(s.starts_at, tz)} to {fmt(s.ends_at, tz)}</span></span>
-              <span className={`n${!full && s.open <= 2 ? " low" : ""}`}>{full ? "Full" : `${s.open} spot${s.open === 1 ? "" : "s"} left`}</span>
+              <span className={`n${full || s.open <= 2 ? " low" : ""}`}>{full ? (s.waiting > 0 ? `Full, ${s.waiting} waiting` : "Full, join waiting list") : `${s.open} spot${s.open === 1 ? "" : "s"} left`}</span>
             </label>
           );
         })}
-        {allFull && <p className="pv-muted">Every shift is full. Check back; spots open when someone cancels.</p>}
+        {joiningWaitlist && <p className="pv-muted pv-waitnote">This shift is full. Sign up to join its waiting list: if a spot opens, you&apos;re moved in automatically and emailed right away.</p>}
       </fieldset>
 
-      {!allFull && (
+      {(
         <>
           <fieldset className="pv-card pv-age">
             <legend>Is the volunteer 18 or older?</legend>
@@ -71,8 +72,8 @@ export default function SignupForm({ token, shifts, tz, error, prefillShift }: P
                 </>
               )}
               {error && <p className="pv-error">{decodeURIComponent(error)}</p>}
-              <button className="pv-button" type="submit">Sign me up <span aria-hidden="true">↗</span></button>
-              <p className="pv-fine">A confirmation email arrives right away, with a link to cancel if plans change. Reminders come the day before and the morning of. No account needed. By signing up you agree to the <a href="/terms" target="_blank" rel="noopener">Terms</a> and <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</p>
+              <button className="pv-button" type="submit">{joiningWaitlist ? "Join the waiting list" : "Sign me up"}</button>
+              <p className="pv-fine">{joiningWaitlist ? "An email confirms you're on the waiting list." : "A confirmation email arrives right away, with a link to cancel if plans change."} Reminders come the day before and the morning of. No account needed. By signing up you agree to the <a href="/terms" target="_blank" rel="noopener">Terms</a> and <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</p>
             </div>
           )}
         </>

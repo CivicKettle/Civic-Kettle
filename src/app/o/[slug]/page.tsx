@@ -37,7 +37,7 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
           </p>
         </div>
 
-        {events.map(({ event, open, capacity, shifts }) => {
+        {events.map(({ event, open, capacity, shifts, waiting }) => {
           const tile = dateTile(event.starts_at, tz);
           return (
             <a className="pv-card pv-event" key={event.id} href={`/v/${event.public_token}`}>
@@ -47,10 +47,10 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
                 <span>{fmtLongDate(event.starts_at, tz)}, {fmtRange(event.starts_at, event.ends_at, tz)}</span>
                 {event.location && <span>{event.location}</span>}
                 <span className={open === 0 ? "pv-event-spots full" : open <= 3 ? "pv-event-spots low" : "pv-event-spots"}>
-                  {open === 0 ? "Full" : `${open} of ${capacity} spots open`}{shifts > 1 ? `, ${shifts} shifts` : ""}
+                  {open === 0 ? (waiting > 0 ? `Full, ${waiting} on the waiting list` : "Full, waiting list open") : `${open} of ${capacity} spots open`}{shifts > 1 ? `, ${shifts} shifts` : ""}
                 </span>
               </span>
-              <span className="pv-event-go">{open === 0 ? "View" : "Sign up"}</span>
+              <span className="pv-event-go">{open === 0 ? "Join waiting list" : "Sign up"}</span>
             </a>
           );
         })}

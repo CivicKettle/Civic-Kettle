@@ -2,7 +2,7 @@ import type { Event, Organization, Shift, Signup } from "@/lib/db";
 import { fmtLongDate, fmtRange } from "@/lib/time";
 import { unsubscribeHeaders, unsubscribeUrl } from "./optout";
 
-export type MessageKind = "confirmation" | "day_before" | "morning_of" | "cancelled";
+export type MessageKind = "confirmation" | "day_before" | "morning_of" | "cancelled" | "waitlist" | "promoted";
 
 export type MessageContext = {
   signup: Signup;
@@ -80,6 +80,15 @@ export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject:
       lead = `It's today. ${org.name} is looking forward to seeing ${who}.`;
       note = event.notes_for_volunteers || event.description || "";
       break;
+    case "waitlist":
+      subject = `You're on the waiting list: ${event.title}`;
+      lead = `${shift.name} is full right now, so ${who === "you" ? "you're" : `${signup.volunteer_name} is`} on the waiting list for ${event.title} with ${org.name}. If a spot opens, ${who === "you" ? "you'll" : "they'll"} be moved in automatically and you'll get an email right away. There's nothing else to do.`;
+      break;
+    case "promoted":
+      subject = `A spot opened: ${whoCap === "You" ? "you're" : `${signup.volunteer_name} is`} in for ${event.title}`;
+      lead = `Good news. A spot opened up, and ${who === "you" ? "you're" : `${signup.volunteer_name} is`} now signed up for ${event.title} with ${org.name}.`;
+      note = event.description || "";
+      break;
     case "cancelled":
       subject = `Cancelled: ${event.title}, ${shift.name}`;
       lead = `${whoCap === "You" ? "Your" : `${signup.volunteer_name}'s`} sign-up for ${event.title} has been cancelled and the spot is open for someone else. Thanks for letting ${org.name} know.`;
@@ -91,7 +100,7 @@ export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject:
     : "";
   const hi = `Hi ${salutation(signup)},`;
   const contact = org.contact_email ? `Questions? Reply to this email or write to ${org.contact_email}.` : "Questions? Reply to this email.";
-  const cancelLine = kind === "cancelled" ? `Changed your mind? Sign up again: ${eventUrl}` : `Can't make it? Cancel in one tap: ${cancelUrl}`;
+  const cancelLine = kind === "cancelled" ? `Changed your mind? Sign up again: ${eventUrl}` : kind === "waitlist" ? `Don't want to wait? Leave the waiting list: ${cancelUrl}` : `Can't make it? Cancel in one tap: ${cancelUrl}`;
 
   const text = [
     hi,
@@ -104,6 +113,7 @@ export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject:
     "",
     cancelLine,
     `See or change all your shifts: ${mineUrl}`,
+    kind === "cancelled" || kind === "waitlist" ? "" : `Add to your calendar: ${siteUrl}/v/ics/${signup.cancel_token}`,
     "",
     contact,
     "",
@@ -123,8 +133,8 @@ export function buildMessage(kind: MessageKind, ctx: MessageContext): { subject:
     </table>
     ${note ? `<p style="margin:18px 0 0;padding:12px 14px;background:#e9eee2;font-size:14px;line-height:1.55;color:#2b3c30">${esc(note)}</p>` : ""}
     ${arrive ? `<p style="margin:18px 0 0;font-size:14px;line-height:1.55">On arrival, scan the QR code at the event to check in, or <a href="${eventUrl}" style="color:#2b3c30">open the event page</a>.</p>` : ""}
-    <p style="margin:24px 0 10px;font-size:14px;line-height:1.55;color:#4a514a">${kind === "cancelled" ? "Changed your mind?" : "Plans change? Switch shifts or cancel, no login needed."}</p>
-    <p style="margin:0">${kind === "cancelled" ? button(eventUrl, "Sign up again") + button(mineUrl, "See my shifts", "outline") : button(mineUrl, "See or change my shifts") + button(cancelUrl, "Cancel this shift", "danger")}</p>
+    <p style="margin:24px 0 10px;font-size:14px;line-height:1.55;color:#4a514a">${kind === "cancelled" ? "Changed your mind?" : kind === "waitlist" ? "Don't want to wait?" : "Plans change? Switch shifts or cancel, no login needed."}</p>
+    <p style="margin:0">${kind === "cancelled" ? button(eventUrl, "Sign up again") + button(mineUrl, "See my shifts", "outline") : kind === "waitlist" ? button(mineUrl, "See my shifts") + button(cancelUrl, "Leave the waiting list", "danger") : button(mineUrl, "See or change my shifts") + button(`${siteUrl}/v/ics/${signup.cancel_token}`, "Add to calendar", "outline") + button(cancelUrl, "Cancel this shift", "danger")}</p>
     <p style="margin:14px 0 0;font-size:13px;line-height:1.55;color:#626b60">${esc(contact)}</p>
   </td></tr>
   <tr><td style="padding:14px 4px 0;font-size:12px;color:#8a8d83;line-height:1.5">Sent by <a href="${siteUrl}" style="color:#626b60">CivicKettle</a> on behalf of ${esc(org.name)}, because of a volunteer sign-up. <a href="${offUrl}" style="color:#626b60">Stop reminder emails and messages from ${esc(org.name)}</a>.</td></tr>

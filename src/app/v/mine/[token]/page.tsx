@@ -56,12 +56,18 @@ export default async function MyShiftsPage({
               {r.event.location && <p className="pv-mine-where">{r.event.location}</p>}
               {(names.size > 1 || r.signup.is_minor) && <p className="pv-mine-who">For {r.signup.volunteer_name}</p>}
             </div>
-            {r.event.status === "cancelled" ? (
+            {r.waiting && r.event.status !== "cancelled" ? (
+              <div className="pv-mine-actions">
+                <p className="pv-mine-wait">On the waiting list. If a spot opens you&apos;re moved in automatically and emailed.</p>
+                <a className="pv-link danger" href={`/v/cancel/${r.signup.cancel_token}?mine=${token}`}>Leave the waiting list</a>
+              </div>
+            ) : r.event.status === "cancelled" ? (
               <p className="pv-mine-flag">The organizer cancelled this event.</p>
             ) : r.signup.checked_in_at ? (
               <p className="pv-mine-flag">Checked in. Thanks for being there.</p>
             ) : (
               <div className="pv-mine-actions">
+                <a className="pv-link" href={`/v/ics/${r.signup.cancel_token}`}>Add to my calendar</a>
                 {r.alternatives.length > 0 && (
                   <details className="pv-switch">
                     <summary>Switch shift</summary>

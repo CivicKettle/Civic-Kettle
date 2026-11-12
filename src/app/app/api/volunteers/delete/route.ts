@@ -3,6 +3,7 @@ import { getOrg, getSession } from "@/lib/db";
 import { normEmail } from "@/lib/emails/optout";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loadVolunteers } from "@/lib/volunteers";
+import { promoteEvent } from "@/lib/waitlist";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +46,8 @@ export async function POST(request: NextRequest) {
     const others = (await loadVolunteers(session, org)).some((v) => normEmail(v.email) === email);
     if (!others) await admin.from("email_optouts").delete().eq("org_id", org.id).eq("email", email);
   }
+
+  if (admin) for (const eventId of new Set(person.history.map((h) => h.eventId))) await promoteEvent(admin, eventId);
 
   return go(request, "/app/volunteers", { deleted: person.name, n: String(person.signupIds.length) });
 }

@@ -61,7 +61,7 @@ export async function loadDeviceSignups(eventId: string, tokens: string[]): Prom
 
 export type OrgPage = {
   org: Pick<Organization, "name" | "slug" | "time_zone" | "contact_email">;
-  events: { event: Event; capacity: number; open: number; shifts: number }[];
+  events: { event: Event; capacity: number; open: number; shifts: number; waiting: number }[];
 };
 
 /**
@@ -93,7 +93,7 @@ export async function loadOrgPage(slug: string): Promise<OrgPage | null> {
     org,
     events: events.map((event) => {
       const mine = shifts.filter((s) => s.event_id === event.id);
-      return { event, capacity: mine.reduce((t, s) => t + s.capacity, 0), open: mine.reduce((t, s) => t + s.open, 0), shifts: mine.length };
+      return { event, capacity: mine.reduce((t, s) => t + s.capacity, 0), open: mine.reduce((t, s) => t + s.open, 0), shifts: mine.length, waiting: mine.reduce((t, s) => t + s.waiting, 0) };
     }),
   };
 }

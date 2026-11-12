@@ -29,7 +29,7 @@ export default async function VolunteersPage({ searchParams }: { searchParams: P
   const rows = filterAndSort(everyone, q, sort);
   const totalHours = Math.round(everyone.reduce((t, v) => t + v.hours, 0) * 100) / 100;
   const link = (s: VolunteerSort) => `/app/volunteers?sort=${s}${q ? `&q=${encodeURIComponent(q)}` : ""}`;
-  const pill = (status: string) => (status === "No-show" ? "ap-pill amber" : status === "Cancelled" ? "ap-pill sent" : "ap-pill");
+  const pill = (status: string) => (status === "No-show" || status === "Waiting list" ? "ap-pill amber" : status === "Cancelled" ? "ap-pill sent" : "ap-pill");
 
   return (
     <AppShell active="volunteers" orgName={org.name} email={session.email}>

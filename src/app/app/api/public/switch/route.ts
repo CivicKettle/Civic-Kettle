@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { Shift, Signup } from "@/lib/db";
 import { deliver, loadParts } from "@/lib/emails/deliver";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { promoteShift } from "@/lib/waitlist";
 
 export const dynamic = "force-dynamic";
 
@@ -60,6 +61,8 @@ export async function POST(request: NextRequest) {
   await admin.from("messages").delete().eq("signup_id", signup.id).in("kind", ["confirmation", "day_before", "morning_of"]);
   const parts = await loadParts(admin, signup.id);
   if (parts) await deliver(admin, "confirmation", parts);
+
+  await promoteShift(admin, signup.shift_id);
 
   return back({ switched: "1" });
 }

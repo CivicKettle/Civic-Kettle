@@ -5,9 +5,11 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   let email = "";
+  let password = "";
   try {
-    const body = (await request.json()) as { email?: string };
+    const body = (await request.json()) as { email?: string; password?: string };
     email = String(body.email || "").trim().toLowerCase();
+    password = String(body.password || "");
   } catch {
     email = "";
   }
@@ -26,6 +28,19 @@ export async function POST(request: NextRequest) {
         email,
         message: "Sign-in isn't switched on yet. The database connection is still being set up.",
       });
+    }
+    if (password) {
+      // Optional password, set in Settings. The cookies for the session are written by the client above.
+      const { error: pwError } = await supabase.auth.signInWithPassword({ email, password });
+      if (pwError) {
+        const message = /invalid login/i.test(pwError.message)
+          ? "That email and password don't match. If you haven't set a password, use the emailed link."
+          : /rate limit|too many/i.test(pwError.message)
+            ? "Too many tries. Wait a few minutes, or use the emailed link."
+            : pwError.message;
+        return NextResponse.json({ status: "error", email, message }, { status: 400 });
+      }
+      return NextResponse.json({ status: "signed_in", email });
     }
     const { error } = await supabase.auth.signInWithOtp({
       email,

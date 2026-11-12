@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getOrg, getSession, type Shift } from "@/lib/db";
 import { parseEventForm } from "@/lib/eventForm";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { promoteEvent } from "@/lib/waitlist";
 
 export const dynamic = "force-dynamic";
 
@@ -77,6 +79,9 @@ export async function POST(request: NextRequest, ctx: { params: Promise<{ id: st
     }
     await session.supabase.from("shifts").delete().eq("id", r.id);
   }
+
+  const admin = createAdminClient();
+  if (admin) await promoteEvent(admin, id);
 
   return go(request, `/app/events/${id}?saved=1`);
 }

@@ -45,7 +45,7 @@ export type Signup = {
   is_minor: boolean;
   guardian_name: string | null;
   guardian_phone: string | null;
-  status: "confirmed" | "cancelled";
+  status: "confirmed" | "cancelled" | "waitlist";
   cancel_token: string;
   checked_in_at: string | null;
   checked_out_at: string | null;
@@ -122,11 +122,12 @@ export function normalizePhone(raw: string): string | null {
   return null;
 }
 
-export type ShiftWithCounts = Shift & { confirmed: number; open: number };
+export type ShiftWithCounts = Shift & { confirmed: number; open: number; waiting: number };
 
 export function withCounts(shifts: Shift[], signups: Pick<Signup, "shift_id" | "status">[]): ShiftWithCounts[] {
   return shifts.map((s) => {
     const confirmed = signups.filter((x) => x.shift_id === s.id && x.status === "confirmed").length;
-    return { ...s, confirmed, open: Math.max(0, s.capacity - confirmed) };
+    const waiting = signups.filter((x) => x.shift_id === s.id && x.status === "waitlist").length;
+    return { ...s, confirmed, open: Math.max(0, s.capacity - confirmed), waiting };
   });
 }

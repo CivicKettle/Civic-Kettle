@@ -9,7 +9,8 @@ import { dateTile, fmtDate, fmtRange } from "@/lib/time";
 export const metadata: Metadata = { title: "Events — CivicKettle" };
 export const dynamic = "force-dynamic";
 
-export default async function EventsPage() {
+export default async function EventsPage({ searchParams }: { searchParams: Promise<{ created?: string; error?: string }> }) {
+  const flags = await searchParams;
   const session = await getSession();
   if (!session) redirect("/app");
   const org = await getOrg(session);
@@ -79,6 +80,8 @@ export default async function EventsPage() {
         <a className="ck-button" href="/app/events/new">New event <span aria-hidden="true">+</span></a>
       </div>
 
+      {flags.created && <p className="ap-flash">Created {flags.created} events, one for each date. They&apos;re all on your organization&apos;s page.</p>}
+      {flags.error && <p className="ap-error ap-error-top">{decodeURIComponent(flags.error)}</p>}
       <ShareBar
         url={`${siteUrl()}/o/${org.slug}`}
         label="Your organization's page"

@@ -1969,3 +1969,14 @@ button.ck-button { font-family: inherit; cursor: pointer; }
 @media (max-width: 640px) {
   .hm-faq { grid-template-columns: 1fr; }
 }
+
+.ap-switch-mode { justify-self: start; margin-top: 2px; font-size: 14px; }
+
+/* ===== Waiting list ===== */
+.pv-opt.waitable .t b { color: #4a514a; }
+.pv-card > p.pv-waitnote, .pv-waitnote { margin: 0; padding: 12px 16px 14px; border-top: 1px solid #eceae3; }
+.pv-mine-wait { margin: 0; padding: 10px 12px; border-radius: 4px; background: #f6e7c1; color: #3a3320; font-size: 14px; line-height: 1.5; }
+.ap-waiting { display: grid; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #d9d6cb; }
+.ap-waiting-k { font-size: 12px; color: #626b60; }
+.ap-person.wait { border: 1px dashed #c9a24a; background: transparent; color: #5a4a1e; }
+.ap-person.wait i { background: #f6e7c1; color: #5a4a1e; }

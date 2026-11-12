@@ -38,6 +38,25 @@ export default function EventForm({ tz, event, shifts = [], error }: Props) {
           </div>
         </div>
 
+        {!editing && (
+          <div className="ap-grid-2">
+            <div className="ap-form">
+              <label htmlFor="repeat">Repeats</label>
+              <select id="repeat" name="repeat" defaultValue="none">
+                <option value="none">Just this once</option>
+                <option value="weekly">Every week</option>
+                <option value="biweekly">Every 2 weeks</option>
+                <option value="monthly">Every month, same date</option>
+              </select>
+            </div>
+            <div className="ap-form">
+              <label htmlFor="repeat_more">How many more times <span>Up to 11, if it repeats</span></label>
+              <input id="repeat_more" name="repeat_more" type="number" min={1} max={11} defaultValue={3} />
+            </div>
+          </div>
+        )}
+        {!editing && <p className="ap-muted">A repeating event is saved as separate events, one per date, each with its own sign-up link. You can change or cancel any one without touching the others.</p>}
+
         <label htmlFor="description">What volunteers should know <span>Optional</span></label>
         <textarea id="description" name="description" rows={3} maxLength={1000} defaultValue={event?.description ?? ""} placeholder="Wear closed-toe shoes. Water and gloves provided." />
 

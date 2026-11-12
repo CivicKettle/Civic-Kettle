@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export default async function SettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; teamError?: string; invited?: string; noEmail?: string; cancelled?: string; removed?: string }>;
+  searchParams: Promise<{ error?: string; teamError?: string; invited?: string; noEmail?: string; cancelled?: string; removed?: string; pw?: string; pwError?: string }>;
 }) {
   const session = await getSession();
   if (!session) redirect("/app");
@@ -107,6 +107,21 @@ export default async function SettingsPage({
           <div className="ap-card-b"><p className="ap-muted">Only the workspace owner can add or remove coordinators.</p></div>
         )}
       </section>
+      <section className="ap-card ap-narrow" id="password">
+        <div className="ap-card-h"><h2>Password</h2><span className="ap-muted">Optional</span></div>
+        {q.pw && <p className="ap-flash ap-flash-in">Password saved. You can now sign in with your email and password, or keep using the emailed link.</p>}
+        {q.pwError && <p className="ap-error ap-error-top ap-flash-in">{decodeURIComponent(q.pwError)}</p>}
+        <form action="/app/api/password" method="post" className="ap-card-b ap-form">
+          <p className="ap-muted">You sign in with a link sent to {session.email}. Set a password here if you&apos;d rather type one. It&apos;s yours alone; other coordinators set their own.</p>
+          <label htmlFor="pw-new">New password <span>At least 8 characters</span></label>
+          <input id="pw-new" name="password" type="password" required minLength={8} maxLength={72} autoComplete="new-password" />
+          <label htmlFor="pw-again">Type it again</label>
+          <input id="pw-again" name="password_again" type="password" required minLength={8} maxLength={72} autoComplete="new-password" />
+          <button className="ap-ghost sm" type="submit">Save password</button>
+          <p className="ap-muted">Forgot it later? Sign in with the emailed link and set a new one here.</p>
+        </form>
+      </section>
+
       <p className="ap-muted"><a className="ap-link" href="/app/inquiries">Inquiries from the website form ›</a></p>
     </AppShell>
   );

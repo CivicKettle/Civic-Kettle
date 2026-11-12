@@ -7,7 +7,7 @@ export type VolunteerShift = {
   title: string;
   shiftName: string;
   startsAt: string;
-  status: "Upcoming" | "On shift" | "Attended" | "No-show" | "Cancelled";
+  status: "Upcoming" | "On shift" | "Attended" | "No-show" | "Cancelled" | "Waiting list";
   hours: number | null;
 };
 
@@ -81,11 +81,12 @@ export async function loadVolunteers(session: Session, org: Organization, now: n
     const ended = new Date(shift.ends_at).getTime() < now;
     let status: VolunteerShift["status"];
     if (s.status === "cancelled") status = "Cancelled";
+    else if (s.status === "waitlist") status = "Waiting list";
     else if (e.a.state === "in") status = "On shift";
     else if (e.a.state === "done") status = "Attended";
     else status = ended ? "No-show" : "Upcoming";
 
-    if (status !== "Cancelled") p.eventIds.add(event.id);
+    if (status !== "Cancelled" && status !== "Waiting list") p.eventIds.add(event.id);
     if (status === "Attended" || status === "On shift") {
       p.attended++;
       p.hours += e.hours ?? 0;

@@ -22,6 +22,7 @@ export default async function CancelPage({
   const { signup, event, shift, org } = data;
   const tz = org.time_zone;
   const cancelled = signup.status === "cancelled";
+  const waiting = signup.status === "waitlist";
 
   return (
     <div className="pv">
@@ -31,8 +32,8 @@ export default async function CancelPage({
       </header>
       <main className="pv-body">
         <div className="pv-hero">
-          <p className="pv-kicker">{cancelled ? "Cancelled" : "Cancel sign-up"}</p>
-          <h1 className="pv-h1">{cancelled ? (done ? "Done. Your spot is open for someone else." : "This sign-up was already cancelled.") : `Can't make it, ${signup.volunteer_name.split(" ")[0]}?`}</h1>
+          <p className="pv-kicker">{cancelled ? "Cancelled" : waiting ? "Waiting list" : "Cancel sign-up"}</p>
+          <h1 className="pv-h1">{cancelled ? (done ? "Done. Your spot is open for someone else." : "This sign-up was already cancelled.") : waiting ? `Leave the waiting list, ${signup.volunteer_name.split(" ")[0]}?` : `Can't make it, ${signup.volunteer_name.split(" ")[0]}?`}</h1>
           <p className="pv-meta">
             <strong>{event.title}</strong><br />
             {fmtLongDate(event.starts_at, tz)}<br />
@@ -49,8 +50,8 @@ export default async function CancelPage({
             <form action="/app/api/public/cancel" method="post" className="pv-fields">
               <input type="hidden" name="cancel_token" value={cancelToken} />
               {mine && <input type="hidden" name="mine" value={mine} />}
-              <p className="pv-note">No hard feelings. Cancelling frees the spot right away so someone else can take it.</p>
-              <button className="pv-button danger" type="submit">Yes, cancel my sign-up</button>
+              <p className="pv-note">{waiting ? "You'll be taken off the waiting list for this shift. You can sign up again any time." : "No hard feelings. Cancelling frees the spot right away so someone else can take it."}</p>
+              <button className="pv-button danger" type="submit">{waiting ? "Yes, take me off the list" : "Yes, cancel my sign-up"}</button>
               <a className="pv-link" href={mine ? `/v/mine/${mine}` : `/v/${event.public_token}`}>Keep it, take me back</a>
             </form>
           )}

@@ -87,12 +87,13 @@ export default async function EventPage({
           <div className="ap-card-h"><h2>Shifts · {filled} of {capacity} spots filled</h2></div>
           {shifts.map((s) => {
             const people = signups.filter((x) => x.shift_id === s.id && x.status === "confirmed");
+            const waiting = signups.filter((x) => x.shift_id === s.id && x.status === "waitlist");
             const pct = s.capacity ? Math.round((s.confirmed / s.capacity) * 100) : 0;
             return (
               <div className="ap-shift" key={s.id}>
                 <div className="ap-shift-h">
                   <h3>{s.name}</h3>
-                  <span className="t">{fmtRange(s.starts_at, s.ends_at, tz)} · {s.confirmed} of {s.capacity}{s.open === 0 ? " · Full" : ""}</span>
+                  <span className="t">{fmtRange(s.starts_at, s.ends_at, tz)} · {s.confirmed} of {s.capacity}{s.open === 0 ? " · Full" : ""}{waiting.length ? ` · ${waiting.length} waiting` : ""}</span>
                 </div>
                 <span className="ap-bar"><i className={pct < 50 ? "low" : undefined} style={{ width: `${pct}%` }} /></span>
                 <div className="ap-people">
@@ -108,6 +109,21 @@ export default async function EventPage({
                     <span key={`open-${i}`} className="ap-person open"><i>+</i>Open spot</span>
                   ))}
                 </div>
+                {waiting.length > 0 && (
+                  <div className="ap-waiting">
+                    <span className="ap-waiting-k">Waiting list, first in line first</span>
+                    <div className="ap-people">
+                      {waiting.map((p) => (
+                        <form key={p.id} action={`/app/api/signups/${p.id}/cancel`} method="post" className="ap-person wait">
+                          <input type="hidden" name="event_id" value={id} />
+                          <i>{initials(p.volunteer_name)}</i>
+                          <span>{p.volunteer_name}{p.is_minor ? " · minor" : ""}</span>
+                          <button type="submit" aria-label={`Remove ${p.volunteer_name} from the waiting list`} title="Remove from the waiting list">×</button>
+                        </form>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -129,7 +145,7 @@ export default async function EventPage({
                       {p.is_minor && p.guardian_name ? ` · Guardian: ${p.guardian_name}${p.guardian_phone ? ` ${p.guardian_phone}` : ""}` : ""}
                     </div>
                   </div>
-                  <span className={`ap-pill${p.status === "cancelled" ? " sent" : ""}`}>{p.status === "cancelled" ? "Cancelled" : "Confirmed"}</span>
+                  <span className={`ap-pill${p.status === "cancelled" ? " sent" : p.status === "waitlist" ? " amber" : ""}`}>{p.status === "cancelled" ? "Cancelled" : p.status === "waitlist" ? "Waiting list" : "Confirmed"}</span>
                 </div>
               ))}
             </div>

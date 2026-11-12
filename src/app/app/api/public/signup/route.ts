@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { normalizePhone } from "@/lib/db";
 import { deliver, loadParts } from "@/lib/emails/deliver";
+import type { Signup } from "@/lib/db";
 import { DEVICE_COOKIE, addTokens, deviceCookieOptions, parseTokens } from "@/lib/device";
 
 export const dynamic = "force-dynamic";
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
     .from("signups")
     .select("cancel_token")
     .eq("shift_id", shift.id)
-    .eq("status", "confirmed")
+    .in("status", ["confirmed", "waitlist"])
     .eq("email", email)
     .ilike("volunteer_name", name)
     .limit(1);
@@ -76,7 +77,8 @@ export async function POST(request: NextRequest) {
   if (dup) return confirmed(request, `/v/${token}/done?c=${dup.cancel_token}&again=1`, dup.cancel_token);
 
   const { count } = await admin.from("signups").select("id", { count: "exact", head: true }).eq("shift_id", shift.id).eq("status", "confirmed");
-  if ((count ?? 0) >= shift.capacity) return go(request, back, "That shift just filled up. Pick another if you can.");
+  // A full shift takes people onto its waiting list instead of turning them away.
+  const status: Signup["status"] = (count ?? 0) >= shift.capacity ? "waitlist" : "confirmed";
 
   const { data: created, error } = await admin
     .from("signups")
@@ -89,14 +91,18 @@ export async function POST(request: NextRequest) {
       is_minor: isMinor,
       guardian_name: isMinor ? guardianName : null,
       guardian_phone: isMinor ? guardianPhone : null,
+      status,
     })
     .select("id,cancel_token")
     .single();
-  if (error || !created) return go(request, back, "Something went wrong saving your sign-up. Try again.");
+  if (error || !created) {
+    // Before the waiting-list database update, a full shift can only refuse.
+    return go(request, back, status === "waitlist" ? "That shift is full. Pick another if you can." : "Something went wrong saving your sign-up. Try again.");
+  }
 
   // Confirmation email. A failure here never blocks the sign-up itself.
   const parts = await loadParts(admin, created.id);
-  if (parts) await deliver(admin, "confirmation", parts);
+  if (parts) await deliver(admin, status === "waitlist" ? "waitlist" : "confirmation", parts);
 
   return confirmed(request, `/v/${token}/done?c=${created.cancel_token}`, created.cancel_token);
 }

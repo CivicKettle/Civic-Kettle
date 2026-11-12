@@ -12,6 +12,8 @@ export type MineRow = {
   alternatives: ShiftWithCounts[];
   /** False once they have checked in, or the event was cancelled. */
   canChange: boolean;
+  /** On the shift's waiting list, not yet holding a spot. */
+  waiting: boolean;
 };
 
 export type Mine = {
@@ -41,7 +43,7 @@ export async function loadMine(token: string): Promise<Mine | null> {
   const events = new Map(((evs ?? []) as Event[]).map((e) => [e.id, e]));
   if (events.size === 0) return { org, email, upcoming: [], pastShifts: 0, pastHours: 0 };
 
-  const { data: su } = await admin.from("signups").select("*").in("event_id", [...events.keys()]).eq("email", email).eq("status", "confirmed");
+  const { data: su } = await admin.from("signups").select("*").in("event_id", [...events.keys()]).eq("email", email).in("status", ["confirmed", "waitlist"]);
   const mine = (su ?? []) as Signup[];
   const eventIds = [...new Set(mine.map((s) => s.event_id))];
   if (eventIds.length === 0) return { org, email, upcoming: [], pastShifts: 0, pastHours: 0 };
@@ -62,10 +64,11 @@ export async function loadMine(token: string): Promise<Mine | null> {
     if (!event || !shift) continue;
     if (new Date(shift.ends_at).getTime() > now) {
       const taken = new Set(mine.filter((m) => m.event_id === s.event_id && m.volunteer_name.trim().toLowerCase() === s.volunteer_name.trim().toLowerCase()).map((m) => m.shift_id));
-      const canChange = !s.checked_in_at && event.status !== "cancelled";
+      const waiting = s.status === "waitlist";
+      const canChange = !waiting && !s.checked_in_at && event.status !== "cancelled";
       const alternatives = canChange ? shifts.filter((x) => x.event_id === s.event_id && !taken.has(x.id) && x.open > 0 && new Date(x.ends_at).getTime() > now) : [];
-      upcoming.push({ signup: s, event, shift, alternatives, canChange });
-    } else if (s.checked_in_at) {
+      upcoming.push({ signup: s, event, shift, alternatives, canChange, waiting });
+    } else if (s.checked_in_at && s.status === "confirmed") {
       pastShifts++;
       pastHours += toEntry(s, shift, event, now).hours ?? 0;
     }

@@ -32,7 +32,7 @@ export async function GET(request: NextRequest, ctx: { params: Promise<{ id: str
     if (!shift) continue;
     const e = toEntry(s, shift, ev, now);
     const ended = new Date(shift.ends_at).getTime() < now;
-    const status = s.status === "cancelled" ? "Cancelled" : e.a.state !== "none" ? "Attended" : ended ? "No-show" : "Signed up";
+    const status = s.status === "cancelled" ? "Cancelled" : s.status === "waitlist" ? "Waiting list" : e.a.state !== "none" ? "Attended" : ended ? "No-show" : "Signed up";
     rows.push([
       s.volunteer_name, s.email, s.phone, s.is_minor ? "Yes" : "No", s.guardian_name, s.guardian_phone,
       shift.name, utcToZonedInputs(shift.starts_at, tz).date, `${fmtTime(shift.starts_at, tz)} to ${fmtTime(shift.ends_at, tz)}`,

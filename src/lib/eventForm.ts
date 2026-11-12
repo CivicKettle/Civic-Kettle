@@ -64,3 +64,28 @@ export function parseEventForm(form: FormData, tz: string): { ok: true; data: Pa
     },
   };
 }
+
+export type Repeat = "none" | "weekly" | "biweekly" | "monthly";
+
+/**
+ * The dates of a repeating event, as YYYY-MM-DD strings, starting with the
+ * first. Monthly keeps the day of the month (the 31st becomes the last day of
+ * a shorter month). At most 12 dates in total.
+ */
+export function repeatDates(first: string, repeat: Repeat, more: number): string[] {
+  const out = [first];
+  if (repeat === "none" || !/^\d{4}-\d{2}-\d{2}$/.test(first)) return out;
+  const [y, m, d] = first.split("-").map(Number);
+  const n = Math.max(0, Math.min(11, Math.floor(more) || 0));
+  for (let i = 1; i <= n; i++) {
+    let dt: Date;
+    if (repeat === "monthly") {
+      const lastDay = new Date(Date.UTC(y, m - 1 + i + 1, 0)).getUTCDate();
+      dt = new Date(Date.UTC(y, m - 1 + i, Math.min(d, lastDay)));
+    } else {
+      dt = new Date(Date.UTC(y, m - 1, d + i * (repeat === "weekly" ? 7 : 14)));
+    }
+    out.push(dt.toISOString().slice(0, 10));
+  }
+  return out;
+}
