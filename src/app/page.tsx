@@ -1,6 +1,6 @@
-import QRCode from "qrcode";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import StartForm from "@/components/StartForm";
 
 /** Sample sign-ups for the illustration at the top of the page. */
 const SHEET = [
@@ -11,9 +11,7 @@ const SHEET = [
 
 const initials = (n: string) => n.split(" ").map((w) => w[0]).join("");
 
-export default async function Home() {
-  // A real code: scanning it opens this site.
-  const qr = await QRCode.toString("https://civickettle.com", { type: "svg", margin: 0, color: { dark: "#252b25", light: "#0000" } });
+export default function Home() {
   let chip = 0;
 
   return (
@@ -24,15 +22,11 @@ export default async function Home() {
           <div className="hm-wrap hm-hero-grid">
             <div className="hm-hero-copy">
               <h1 id="hero-title">Volunteer sign{"\u2011"}ups, shifts and hours in one place.</h1>
-              <p className="hm-lede">Share one link. Volunteers pick a shift, get reminded, scan in at the door, and their hours add up on their own.</p>
-              <div className="hm-hero-action">
-                <a className="hm-cta" href="#contact">Get started</a>
-                <a className="hm-quiet" href="#workflow">See how it works</a>
-              </div>
-              <p className="hm-audience">$19 a month. Made for small charities, community groups and local nonprofits.</p>
+              <p className="hm-lede">Share one link. Volunteers pick a shift, get reminded, and check in at the door. Their hours add up on their own.</p>
+              <StartForm id="start-top" tone="dark" />
             </div>
 
-            <div className="hm-stage" role="img" aria-label="Illustration with sample data: a sign-up sheet for a garden day filling with volunteer names, the same event on a volunteer's phone, and a door sign with a code to scan for check-in.">
+            <div className="hm-stage" role="img" aria-label="Illustration with sample data: a sign-up sheet for a garden day filling with volunteer names.">
               <div className="hm-sheet" aria-hidden="true">
                 <div className="hm-sheet-top">
                   <div>
@@ -55,32 +49,12 @@ export default async function Home() {
                 ))}
               </div>
 
-              <div className="hm-phone" aria-hidden="true">
-                <div className="hm-phone-screen">
-                  <p className="hm-phone-org">Maple Street Community Garden</p>
-                  <p className="hm-phone-title">Neighborhood garden day</p>
-                  <p className="hm-phone-date">Saturday, May 18</p>
-                  <div className="hm-opt hm-opt-full"><span className="hm-radio" /><span><strong>Setup</strong>8:00 AM</span><em>Full</em></div>
-                  <div className="hm-opt hm-opt-on"><span className="hm-radio" /><span><strong>Planting</strong>9:00 AM</span><em>1 spot left</em></div>
-                  <div className="hm-opt"><span className="hm-radio" /><span><strong>Cleanup</strong>12:00 PM</span><em>3 spots left</em></div>
-                  <span className="hm-phone-btn">Sign me up</span>
-                  <p className="hm-phone-fine">No account needed</p>
-                </div>
-              </div>
-
-              <div className="hm-door" aria-hidden="true">
-                <div className="hm-door-qr" dangerouslySetInnerHTML={{ __html: qr }} />
-                <p><strong>Scan to check in</strong>Neighborhood garden day</p>
-              </div>
             </div>
           </div>
         </section>
 
         <section className="hm-section hm-wrap" id="workflow" aria-labelledby="workflow-title">
-          <div className="hm-head">
-            <h2 id="workflow-title">One Saturday, start to finish.</h2>
-            <p>Here is what a single event looks like when the sign-up sheet, the reminder texts and the hours spreadsheet are the same thing.</p>
-          </div>
+          <h2 className="hm-h2" id="workflow-title">One Saturday, start to finish.</h2>
           <ol className="hm-days">
             <li>
               <p className="hm-when">Monday</p>
@@ -89,7 +63,7 @@ export default async function Home() {
                 <p className="hm-vig-note">Text it, email it, or print it on a flyer.</p>
               </div>
               <h3>Share one link</h3>
-              <p>Volunteers pick a shift in under a minute, with no account to create. A parent can sign up a child under 18.</p>
+              <p>Volunteers pick a shift in under a minute. No account needed.</p>
             </li>
             <li>
               <p className="hm-when">Friday, 6 pm</p>
@@ -99,7 +73,7 @@ export default async function Home() {
                 <p className="hm-vig-note">Can&apos;t make it? Cancel in one tap.</p>
               </div>
               <h3>Reminders send themselves</h3>
-              <p>Everyone gets an email the day before and the morning of. When someone cancels, the spot reopens right away.</p>
+              <p>Everyone gets an email the day before and the morning of.</p>
             </li>
             <li>
               <p className="hm-when">Saturday, 8:45 am</p>
@@ -109,7 +83,7 @@ export default async function Home() {
                 <p><span className="hm-tick hm-tick-off" />Ana Ortiz<em>Not here yet</em></p>
               </div>
               <h3>Scan in at the door</h3>
-              <p>Tape up the sign. Volunteers scan the code to check in and out, and you watch the roster fill on your phone.</p>
+              <p>Volunteers scan a code with their phone to check in and out.</p>
             </li>
             <li>
               <p className="hm-when">Saturday night</p>
@@ -118,108 +92,24 @@ export default async function Home() {
                 <p><strong>41.5</strong>hours</p>
                 <p><strong>2</strong>no-shows</p>
               </div>
-              <h3>Hours and a summary, done</h3>
-              <p>Approve everyone&apos;s hours with one click, see who came and who didn&apos;t, and export it for your records.</p>
+              <h3>Hours add themselves up</h3>
+              <p>See who came, approve their hours with one click, and export.</p>
             </li>
           </ol>
         </section>
 
-        <section className="hm-section hm-wrap hm-swap" aria-labelledby="swap-title">
-          <div className="hm-head">
-            <h2 id="swap-title">Less admin, more community impact.</h2>
-            <p>CivicKettle does one job: it takes the paperwork around volunteers off the person who organizes them.</p>
-          </div>
-          <dl className="hm-swap-list">
-            <div><dt>The clipboard at the door</dt><dd>A code volunteers scan with their own phone</dd></div>
-            <div><dt>The group text the night before</dt><dd>Reminders that go out without you</dd></div>
-            <div><dt>Guessing who will show up</dt><dd>A roster that updates as people sign up and cancel</dd></div>
-            <div><dt>The spreadsheet of hours</dt><dd>Hours counted from check-in to check-out, ready to export</dd></div>
-          </dl>
-        </section>
-
-        <section className="hm-wrap" id="plans" aria-labelledby="pricing-title">
-          <div className="hm-ticket">
+        <section className="hm-wrap hm-last" id="plans" aria-labelledby="pricing-title">
+          <div className="hm-ticket" id="contact">
             <div className="hm-ticket-stub">
               <p className="hm-price"><strong>$19</strong><span>a month</span></p>
-              <p>One plan for your whole organization.</p>
+              <p>One plan. Everything included.</p>
             </div>
             <div className="hm-ticket-body">
-              <h2 id="pricing-title">Everything on this page is included.</h2>
-              <ul>
-                <li>Sign-up pages for every event</li>
-                <li>Email reminders and messages</li>
-                <li>Check-in by scanning a code</li>
-                <li>Hours with approval and export</li>
-                <li>A summary after each event</li>
-                <li>Room for your co-coordinators</li>
-              </ul>
-              <div className="hm-ticket-foot">
-                <a className="ck-button" href="#contact">Get started</a>
-                <span>Nothing is charged until you&apos;ve agreed to start.</span>
-              </div>
+              <h2 id="pricing-title">Set up your first event in a few minutes.</h2>
+              <StartForm id="start-bottom" tone="light" />
             </div>
           </div>
-        </section>
-
-        <section className="ck-contact hm-wrap hm-contact" id="contact" aria-labelledby="contact-title">
-          <div className="ck-contact-copy">
-            <h2 id="contact-title">Bring CivicKettle to your organization.</h2>
-            <p>Tell us a little about your group. We&apos;ll email you within a day or two to get your workspace ready.</p>
-            <p className="ck-contact-alt">Prefer email? <a href="mailto:civickettle@gmail.com">civickettle@gmail.com</a></p>
-            <p className="ck-contact-alt">Already use CivicKettle? <a href="/app">Sign in</a></p>
-          </div>
-      <form className="ck-form" name="founding-org" method="POST" action="/app/api/inquiry">
-                <p className="ck-hidden"><label>Leave this empty: <input name="bot-field" /></label></p>
-        <div className="ck-form-row">
-          <label htmlFor="f-org">Organization</label>
-          <input id="f-org" name="organization" type="text" required autoComplete="organization" placeholder="Maple Street Community Garden" />
-        </div>
-        <div className="ck-form-grid">
-          <div className="ck-form-row">
-            <label htmlFor="f-name">Your name</label>
-            <input id="f-name" name="name" type="text" required autoComplete="name" />
-          </div>
-          <div className="ck-form-row">
-            <label htmlFor="f-email">Email</label>
-            <input id="f-email" name="email" type="email" required autoComplete="email" />
-          </div>
-        </div>
-        <div className="ck-form-grid">
-          <div className="ck-form-row">
-            <label htmlFor="f-type">Kind of organization</label>
-            <select id="f-type" name="org_type" required defaultValue="">
-              <option value="" disabled>Choose one</option>
-              <option>Small charity or nonprofit</option>
-              <option>Community or neighborhood group</option>
-              <option>Faith community</option>
-              <option>School, PTA or youth program</option>
-              <option>Sports league or club</option>
-              <option>Something else</option>
-            </select>
-          </div>
-          <div className="ck-form-row">
-            <label htmlFor="f-size">Volunteers in a typical month</label>
-            <select id="f-size" name="volunteers" required defaultValue="">
-              <option value="" disabled>Choose one</option>
-              <option>Under 10</option>
-              <option>10 to 25</option>
-              <option>25 to 75</option>
-              <option>75 to 200</option>
-              <option>More than 200</option>
-            </select>
-          </div>
-        </div>
-        <div className="ck-form-row">
-          <label htmlFor="f-today">How do you handle sign-ups and hours today?</label>
-          <textarea id="f-today" name="current_process" rows={3} placeholder="Spreadsheets, a group text, sign-up sheets at the door…"></textarea>
-        </div>
-        <div className="ck-form-row">
-          <label htmlFor="f-pain">What's the most annoying part? <span>Optional</span></label>
-          <textarea id="f-pain" name="biggest_pain" rows={3}></textarea>
-        </div>
-        <button className="ck-button" type="submit">Request a workspace <span aria-hidden="true">↗</span></button>
-        <p className="ck-form-note">No payment and no commitment. We reply from civickettle@gmail.com.</p>
-      </form>
+          <p className="hm-questions">Questions? Write to <a href="mailto:civickettle@gmail.com">civickettle@gmail.com</a>. Already use CivicKettle? <a href="/app">Sign in</a>. By getting started you agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
         </section>
       </main>
       <SiteFooter />

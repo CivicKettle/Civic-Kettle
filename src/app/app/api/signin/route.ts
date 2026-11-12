@@ -32,7 +32,13 @@ export async function POST(request: NextRequest) {
       options: { emailRedirectTo: `${siteUrl()}/app/auth/callback` },
     });
     if (error) {
-      return NextResponse.json({ status: "error", email, message: error.message }, { status: 400 });
+      // Say what to do, not what the mail system called it.
+      const message = /security purposes|only request this after/i.test(error.message)
+        ? "You just asked for a link. Check your email, or wait a minute and try again."
+        : /rate limit/i.test(error.message)
+          ? "Too many sign-in emails just went out. Wait a few minutes and try again."
+          : error.message;
+      return NextResponse.json({ status: "error", email, message }, { status: 400 });
     }
     return NextResponse.json({ status: "sent", email });
   } catch (err) {

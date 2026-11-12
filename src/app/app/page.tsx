@@ -38,7 +38,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
           <p className="ck-kicker">Coordinator sign-in</p>
           <h1>Your workspace.</h1>
           <p className="ck-intro">
-            Sign in with the email you used when your organization joined CivicKettle.
+            Enter your email and we&apos;ll send you a link. New to CivicKettle? The same link sets up your workspace.
           </p>
         </div>
         <SignInForm linkError={error === "link"} />
