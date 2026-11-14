@@ -1,5 +1,5 @@
 import { CONTACT_EMAIL } from "@/lib/contact";
-import { buildNewOrgNotice } from "@/lib/emails/templates";
+import { buildFeedbackNotice, buildNewOrgNotice } from "@/lib/emails/templates";
 import { sendEmail } from "@/lib/emails/send";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { siteUrl } from "@/lib/supabase/server";
@@ -37,5 +37,18 @@ export async function notifyNewOrg(org: { name: string; timeZone: string }, coor
     else console.error(`[notify] new workspace notice failed for "${org.name}": ${result.error}`);
   } catch (err) {
     console.error("[notify] new workspace notice crashed:", err);
+  }
+}
+
+/** Email a coordinator's feedback note to CivicKettle. Returns whether it was sent. */
+export async function notifyFeedback(note: { orgName: string; email: string; message: string }): Promise<boolean> {
+  try {
+    const msg = buildFeedbackNotice({ ...note, siteUrl: siteUrl() });
+    const result = await sendEmail({ to: noticeAddress(), subject: msg.subject, html: msg.html, text: msg.text, replyTo: note.email });
+    if (!result.ok) console.error(`[notify] feedback from "${note.orgName}" failed: ${result.error}`);
+    return result.ok;
+  } catch (err) {
+    console.error("[notify] feedback crashed:", err);
+    return false;
   }
 }

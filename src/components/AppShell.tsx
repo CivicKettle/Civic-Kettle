@@ -9,7 +9,7 @@ const NAV = [
   { href: "/app/settings", label: "Settings", key: "settings" },
 ] as const;
 
-export type NavKey = (typeof NAV)[number]["key"];
+export type NavKey = (typeof NAV)[number]["key"] | "feedback";
 
 export { KettleMark };
 
@@ -44,6 +44,7 @@ export default function AppShell({
             </a>
           ))}
         </nav>
+        <a className={`ap-feedback${active === "feedback" ? " on" : ""}`} href="/app/feedback">Send feedback</a>
         <div className="ap-side-foot">
           {email && <span>{email}</span>}
           <form action="/app/api/signout" method="post">

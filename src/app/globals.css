@@ -2118,3 +2118,22 @@ input::placeholder, textarea::placeholder { color: #7a8076; }
 .hm-dash-top em { padding: 4px 12px; font-size: 13px; font-weight: 600; }
 .hm-price-year { margin: 6px 0 14px !important; font-size: 16px !important; color: #3a3320 !important; }
 .hm-price-year strong { font-weight: 600; }
+
+/* Getting started steps on the Overview, and the feedback link */
+.ap-steps ol { margin: 0; padding: 0; list-style: none; }
+.ap-steps li { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 16px 22px; border-top: 1px solid var(--ck-rule); }
+.ap-steps li:first-child { border-top: 0; }
+.ap-step-mark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid #9aa890; color: #4a514a; font-size: 15px; font-weight: 500; }
+.ap-steps li.next .ap-step-mark { border-color: var(--ck-marigold); background: var(--ck-marigold); color: #23291f; }
+.ap-steps li.done .ap-step-mark { border-color: var(--ck-green); background: var(--ck-green); color: #f4f2e9; }
+.ap-steps h3 { margin: 0; font-size: 17px; font-weight: 500; letter-spacing: -0.02em; }
+.ap-steps li.done h3 { color: #5d665b; font-weight: 400; }
+.ap-steps p { margin: 3px 0 0; max-width: 62ch; color: #4a514a; font-size: 14px; line-height: 1.5; }
+.ap-card-h > span { color: var(--ck-muted); font-size: 13px; }
+.ap-feedback { display: block; margin: auto 0 14px; padding: 10px 12px; border: 1px solid rgba(244, 242, 233, 0.3); border-radius: 4px; color: #f4f2e9; font-size: 14px; text-align: center; }
+.ap-feedback:hover, .ap-feedback.on { border-color: var(--ck-marigold); color: var(--ck-marigold); }
+.ap-feedback + .ap-side-foot { margin-top: 0; }
+@media (max-width: 640px) {
+  .ap-steps li { grid-template-columns: 34px minmax(0, 1fr); }
+  .ap-steps li .ck-button { grid-column: 2; justify-self: start; }
+}

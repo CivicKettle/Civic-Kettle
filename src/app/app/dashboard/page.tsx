@@ -97,6 +97,28 @@ export default async function DashboardPage() {
   const hoursLabel = Math.round(hoursThisMonth * 100) / 100;
   const trial = await trialFor(session, org);
 
+  // First steps for a new workspace. Each one ticks itself off from what has actually happened.
+  const { data: anyEvent } = await session.supabase.from("events").select("id").eq("org_id", org.id).order("starts_at", { ascending: false }).limit(200);
+  const orgEventIds = (anyEvent ?? []).map((e) => e.id as string);
+  const none = { data: [] as { id: string }[] };
+  const [{ data: anySignup }, { data: anyCheckIn }, { data: anyApproved }] = orgEventIds.length
+    ? await Promise.all([
+        session.supabase.from("signups").select("id").in("event_id", orgEventIds).limit(1),
+        session.supabase.from("signups").select("id").in("event_id", orgEventIds).not("checked_in_at", "is", null).limit(1),
+        session.supabase.from("signups").select("id").in("event_id", orgEventIds).not("hours_approved_at", "is", null).limit(1),
+      ])
+    : [none, none, none];
+  const firstEventId = (anyEvent ?? [])[0]?.id as string | undefined;
+  const eventHref = firstEventId ? `/app/events/${firstEventId}` : "/app/events/new";
+  const steps = [
+    { done: Boolean(firstEventId), title: "Create your first event", body: "Give it a date, a place and the shifts you need filled. It takes about two minutes.", href: "/app/events/new", action: "Create an event" },
+    { done: Boolean(anySignup?.length), title: "Share the sign-up link", body: "Copy the link or download the QR code from the event page and send it to your volunteers. This step is done when the first person signs up.", href: eventHref, action: firstEventId ? "Open the event" : "Create an event first" },
+    { done: Boolean(anyCheckIn?.length), title: "Check people in at the event", body: "Print the door sign. Volunteers scan it with their phone to check in and out, and you see who showed up.", href: firstEventId ? `${eventHref}/checkin` : "/app/events/new", action: firstEventId ? "Open check-in" : "Create an event first" },
+    { done: Boolean(anyApproved?.length), title: "Approve the hours", body: "After the event, look over everyone's hours, approve them, and export a spreadsheet if you need one.", href: "/app/hours", action: "Open Hours" },
+  ];
+  const stepsDone = steps.filter((s) => s.done).length;
+  const nextStep = steps.findIndex((s) => !s.done);
+
   return (
     <AppShell active="overview" orgName={org.name} email={session.email}>
       <div className="ap-top">
@@ -108,6 +130,24 @@ export default async function DashboardPage() {
       </div>
 
       {trial && <p className="ap-flash">{trialLine(trial)}</p>}
+
+      {stepsDone < steps.length && (
+        <section className="ap-card ap-steps" aria-labelledby="steps-title">
+          <div className="ap-card-h"><h2 id="steps-title">Getting started</h2><span>{stepsDone} of {steps.length} done</span></div>
+          <ol>
+            {steps.map((s, i) => (
+              <li key={s.title} className={s.done ? "done" : i === nextStep ? "next" : undefined}>
+                <span className="ap-step-mark" aria-hidden="true">{s.done ? "✓" : i + 1}</span>
+                <div>
+                  <h3>{s.title}{s.done ? <span className="ck-hidden"> (done)</span> : null}</h3>
+                  {!s.done && <p>{s.body}</p>}
+                </div>
+                {!s.done && i === nextStep && <a className="ck-button" href={s.href}>{s.action}</a>}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
 
       <div className="ap-tiles">
         <div className="ap-tile"><span className="l">Upcoming events</span><span className="v">{events.length}</span><span className="d">{events[0] ? `Next: ${dateTile(events[0].starts_at, org.time_zone).dow} ${dateTile(events[0].starts_at, org.time_zone).day}` : "Nothing scheduled"}</span></div>

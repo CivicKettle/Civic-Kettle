@@ -245,3 +245,22 @@ export function buildNewOrgNotice(ctx: { orgName: string; email: string; timeZon
 </table></td></tr></table></body></html>`;
   return { subject, html, text };
 }
+
+/** A coordinator's feedback note, sent to CivicKettle itself. */
+export function buildFeedbackNotice(ctx: { orgName: string; email: string; message: string; siteUrl: string }): { subject: string; html: string; text: string } {
+  const { orgName, email, message, siteUrl } = ctx;
+  const subject = `Feedback from ${orgName}`;
+  const text = [`${orgName} (${email}) sent feedback:`, "", message, "", "Reply to this email to answer them directly.", "", `CivicKettle. ${siteUrl}`].join("\n");
+  const html = `<!doctype html><html><body style="margin:0;background:#f2f0e9;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#252b25">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f2f0e9"><tr><td align="center" style="padding:28px 16px">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px">
+  ${band("CivicKettle")}
+  <tr><td style="background:#faf8f2;border:1px solid #d5d3c9;border-top:0;padding:28px 28px 24px">
+    <p style="margin:0 0 6px;font-size:13px;color:#626b60">Feedback from</p>
+    <p style="margin:0 0 18px;font-size:16px;line-height:1.5"><strong>${esc(orgName)}</strong><br>${esc(email)}</p>
+    <p style="margin:0;padding:14px 16px;background:#f2f0e9;border-left:4px solid #e3b04b;font-size:16px;line-height:1.55;white-space:pre-wrap">${esc(message)}</p>
+    <p style="margin:18px 0 0;font-size:13px;line-height:1.55;color:#626b60">Reply to this email to answer them directly.</p>
+  </td></tr>
+</table></td></tr></table></body></html>`;
+  return { subject, html, text };
+}
