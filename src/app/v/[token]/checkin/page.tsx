@@ -15,7 +15,7 @@ export default async function CheckinPage({
   searchParams,
 }: {
   params: Promise<{ token: string }>;
-  searchParams: Promise<{ ok?: string; error?: string; notfound?: string }>;
+  searchParams: Promise<{ ok?: string; error?: string; sent?: string; bademail?: string }>;
 }) {
   const { token } = await params;
   const flags = await searchParams;
@@ -104,11 +104,15 @@ export default async function CheckinPage({
         ) : (
           <form action="/app/api/public/find" method="post" className="pv-card pv-fields">
             <input type="hidden" name="token" value={token} />
-            <p className="pv-hi">Find your sign-up</p>
-            <p className="pv-muted">This phone doesn&apos;t have a sign-up for this event. Enter the email or mobile number used when signing up.</p>
-            <label>Email or mobile<input name="who" type="text" required autoComplete="email" inputMode="email" placeholder="you@example.com" /></label>
-            {flags.notfound && <p className="pv-error">No sign-up found for that. Check the spelling, or see the coordinator.</p>}
-            <button className="pv-button" type="submit">Find me</button>
+            <p className="pv-hi">{flags.sent ? "Check your email" : "Find your sign-up"}</p>
+            {flags.sent ? (
+              <p className="pv-note">If that email has a sign-up for this event, a check-in link is on its way to it. Open the link on this phone. Nothing after a minute? Check the spelling and try again, or see the coordinator, who can check you in.</p>
+            ) : (
+              <p className="pv-muted">This phone doesn&apos;t have a sign-up for this event. Enter the email used when signing up and we&apos;ll send it a check-in link. No email on this phone? The coordinator can check you in.</p>
+            )}
+            <label>Email<input name="who" type="email" required autoComplete="email" inputMode="email" placeholder="you@example.com" /></label>
+            {flags.bademail && <p className="pv-error" role="alert">That doesn&apos;t look like an email address.</p>}
+            <button className={flags.sent ? "pv-button ghost" : "pv-button"} type="submit">{flags.sent ? "Send it again" : "Email me a check-in link"}</button>
             {!ended && <a className="pv-link" href={`/v/${token}?signup=1`}>Not signed up yet? Sign up now</a>}
           </form>
         )}

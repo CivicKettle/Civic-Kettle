@@ -264,3 +264,30 @@ export function buildFeedbackNotice(ctx: { orgName: string; email: string; messa
 </table></td></tr></table></body></html>`;
   return { subject, html, text };
 }
+
+/**
+ * The link a volunteer asks for at the door when their phone doesn't know them.
+ * It goes only to the email address already on the sign-up, so typing someone
+ * else's address gets a stranger nothing.
+ */
+export function buildCheckinLink(ctx: { orgName: string; eventTitle: string; names: string[]; url: string; siteUrl: string }): { subject: string; html: string; text: string } {
+  const { orgName, eventTitle, names, url, siteUrl } = ctx;
+  const subject = `Your check-in link for ${eventTitle}`;
+  const forWhom = names.length > 1 ? ` It covers ${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}.` : "";
+  const lead = `Open this on the phone you want to check in with, and it will bring up your sign-up for ${eventTitle}.${forWhom}`;
+  const ignore = "If you didn't ask for this, you can ignore it. Nothing has changed and nobody else can see this link.";
+  const text = ["Hi,", "", lead, "", `Check in: ${url}`, "", ignore, "", `${orgName}, sent through CivicKettle. ${siteUrl}`].join("\n");
+  const html = `<!doctype html><html><body style="margin:0;background:#f2f0e9;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#252b25">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f2f0e9"><tr><td align="center" style="padding:28px 16px">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px">
+  ${band(orgName)}
+  <tr><td style="background:#faf8f2;border:1px solid #d5d3c9;border-top:0;padding:28px 28px 24px">
+    <p style="margin:0 0 14px;font-size:16px">Hi,</p>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.55">${esc(lead)}</p>
+    <p style="margin:0">${button(url, "Open check-in")}</p>
+    <p style="margin:20px 0 0;font-size:13px;line-height:1.55;color:#626b60">${esc(ignore)}</p>
+  </td></tr>
+  <tr><td style="padding:14px 4px 0;font-size:12px;color:#8a8d83;line-height:1.5">${esc(orgName)}, sent through <a href="${siteUrl}" style="color:#626b60">CivicKettle</a></td></tr>
+</table></td></tr></table></body></html>`;
+  return { subject, html, text };
+}

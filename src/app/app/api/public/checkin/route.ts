@@ -23,14 +23,14 @@ export async function POST(request: NextRequest) {
   const signup = s as Signup | null;
   const tokens = parseTokens(request.cookies.get(DEVICE_COOKIE)?.value);
   // The device must hold this sign-up's private token.
-  if (!signup || !tokens.includes(signup.cancel_token)) return to("?notfound=1");
+  if (!signup || !tokens.includes(signup.cancel_token)) return to("?error=" + encodeURIComponent("This phone isn't connected to that sign-up. Ask for a check-in link below, or see the coordinator."));
 
   const [{ data: ev }, { data: sh }] = await Promise.all([
     admin.from("events").select("id,status,public_token").eq("id", signup.event_id).single(),
     admin.from("shifts").select("*").eq("id", signup.shift_id).single(),
   ]);
   const shift = sh as Shift | null;
-  if (!ev || !shift || ev.public_token !== token || ev.status === "cancelled") return to("?notfound=1");
+  if (!ev || !shift || ev.public_token !== token || ev.status === "cancelled") return to("?error=" + encodeURIComponent("This phone isn't connected to that sign-up. Ask for a check-in link below, or see the coordinator."));
 
   const now = new Date().toISOString();
   if (action === "in") {
