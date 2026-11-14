@@ -48,6 +48,7 @@ export default function SignInForm({ linkError = false, startWithLink = false, d
           We sent a sign-in link to <strong>{state.email}</strong>. Open it in this same browser and
           you&apos;ll land in your workspace. The link works once and expires in an hour.
         </p>
+        <p>Nothing after a minute? Check the address above for typos and look in your spam folder, then <a href="/app?new=1">try again</a>.</p>
       </div>
     );
   }
