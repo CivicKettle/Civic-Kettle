@@ -2,7 +2,8 @@
 //
 // What it records: page visits on the public site and in the coordinator
 // workspace, plus one "started a trial" event. Nothing is recorded on
-// volunteer pages, and clicks, typed text and screen recordings are off, so
+// volunteer pages, and clicks, typed text, page-speed measurements and screen
+// recordings are off, so
 // volunteers' names and contact details never reach it. No cookies: the
 // visitor id lives in the tab's session storage and is gone when it closes.
 const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
@@ -16,6 +17,8 @@ if (key && !volunteerPage) {
       persistence: "sessionStorage",
       person_profiles: "identified_only",
       autocapture: false,
+      // Page visits only: no page-speed measurements either.
+      capture_performance: false,
       disable_session_recording: true,
       disable_surveys: true,
     });
