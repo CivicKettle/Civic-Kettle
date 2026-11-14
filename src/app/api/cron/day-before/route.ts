@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { runReminders } from "@/lib/emails/reminders";
+import { clearOldAttempts } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -11,6 +12,7 @@ export async function GET(request: NextRequest) {
   if (secret && auth !== `Bearer ${secret}`) {
     return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
+  await clearOldAttempts();
   const result = await runReminders("day_before");
   return NextResponse.json(result);
 }

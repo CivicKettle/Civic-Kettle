@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { clientIp, withinLimits } from "@/lib/rateLimit";
 import { createClient, siteUrl } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -29,8 +30,17 @@ export async function POST(request: NextRequest) {
         message: "Sign-in isn't switched on yet. The database connection is still being set up.",
       });
     }
+    const ip = clientIp(request);
     if (password) {
-      // Optional password, set in Settings. The cookies for the session are written by the client above.
+      // Slow down password guessing: per account and per connection.
+      const allowed = await withinLimits([
+        { action: "signin-pw-email", who: email, max: 10, minutes: 15 },
+        { action: "signin-pw-ip", who: ip, max: 40, minutes: 15 },
+      ]);
+      if (!allowed) {
+        return NextResponse.json({ status: "error", email, message: "Too many tries. Wait 15 minutes, or use the emailed link." }, { status: 429 });
+      }
+      // The cookies for the session are written by the client above.
       const { error: pwError } = await supabase.auth.signInWithPassword({ email, password });
       if (pwError) {
         const message = /invalid login/i.test(pwError.message)
@@ -41,6 +51,13 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ status: "error", email, message }, { status: 400 });
       }
       return NextResponse.json({ status: "signed_in", email });
+    }
+    const linkAllowed = await withinLimits([
+      { action: "signin-link-email", who: email, max: 5, minutes: 15 },
+      { action: "signin-link-ip", who: ip, max: 15, minutes: 15 },
+    ]);
+    if (!linkAllowed) {
+      return NextResponse.json({ status: "error", email, message: "Too many sign-in emails just went out. Wait a few minutes and try again." }, { status: 429 });
     }
     const { error } = await supabase.auth.signInWithOtp({
       email,

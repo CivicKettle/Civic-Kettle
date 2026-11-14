@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { normalizePhone } from "@/lib/db";
 import { deliver, loadParts } from "@/lib/emails/deliver";
 import type { Signup } from "@/lib/db";
+import { clientIp, withinLimits } from "@/lib/rateLimit";
 import { DEVICE_COOKIE, addTokens, deviceCookieOptions, parseTokens } from "@/lib/device";
 
 export const dynamic = "force-dynamic";
@@ -54,6 +55,15 @@ export async function POST(request: NextRequest) {
   if (isMinor && !guardianName) return go(request, back, "A parent or guardian's name is required for volunteers under 18.");
   if (isMinor && guardianPhoneRaw && !guardianPhone) return go(request, back, "The guardian's mobile should be a 10-digit phone number, like 949 555 0100. The consent is the checkbox below.");
   if (isMinor && !consent) return go(request, back, "Please confirm you are the volunteer's parent or guardian.");
+
+  // Well above what real people do; stops a script flooding an event or someone's inbox.
+  const ip = clientIp(request);
+  const allowed = await withinLimits([
+    { action: "signup-ip", who: ip, max: 40, minutes: 10 },
+    { action: "signup-ip-day", who: ip, max: 200, minutes: 24 * 60 },
+    { action: "signup-email", who: email, max: 12, minutes: 60 },
+  ]);
+  if (!allowed) return go(request, back, "That's a lot of sign-ups in a short time. Please wait a few minutes and try again.");
 
   // Event and shift must match the token, be open, and in the future.
   const { data: ev } = await admin.from("events").select("id,status,ends_at").eq("public_token", token).maybeSingle();
