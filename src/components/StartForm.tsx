@@ -34,7 +34,7 @@ export default function StartForm({ tone = "dark", id }: { tone?: "dark" | "ligh
     return (
       <div className={`hm-start hm-start-${tone} hm-start-done`} role="status">
         <strong>Check your email.</strong>
-        <span>We sent a link to {state.email}. Open it in this browser, choose a password, and you&apos;re in. Nothing after a minute? Check the address for typos and your spam folder, then try again.</span>
+        <span>We sent a link to {state.email}. Open it, choose a password, and you&apos;re in. Nothing after a minute? Check the address for typos and your spam folder, then try again.</span>
       </div>
     );
   }

@@ -9,7 +9,7 @@ type State = {
 };
 
 const LINK_ERROR =
-  "That sign-in link has expired or was already used. Each link works once, and only the newest one works. Enter your email to get a fresh link, then open it in this same browser window.";
+  "That sign-in link has expired or was already used. Each link works once, and only the newest one works. Enter your email to get a fresh link.";
 
 export default function SignInForm({ linkError = false, startWithLink = false, defaultEmail = "" }: { linkError?: boolean; startWithLink?: boolean; defaultEmail?: string }) {
   const [state, setState] = useState<State>(linkError ? { status: "error", message: LINK_ERROR } : { status: "idle" });
@@ -45,7 +45,7 @@ export default function SignInForm({ linkError = false, startWithLink = false, d
       <div className="ap-card ap-notice" role="status">
         <h2>Check your email</h2>
         <p>
-          We sent a sign-in link to <strong>{state.email}</strong>. Open it in this same browser and
+          We sent a sign-in link to <strong>{state.email}</strong>. Open it on any device and
           you&apos;ll land in your workspace. The link works once and expires in an hour.
         </p>
         <p>Nothing after a minute? Check the address above for typos and look in your spam folder, then <a href="/app?new=1">try again</a>.</p>
@@ -82,7 +82,7 @@ export default function SignInForm({ linkError = false, startWithLink = false, d
       </button>
       {state.status === "error" && <p className="ap-error">{state.message}</p>}
       {state.status === "unconfigured" && <p className="ap-muted">{state.message}</p>}
-      <p className="ap-muted">{usePassword ? "New to CivicKettle? Start from the homepage and you'll choose a password there." : "The link signs you in once. Open it in this same browser."} By signing in you agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
+      <p className="ap-muted">{usePassword ? "New to CivicKettle? Start from the homepage and you'll choose a password there." : "The link signs you in once, on any device."} By signing in you agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
     </form>
   );
 }
