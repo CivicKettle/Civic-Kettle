@@ -35,11 +35,12 @@ export default async function Home() {
             <div className="hm-hero-copy">
               <h1 id="hero-title">Organizing volunteers shouldn&apos;t be another full{"\u2011"}time job.</h1>
               <p className="hm-lede">Volunteer sign-ups, reminders, check-in and hours for local Orange County nonprofits, all from one link.</p>
-              <StartForm id="start-top" tone="dark" />
+              <a className="hm-hero-link" href="#workflow">See how it works</a>
             </div>
 
             <div className="hm-stage" role="img" aria-label="Illustration with sample data: a sign-up sheet for a garden day filling with volunteer names.">
               <div className="hm-sheet" aria-hidden="true">
+                <p className="hm-example">Example</p>
                 <div className="hm-sheet-top">
                   <div>
                     <p className="hm-sheet-org">Maple Street Community Garden</p>
@@ -61,7 +62,7 @@ export default async function Home() {
                 ))}
               </div>
 
-              <p className="hm-sample">An example event with made-up names. Yours shows your own shifts and volunteers.</p>
+              <p className="hm-sample">This is an example. The organization, event and names are made up.</p>
             </div>
           </div>
         </section>
@@ -77,11 +78,11 @@ export default async function Home() {
                   <li><strong>Communicate</strong>with one link, automatic reminders and group messages</li>
                   <li><strong>Track</strong>who confirmed, who showed up on time, and every hour</li>
                 </ul>
-                <p className="hm-side-foot">{TRIAL_DAYS} day free trial, then $19 a month.</p>
+                <p className="hm-side-foot">$19 a month for your whole organization.</p>
               </div>
               <div className="hm-dash" role="img" aria-label="Illustration with sample data: a coordinator's overview with volunteers signed up, confirmed, on time, hours this month, and three upcoming events.">
                 <div aria-hidden="true">
-                  <p className="hm-dash-top"><span>Maple Street Community Garden</span><em>Sample</em></p>
+                  <p className="hm-dash-top"><span>Maple Street Community Garden</span><em>Example</em></p>
                   <p className="hm-dash-title">Your week at a glance</p>
                   <div className="hm-dash-tiles">
                     <p><strong>28</strong>signed up</p>
@@ -201,7 +202,7 @@ export default async function Home() {
           <dl className="hm-faq" aria-label="Common questions">
             <div><dt>Do volunteers need an app or an account?</dt><dd>No. They open your link, pick a shift, and enter a name and email. It works on any phone.</dd></div>
             <div><dt>How do I know who actually showed up?</dt><dd>Volunteers confirm the day before, then scan a QR code at the door to check in and out. You see who confirmed, who came, who was on time, and who didn&apos;t show.</dd></div>
-            <div><dt>What does it cost?</dt><dd>Volunteers never pay. Organizations get a {TRIAL_DAYS} day free trial, then it is $19 a month. No card to start, and nothing is charged automatically.</dd></div>
+            <div><dt>What does it cost?</dt><dd>Volunteers never pay. Organizations get a {TRIAL_DAYS} day free trial, then it is $19 a month, or $190 a year. No card to start, and nothing is charged automatically.</dd></div>
             <div><dt>Can I get a record of everyone&apos;s hours?</dt><dd>Yes. Hours are counted from check-in to check-out. You approve them and export a spreadsheet for grants, school service hours or your own records.</dd></div>
             <div><dt>Is our volunteers&apos; information safe?</dt><dd>It goes only to your organization. It is never sold or used for ads, and it is deleted on request. The details are in the <a href="/privacy">Privacy Policy</a>.</dd></div>
             <div><dt>How do I cancel?</dt><dd>Open Settings and press Cancel subscription. No contract, no phone call. During the free trial there is nothing to cancel, because we never ask for a card.</dd></div>
@@ -212,10 +213,11 @@ export default async function Home() {
           <div className="hm-ticket" id="contact">
             <div className="hm-ticket-stub">
               <p className="hm-price"><strong>$19</strong><span>a month</span></p>
-              <p>After a {TRIAL_DAYS} day free trial. One plan, everything included. No card to start, no contract, cancel any time.</p>
+              <p className="hm-price-year">or <strong>$190 a year</strong>, two months free</p>
+              <p>Free for the first {TRIAL_DAYS} days. One plan, everything included. No card to start, no contract, cancel any time.</p>
             </div>
             <div className="hm-ticket-body">
-              <h2 id="pricing-title">Try it free for {TRIAL_DAYS} days.</h2>
+              <h2 id="pricing-title">Start with your email.</h2>
               <StartForm id="start-bottom" tone="light" />
             </div>
           </div>

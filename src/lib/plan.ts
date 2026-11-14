@@ -1,5 +1,5 @@
 import type { Organization, Session } from "@/lib/db";
-import { PRICE, TRIAL_DAYS } from "@/lib/pricing";
+import { PRICE, PRICE_YEARLY, TRIAL_DAYS } from "@/lib/pricing";
 import { fmtDate } from "@/lib/time";
 
 export type Trial = { state: "active" | "ended"; daysLeft: number; endsOn: string };
@@ -25,6 +25,6 @@ export async function trialFor(session: Session, org: Organization): Promise<Tri
 /** One sentence for the dashboard and Settings. */
 export function trialLine(t: Trial): string {
   return t.state === "active"
-    ? `Free trial: ${t.daysLeft} day${t.daysLeft === 1 ? "" : "s"} left, until ${t.endsOn}. After that CivicKettle is ${PRICE}. Nothing is charged automatically.`
-    : `Your free trial ended on ${t.endsOn}. CivicKettle is ${PRICE}. Paying isn't set up yet, so nothing changes for you right now.`;
+    ? `Free trial: ${t.daysLeft} day${t.daysLeft === 1 ? "" : "s"} left, until ${t.endsOn}. After that CivicKettle is ${PRICE} or ${PRICE_YEARLY}. Nothing is charged automatically.`
+    : `Your free trial ended on ${t.endsOn}. CivicKettle is ${PRICE} or ${PRICE_YEARLY}. Paying isn't set up yet, so nothing changes for you right now.`;
 }

@@ -2108,3 +2108,13 @@ input::placeholder, textarea::placeholder { color: #7a8076; }
   .ck-legal-table > .h { display: none; }
   .ck-legal-table span:empty { display: none; }
 }
+
+/* Nov 13: one sign-up spot, clearer example labels, yearly price */
+.hm-hero-link { display: inline-block; margin-top: 30px; padding: 13px 22px; border: 1.5px solid rgba(244, 242, 233, 0.55); border-radius: 4px; color: #f4f2e9; font-size: 16px; font-weight: 500; }
+.hm-hero-link:hover { border-color: var(--ck-marigold); color: var(--ck-marigold); }
+.hm-hero-link:focus-visible { outline: 3px solid var(--ck-marigold); outline-offset: 3px; }
+.hm-example { display: inline-block; margin: 0 0 14px; padding: 4px 12px; border-radius: 999px; background: var(--ck-marigold); color: #23291f; font-size: 13px; font-weight: 600; }
+.hm-sample { color: #d5dacb; font-size: 14px; }
+.hm-dash-top em { padding: 4px 12px; font-size: 13px; font-weight: 600; }
+.hm-price-year { margin: 6px 0 14px !important; font-size: 16px !important; color: #3a3320 !important; }
+.hm-price-year strong { font-weight: 600; }

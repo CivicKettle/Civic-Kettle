@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { TRIAL_DAYS } from "@/lib/pricing";
 
 type State = { status: "idle" | "sending" | "sent" | "error"; message?: string; email?: string };
 
@@ -47,11 +46,7 @@ export default function StartForm({ tone = "dark", id }: { tone?: "dark" | "ligh
         <input id={id} name="email" type="email" required autoComplete="email" inputMode="email" placeholder="Your email" defaultValue={state.email} />
         <button type="submit" disabled={sending}>{sending ? "Sending…" : "Start free trial"}</button>
       </div>
-      {state.status === "error" ? (
-        <p className="hm-start-error" role="alert">{state.message}</p>
-      ) : (
-        <p className="hm-start-note">{TRIAL_DAYS} day free trial</p>
-      )}
+      {state.status === "error" && <p className="hm-start-error" role="alert">{state.message}</p>}
     </form>
   );
 }
