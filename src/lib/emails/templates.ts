@@ -222,3 +222,26 @@ export function buildInvite(ctx: { orgName: string; invitedBy: string; email: st
 </table></td></tr></table></body></html>`;
   return { subject, html, text };
 }
+
+/** A note to CivicKettle itself when a new organization creates a workspace. */
+export function buildNewOrgNotice(ctx: { orgName: string; email: string; timeZone: string; when: string; total: number | null; siteUrl: string }): { subject: string; html: string; text: string } {
+  const { orgName, email, timeZone, when, total, siteUrl } = ctx;
+  const subject = `New workspace: ${orgName}`;
+  const count = total === null ? "" : total === 1 ? "That makes 1 workspace in total." : `That makes ${total} workspaces in total.`;
+  const rows: [string, string][] = [["Organization", orgName], ["Coordinator", email], ["Time zone", timeZone], ["Created", when]];
+  const text = [`${orgName} just created a workspace on CivicKettle.`, "", ...rows.map(([l, v]) => `${l}: ${v}`), "", count, "Reply to this email to write to the coordinator directly.", "", `CivicKettle. ${siteUrl}`].filter((line, i, all) => !(line === "" && all[i - 1] === "")).join("\n");
+  const html = `<!doctype html><html><body style="margin:0;background:#f2f0e9;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#252b25">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f2f0e9"><tr><td align="center" style="padding:28px 16px">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px">
+  ${band("CivicKettle")}
+  <tr><td style="background:#faf8f2;border:1px solid #d5d3c9;border-top:0;padding:28px 28px 24px">
+    <p style="margin:0 0 18px;font-size:16px;line-height:1.55"><strong>${esc(orgName)}</strong> just created a workspace.</p>
+    <table role="presentation" cellspacing="0" cellpadding="0" style="font-size:15px;line-height:1.5">
+      ${rows.map(([l, v]) => `<tr><td style="padding:3px 18px 3px 0;color:#626b60;vertical-align:top">${l}</td><td style="padding:3px 0;font-weight:600">${esc(v)}</td></tr>`).join("\n      ")}
+    </table>
+    ${count ? `<p style="margin:18px 0 0;font-size:15px;line-height:1.55">${count}</p>` : ""}
+    <p style="margin:18px 0 0;font-size:13px;line-height:1.55;color:#626b60">Reply to this email to write to the coordinator directly.</p>
+  </td></tr>
+</table></td></tr></table></body></html>`;
+  return { subject, html, text };
+}

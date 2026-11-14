@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getOrg, getSession, slugify } from "@/lib/db";
 import { TIME_ZONES } from "@/lib/time";
+import { notifyNewOrg } from "@/lib/notify";
 import { passwordProblem, saveFirstPassword } from "@/lib/password";
 
 export const dynamic = "force-dynamic";
@@ -43,7 +44,10 @@ export async function POST(request: NextRequest) {
         p_slug: slug,
         p_time_zone: timeZone,
       });
-      if (!error) return back(request, "/app/dashboard");
+      if (!error) {
+        await notifyNewOrg({ name, timeZone }, session.email);
+        return back(request, "/app/dashboard");
+      }
       if (!/duplicate|unique/i.test(error.message)) {
         return back(request, "/app/setup", error.message);
       }
