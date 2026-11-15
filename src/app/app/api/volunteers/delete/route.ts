@@ -38,6 +38,12 @@ export async function POST(request: NextRequest) {
     if (error) return go(request, back, { error: `Couldn't delete: ${error.message}` });
   }
 
+  // Their hours letters go too, so a deleted person's name and hours can no
+  // longer be looked up by a letter code. (No error if step 12 hasn't been run.)
+  if (person.email) {
+    await session.supabase.from("hours_letters").delete().eq("org_id", org.id).eq("volunteer_email", normEmail(person.email)).ilike("volunteer_name", person.name);
+  }
+
   // Forget their email preference too, unless the same address still has sign-ups
   // under another name (a parent with a second child, for example).
   const email = normEmail(person.email);

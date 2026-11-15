@@ -7,7 +7,7 @@
 // volunteers' names and contact details never reach it. No cookies: the
 // visitor id lives in the tab's session storage and is gone when it closes.
 const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
-const volunteerPage = /^\/(v|o|u)(\/|$)/.test(window.location.pathname);
+const volunteerPage = /^\/(v|o|u|verify)(\/|$)/.test(window.location.pathname);
 
 if (key && !volunteerPage) {
   void import("posthog-js").then(({ default: posthog }) => {

@@ -73,6 +73,19 @@ export async function POST(request: NextRequest) {
     return back(request, "/app/settings", error ? error.message : undefined);
   }
 
+  if (intent === "letterhead") {
+    const org = await getOrg(session);
+    if (!org) return back(request, "/app/setup");
+    const field = (key: string, max: number) => String(form.get(key) || "").trim().slice(0, max) || null;
+    const signer = field("signer_name", 80);
+    if (!signer || signer.length < 2) return back(request, "/app/settings", "Add the name of the person who approves letters.", "letterhead");
+    const { error } = await session.supabase
+      .from("organizations")
+      .update({ signer_name: signer, signer_title: field("signer_title", 80), letter_address: field("letter_address", 200), letter_phone: field("letter_phone", 40) })
+      .eq("id", org.id);
+    return back(request, "/app/settings", error ? "That couldn't be saved yet. This setting needs database step 11 to be run in Supabase." : undefined, "letterhead");
+  }
+
   if (intent === "value") {
     const org = await getOrg(session);
     if (!org) return back(request, "/app/setup");

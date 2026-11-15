@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPage kicker="Privacy" title="Privacy Policy" updated="November 11, 2026">
+    <LegalPage kicker="Privacy" title="Privacy Policy" updated="November 14, 2026">
       <p className="ck-legal-lead">
         CivicKettle helps community organizations sign up volunteers, remind them, check them in, and count their hours. This page explains what information that takes and what happens to it.
       </p>
@@ -42,6 +42,7 @@ export default function PrivacyPage() {
       <ul>
         <li><strong>The organization you signed up with.</strong> Its coordinators see your sign-up, contact details, attendance and hours. When you sign up, that organization decides how it uses the information, and its email address is at the bottom of every sign-up page and every email.</li>
         <li><strong>The companies that run our systems</strong>, only so they can provide them: Supabase (database and sign-in), Vercel (website hosting), Resend (email delivery) and PostHog (visit counts, described below). They may process information in the United States and other countries where they operate.</li>
+        <li><strong>Anyone you give an hours letter to.</strong> If you ask for a letter confirming your hours and the organization approves it, the letter carries a code. A person who has that code can open a page showing your name, the organization, your hours and the dates, so they can check the letter is real. Nobody can find that page without the code, and the organization can cancel a letter.</li>
         <li><strong>Authorities</strong>, if the law requires it.</li>
       </ul>
       <p>We don&apos;t sell or rent personal information, we don&apos;t show ads, and we don&apos;t use volunteer contact details to promote anything.</p>

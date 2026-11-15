@@ -25,6 +25,9 @@ export default async function HoursPage({
   const range = parseRange(q.from, q.to, tz);
   const entries = await loadEntries(session, org, range.startIso, range.endIso);
   const here = `/app/hours?from=${range.from}&to=${range.to}`;
+  // Zero when database step 12 hasn't been run yet.
+  const { count: waitingCount } = await session.supabase.from("hours_letters").select("id", { count: "exact", head: true }).eq("org_id", org.id).eq("status", "requested");
+  const lettersWaiting = waitingCount ?? 0;
 
   const stillIn = entries.filter((e) => e.hours === null);
   const counted = entries.filter((e) => e.hours !== null);
@@ -86,6 +89,7 @@ export default async function HoursPage({
         </div>
         <div className="ap-top-actions">
           <a className="ck-button" href={`/app/hours/report?from=${range.from}&to=${range.to}`}>Impact report</a>
+          <a className="ap-ghost" href="/app/hours/letters">Hours letters{lettersWaiting > 0 ? ` (${lettersWaiting} waiting)` : ""}</a>
           <a className="ap-ghost" href={`/app/api/hours/export?from=${range.from}&to=${range.to}`}>Export CSV</a>
         </div>
       </div>

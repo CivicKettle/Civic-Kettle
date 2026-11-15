@@ -22,6 +22,7 @@ export default async function SettingsPage({
   const q = await searchParams;
   const error = q.at ? undefined : q.error;
   const valueError = q.at === "value" ? q.error : undefined;
+  const letterError = q.at === "letterhead" ? q.error : undefined;
   const rate = hourValue(org);
   const [role, team, invites] = await Promise.all([getRole(session, org.id), loadTeam(session, org), loadInvites(session, org)]);
   const owner = role === "owner";
@@ -62,6 +63,26 @@ export default async function SettingsPage({
         {valueError && <p className="ap-error">{decodeURIComponent(valueError)}</p>}
         {q.at === "value" && !valueError && <p className="ap-ok" role="status">Saved.</p>}
         <button className="ck-button" type="submit">Save value <span aria-hidden="true">↗</span></button>
+      </form>
+
+      <form action="/app/api/org" method="post" className="ap-card ap-form ap-narrow" id="letterhead">
+        <input type="hidden" name="intent" value="letterhead" />
+        <h2 className="ap-h2">Hours letters</h2>
+        <p className="ap-muted">
+          Shown on every verified hours letter. The letter says who approved it in plain type and carries a code anyone can check, so no signature picture is stored.
+          There is a blank line on the letter if you want to sign a printed copy by hand.
+        </p>
+        <label htmlFor="signer_name">Approved by <span>Your name</span></label>
+        <input id="signer_name" name="signer_name" type="text" maxLength={80} required defaultValue={org.signer_name ?? ""} placeholder="Maria Lopez" />
+        <label htmlFor="signer_title">Title</label>
+        <input id="signer_title" name="signer_title" type="text" maxLength={80} defaultValue={org.signer_title ?? ""} placeholder="Volunteer Coordinator" />
+        <label htmlFor="letter_address">Mailing address <span>For the letterhead</span></label>
+        <input id="letter_address" name="letter_address" type="text" maxLength={200} defaultValue={org.letter_address ?? ""} placeholder="123 Main Street, Irvine, CA 92602" />
+        <label htmlFor="letter_phone">Phone</label>
+        <input id="letter_phone" name="letter_phone" type="tel" maxLength={40} defaultValue={org.letter_phone ?? ""} placeholder="(949) 555-0100" />
+        {letterError && <p className="ap-error">{decodeURIComponent(letterError)}</p>}
+        {q.at === "letterhead" && !letterError && <p className="ap-ok" role="status">Saved.</p>}
+        <button className="ck-button" type="submit">Save letter details <span aria-hidden="true">↗</span></button>
       </form>
 
       {trial && (

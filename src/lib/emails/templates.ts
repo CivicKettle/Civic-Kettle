@@ -291,3 +291,49 @@ export function buildCheckinLink(ctx: { orgName: string; eventTitle: string; nam
 </table></td></tr></table></body></html>`;
   return { subject, html, text };
 }
+
+function plainEmail(orgName: string, siteUrl: string, paragraphs: string[], cta?: { url: string; label: string }): { html: string; text: string } {
+  const text = [...paragraphs, ...(cta ? [`${cta.label}: ${cta.url}`] : []), `${orgName}, sent through CivicKettle. ${siteUrl}`].join("\n\n");
+  const html = `<!doctype html><html><body style="margin:0;background:#f2f0e9;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#252b25">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f2f0e9"><tr><td align="center" style="padding:28px 16px">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px">
+  ${band(orgName)}
+  <tr><td style="background:#faf8f2;border:1px solid #d5d3c9;border-top:0;padding:28px 28px 24px">
+    ${paragraphs.map((p) => `<p style="margin:0 0 16px;font-size:16px;line-height:1.55">${esc(p)}</p>`).join("\n    ")}
+    ${cta ? `<p style="margin:4px 0 0">${button(cta.url, cta.label)}</p>` : ""}
+  </td></tr>
+  <tr><td style="padding:14px 4px 0;font-size:12px;color:#8a8d83;line-height:1.5">${esc(orgName)}, sent through <a href="${siteUrl}" style="color:#626b60">CivicKettle</a></td></tr>
+</table></td></tr></table></body></html>`;
+  return { html, text };
+}
+
+/** To the volunteer: their hours letter was approved. */
+export function buildLetterReady(ctx: { orgName: string; name: string; hours: string; url: string; siteUrl: string }): { subject: string; html: string; text: string } {
+  const first = ctx.name.trim().split(/\s+/)[0] || "there";
+  const body = plainEmail(ctx.orgName, ctx.siteUrl, [
+    `Hi ${first},`,
+    `Your hours letter from ${ctx.orgName} is ready. It confirms ${ctx.hours} of volunteering, approved by a coordinator.`,
+    "The page below has the letter as a PDF you can print or send. Anyone you give it to can use the code on it to check it is real.",
+  ], { url: ctx.url, label: "Open my hours letter" });
+  return { subject: `Your volunteer hours letter from ${ctx.orgName}`, ...body };
+}
+
+/** To the volunteer: the coordinator did not issue the letter. */
+export function buildLetterDeclined(ctx: { orgName: string; name: string; contactEmail: string | null; siteUrl: string }): { subject: string; html: string; text: string } {
+  const first = ctx.name.trim().split(/\s+/)[0] || "there";
+  const body = plainEmail(ctx.orgName, ctx.siteUrl, [
+    `Hi ${first},`,
+    `${ctx.orgName} was not able to issue the hours letter you asked for.`,
+    ctx.contactEmail ? `If you think that is a mistake, reply to this email or write to ${ctx.contactEmail}.` : "If you think that is a mistake, reply to this email.",
+  ]);
+  return { subject: `About your hours letter request to ${ctx.orgName}`, ...body };
+}
+
+/** To the coordinator: a volunteer asked for an hours letter. */
+export function buildLetterAsk(ctx: { orgName: string; name: string; hours: string; url: string; siteUrl: string }): { subject: string; html: string; text: string } {
+  const body = plainEmail(ctx.orgName, ctx.siteUrl, [
+    `${ctx.name} asked for a verified hours letter. They have ${ctx.hours} approved so far.`,
+    "Nothing is sent to them until you look it over and approve it.",
+  ], { url: ctx.url, label: "Review the request" });
+  return { subject: `${ctx.name} asked for an hours letter`, ...body };
+}

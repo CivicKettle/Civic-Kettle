@@ -13,7 +13,7 @@ export default async function MyShiftsPage({
   searchParams,
 }: {
   params: Promise<{ token: string }>;
-  searchParams: Promise<{ cancelled?: string; switched?: string; error?: string }>;
+  searchParams: Promise<{ cancelled?: string; switched?: string; error?: string; letter?: string }>;
 }) {
   const { token } = await params;
   const q = await searchParams;
@@ -90,6 +90,32 @@ export default async function MyShiftsPage({
             )}
           </div>
         ))}
+
+        {data.letters && data.letters.length > 0 && (
+          <div className="pv-card pv-fields pv-letters" id="letters">
+            <h2 className="pv-h2">Hours letter</h2>
+            <p className="pv-muted">A letter from {org.name} confirming your approved hours, for a school, employer or anyone who asks. The coordinator looks it over before it is sent.</p>
+            {q.letter === "asked" && <p className="pv-note" role="status">Request sent. You will get an email at {data.email} when the coordinator approves it.</p>}
+            {q.letter === "already" && <p className="pv-note" role="status">Your request is already with the coordinator.</p>}
+            {data.letters.map((l) => (
+              <div className="pv-letter-row" key={l.name}>
+                <p><strong>{l.name}</strong> · {fmtHours(l.approvedHours)} approved</p>
+                {l.state === "requested" ? (
+                  <p className="pv-muted">Waiting for the coordinator to approve.</p>
+                ) : (
+                  <>
+                    {l.state === "approved" && l.code && <a className="pv-link" href={`/verify/${l.code}`}>Open my latest letter</a>}
+                    <form action="/app/api/public/letter" method="post">
+                      <input type="hidden" name="token" value={token} />
+                      <input type="hidden" name="name" value={l.name} />
+                      <button className={l.state === "approved" ? "pv-link" : "pv-button"} type="submit">{l.state === "approved" ? "Ask for an updated letter" : "Ask for my hours letter"}</button>
+                    </form>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="pv-mine-more">
           {data.pastShifts > 0 && <p>So far with {org.name}: {data.pastShifts} {data.pastShifts === 1 ? "shift" : "shifts"}, {fmtHours(data.pastHours)}.</p>}
