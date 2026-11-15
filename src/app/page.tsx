@@ -202,7 +202,7 @@ export default async function Home() {
           <dl className="hm-faq" aria-label="Common questions">
             <div><dt>Do volunteers need an app or an account?</dt><dd>No. They open your link, pick a shift, and enter a name and email. It works on any phone.</dd></div>
             <div><dt>How do I know who actually showed up?</dt><dd>Volunteers confirm the day before, then scan a QR code at the door to check in and out. You see who confirmed, who came, who was on time, and who didn&apos;t show.</dd></div>
-            <div><dt>What does it cost?</dt><dd>Volunteers never pay. Organizations get a {TRIAL_DAYS} day free trial, then it is $19 a month, or $170 a year. No card to start, and nothing is charged automatically.</dd></div>
+            <div><dt>What does it cost?</dt><dd>Volunteers never pay. Organizations get a {TRIAL_DAYS} day free trial, then it is $19 a month, or $150 a year. No card to start, and nothing is charged automatically.</dd></div>
             <div><dt>Can I get a record of everyone&apos;s hours?</dt><dd>Yes. Hours are counted from check-in to check-out. You approve them and export a spreadsheet for grants, school service hours or your own records.</dd></div>
             <div><dt>Is our volunteers&apos; information safe?</dt><dd>It goes only to your organization. It is never sold or used for ads, and it is deleted on request. The details are in the <a href="/privacy">Privacy Policy</a>.</dd></div>
             <div><dt>How do I cancel?</dt><dd>Open Settings and press Cancel subscription. No contract, no phone call. During the free trial there is nothing to cancel, because we never ask for a card.</dd></div>
@@ -213,7 +213,7 @@ export default async function Home() {
           <div className="hm-ticket" id="contact">
             <div className="hm-ticket-stub">
               <p className="hm-price"><strong>$19</strong><span>a month</span></p>
-              <p className="hm-price-year">or <strong>$170 a year</strong>, which saves $58</p>
+              <p className="hm-price-year">or <strong>$150 a year</strong>, which saves $78</p>
               <p>Free for the first {TRIAL_DAYS} days. One plan, everything included. No card to start, no contract, cancel any time.</p>
             </div>
             <div className="hm-ticket-body">
