@@ -1503,7 +1503,9 @@ button.ck-button { font-family: inherit; cursor: pointer; }
 .pv-hi { margin: 0; font-family: var(--font-editorial); font-size: 26px; letter-spacing: -0.02em; line-height: 1.1; }
 .pv-button.big { min-height: 64px; font-size: 18px; width: 100%; }
 .pv-checkin form, .pv-today form { display: grid; }
-.pv-today { border-color: #b9c9b0; background: #f6ecd0; }
+.pv-today { border-color: var(--ck-rule); background: transparent; }
+.pv-already { margin: 0; font-size: 14px; color: var(--ck-muted); }
+.pv-already a { color: var(--ck-green); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 
 /* ===== Printable door sign ===== */
 .po { min-height: 100vh; background: #dde4ce; padding: 24px 16px 48px; }
