@@ -5,6 +5,7 @@ import { getOrg, getRole, getSession } from "@/lib/db";
 import { trialFor, trialLine } from "@/lib/plan";
 import { loadInvites, loadTeam } from "@/lib/team";
 import { fmtDate, TIME_ZONES } from "@/lib/time";
+import { fmtMoney, hourValue, VALUE_SOURCE } from "@/lib/value";
 
 export const metadata: Metadata = { title: "Settings | CivicKettle" };
 export const dynamic = "force-dynamic";
@@ -12,14 +13,16 @@ export const dynamic = "force-dynamic";
 export default async function SettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; teamError?: string; invited?: string; noEmail?: string; cancelled?: string; removed?: string; pw?: string; pwError?: string }>;
+  searchParams: Promise<{ error?: string; at?: string; teamError?: string; invited?: string; noEmail?: string; cancelled?: string; removed?: string; pw?: string; pwError?: string }>;
 }) {
   const session = await getSession();
   if (!session) redirect("/app");
   const org = await getOrg(session);
   if (!org || !session.hasPassword) redirect("/app/setup");
   const q = await searchParams;
-  const { error } = q;
+  const error = q.at ? undefined : q.error;
+  const valueError = q.at === "value" ? q.error : undefined;
+  const rate = hourValue(org);
   const [role, team, invites] = await Promise.all([getRole(session, org.id), loadTeam(session, org), loadInvites(session, org)]);
   const owner = role === "owner";
   const trial = await trialFor(session, org);
@@ -44,6 +47,21 @@ export default async function SettingsPage({
         </select>
         {error && <p className="ap-error">{decodeURIComponent(error)}</p>}
         <button className="ck-button" type="submit">Save <span aria-hidden="true">↗</span></button>
+      </form>
+
+      <form action="/app/api/org" method="post" className="ap-card ap-form ap-narrow" id="value">
+        <input type="hidden" name="intent" value="value" />
+        <h2 className="ap-h2">Value of volunteer time</h2>
+        <p className="ap-muted">
+          The impact report multiplies approved hours by this amount. It starts at {fmtMoney(VALUE_SOURCE.california, true)}, the 2025 figure for California
+          from <a href={VALUE_SOURCE.url} target="_blank" rel="noopener noreferrer">{VALUE_SOURCE.name}</a> ({VALUE_SOURCE.released}). Their national figure
+          is {fmtMoney(VALUE_SOURCE.national, true)}. Change it if your funder asks for a different number.
+        </p>
+        <label htmlFor="hour_value">Dollars per hour</label>
+        <input id="hour_value" name="hour_value" type="number" min={0} max={500} step={0.01} required defaultValue={rate.toFixed(2)} inputMode="decimal" />
+        {valueError && <p className="ap-error">{decodeURIComponent(valueError)}</p>}
+        {q.at === "value" && !valueError && <p className="ap-ok" role="status">Saved.</p>}
+        <button className="ck-button" type="submit">Save value <span aria-hidden="true">↗</span></button>
       </form>
 
       {trial && (

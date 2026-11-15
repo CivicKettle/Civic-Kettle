@@ -9,9 +9,11 @@ type Props = {
   event?: Event;
   shifts?: Shift[];
   error?: string;
+  /** Advice on how many spots to offer, from this organization's own show-up record. */
+  hint?: string | null;
 };
 
-export default function EventForm({ tz, event, shifts = [], error }: Props) {
+export default function EventForm({ tz, event, shifts = [], error, hint }: Props) {
   const editing = Boolean(event);
   const day = event ? utcToZonedInputs(event.starts_at, tz).date : "";
   const rows = Array.from({ length: MAX_SHIFTS }, (_, i) => shifts[i]);
@@ -75,6 +77,7 @@ export default function EventForm({ tz, event, shifts = [], error }: Props) {
       <div className="ap-card ap-form">
         <h2 className="ap-h2">Shifts</h2>
         <p className="ap-muted">Up to five. Leave a row blank to skip it. Times are {tz.replace("_", " ")}.</p>
+        {hint && <p className="ap-hint">{hint}</p>}
         <div className="ap-shift-rows">
           <div className="ap-shift-head"><span>Shift name</span><span>Starts</span><span>Ends</span><span>Spots</span></div>
           {rows.map((s, i) => {

@@ -84,7 +84,10 @@ export default async function HoursPage({
           <p className="ck-kicker">{org.name}</p>
           <h1 className="ap-h1">Hours</h1>
         </div>
-        <a className="ap-ghost" href={`/app/api/hours/export?from=${range.from}&to=${range.to}`}>Export CSV</a>
+        <div className="ap-top-actions">
+          <a className="ck-button" href={`/app/hours/report?from=${range.from}&to=${range.to}`}>Impact report</a>
+          <a className="ap-ghost" href={`/app/api/hours/export?from=${range.from}&to=${range.to}`}>Export CSV</a>
+        </div>
       </div>
 
       {q.error && <p className="ap-error ap-error-top">{decodeURIComponent(q.error)}</p>}

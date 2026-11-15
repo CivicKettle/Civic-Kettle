@@ -8,6 +8,15 @@ export type Organization = {
   time_zone: string;
   contact_email: string | null;
   created_at?: string;
+  /** Settings from database step 11. Undefined until that step has been run. */
+  hour_value?: number | null;
+  level_bronze?: number | null;
+  level_silver?: number | null;
+  level_gold?: number | null;
+  letter_address?: string | null;
+  letter_phone?: string | null;
+  signer_name?: string | null;
+  signer_title?: string | null;
 };
 
 export type Event = {
@@ -106,11 +115,15 @@ export async function getOrg(session: Session): Promise<Organization | null> {
     orgId = await acceptInvite(session.userId, session.email);
   }
   if (!orgId) return null;
-  const { data: org } = await session.supabase
+  const base = "id,name,slug,time_zone,contact_email,created_at";
+  const full = await session.supabase
     .from("organizations")
-    .select("id,name,slug,time_zone,contact_email,created_at")
+    .select(`${base},hour_value,level_bronze,level_silver,level_gold,letter_address,letter_phone,signer_name,signer_title`)
     .eq("id", orgId)
     .maybeSingle();
+  if (!full.error) return (full.data as Organization) ?? null;
+  // Database step 11 hasn't been run yet: carry on with the built-in defaults.
+  const { data: org } = await session.supabase.from("organizations").select(base).eq("id", orgId).maybeSingle();
   return (org as Organization) ?? null;
 }
 

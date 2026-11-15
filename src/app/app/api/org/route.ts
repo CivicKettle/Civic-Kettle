@@ -6,9 +6,10 @@ import { passwordProblem, saveFirstPassword } from "@/lib/password";
 
 export const dynamic = "force-dynamic";
 
-function back(request: NextRequest, path: string, error?: string) {
+function back(request: NextRequest, path: string, error?: string, at?: string) {
   const url = new URL(path, request.url);
   if (error) url.searchParams.set("error", error);
+  if (at) { url.searchParams.set("at", at); url.hash = at; }
   return NextResponse.redirect(url, { status: 303 });
 }
 
@@ -70,6 +71,18 @@ export async function POST(request: NextRequest) {
       .update({ name, time_zone: timeZone, contact_email: contactEmail })
       .eq("id", org.id);
     return back(request, "/app/settings", error ? error.message : undefined);
+  }
+
+  if (intent === "value") {
+    const org = await getOrg(session);
+    if (!org) return back(request, "/app/setup");
+    const raw = String(form.get("hour_value") || "").replace(/[$,\s]/g, "");
+    const value = Math.round(Number(raw) * 100) / 100;
+    if (!raw || !Number.isFinite(value) || value < 0 || value > 500) {
+      return back(request, "/app/settings", "Enter a dollar amount between 0 and 500, like 41.75.", "value");
+    }
+    const { error } = await session.supabase.from("organizations").update({ hour_value: value }).eq("id", org.id);
+    return back(request, "/app/settings", error ? "That couldn't be saved yet. This setting needs database step 11 to be run in Supabase." : undefined, "value");
   }
 
   return back(request, "/app/dashboard");

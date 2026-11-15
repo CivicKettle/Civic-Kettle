@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import ShareBar from "@/components/ShareBar";
+import { expectLine, loadShowRate } from "@/lib/showRate";
 import { attendance } from "@/lib/attendance";
 import { getOrg, getSession, withCounts, type Event, type Shift, type Signup } from "@/lib/db";
 import { siteUrl } from "@/lib/supabase/server";
@@ -45,6 +46,8 @@ export default async function EventPage({
   const signups = (suRaw ?? []) as Signup[];
   const capacity = shifts.reduce((a, s) => a + s.capacity, 0);
   const filled = shifts.reduce((a, s) => a + s.confirmed, 0);
+  const stillAhead = ev.status !== "cancelled" && new Date(ev.starts_at).getTime() > Date.now();
+  const expect = stillAhead ? expectLine(await loadShowRate(session, org), filled) : null;
   const publicUrl = `${siteUrl()}/v/${ev.public_token}`;
   const tz = org.time_zone;
 
@@ -85,6 +88,7 @@ export default async function EventPage({
       <div className="ap-grid-main">
         <section className="ap-card">
           <div className="ap-card-h"><h2>Shifts · {filled} of {capacity} spots filled</h2></div>
+          {expect && <div className="ap-card-b"><p className="ap-hint">{expect}</p></div>}
           {shifts.map((s) => {
             const people = signups.filter((x) => x.shift_id === s.id && x.status === "confirmed");
             const waiting = signups.filter((x) => x.shift_id === s.id && x.status === "waitlist");

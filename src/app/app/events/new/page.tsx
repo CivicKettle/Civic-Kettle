@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import EventForm from "@/components/EventForm";
+import { loadShowRate, overbookHint } from "@/lib/showRate";
 import { getOrg, getSession } from "@/lib/db";
 
 export const metadata: Metadata = { title: "New event | CivicKettle" };
@@ -22,7 +23,7 @@ export default async function NewEventPage({ searchParams }: { searchParams: Pro
           <h1 className="ap-h1">Create an event</h1>
         </div>
       </div>
-      <EventForm tz={org.time_zone} error={error} />
+      <EventForm tz={org.time_zone} error={error} hint={overbookHint(await loadShowRate(session, org))} />
     </AppShell>
   );
 }

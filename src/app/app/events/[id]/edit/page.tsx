@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import EventForm from "@/components/EventForm";
+import { loadShowRate, overbookHint } from "@/lib/showRate";
 import { getOrg, getSession, type Event, type Shift } from "@/lib/db";
 
 export const metadata: Metadata = { title: "Edit event | CivicKettle" };
@@ -33,7 +34,7 @@ export default async function EditEventPage({
           <h1 className="ap-h1">Edit event</h1>
         </div>
       </div>
-      <EventForm tz={org.time_zone} event={ev as Event} shifts={(sh ?? []) as Shift[]} error={error} />
+      <EventForm tz={org.time_zone} event={ev as Event} shifts={(sh ?? []) as Shift[]} error={error} hint={overbookHint(await loadShowRate(session, org))} />
     </AppShell>
   );
 }

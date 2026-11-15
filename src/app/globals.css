@@ -2138,3 +2138,26 @@ input::placeholder, textarea::placeholder { color: #7a8076; }
   .ap-steps li { grid-template-columns: 34px minmax(0, 1fr); }
   .ap-steps li .ck-button { grid-column: 2; justify-self: start; }
 }
+
+/* Advice drawn from the organization's own record */
+.ap-hint { margin: 0; padding: 10px 12px; border-left: 3px solid #e3b04b; background: #f6ecd0; font-size: 14px; line-height: 1.45; color: #3a3320; }
+.ap-ok { margin: 0; font-size: 14px; color: #2f6b3c; }
+.ap-top-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+/* Impact report: one printable page */
+.rp { max-width: 820px; display: grid; gap: 22px; }
+.rp-head { display: grid; gap: 6px; padding-bottom: 18px; border-bottom: 2px solid var(--ck-green); }
+.rp-head h1 { margin: 0; font-family: var(--font-serif), Georgia, serif; font-size: 34px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.1; }
+.rp-head p { margin: 0; color: var(--ck-muted); font-size: 15px; }
+.rp-value { display: grid; gap: 6px; padding: 22px 24px; border-radius: 4px; background: var(--ck-green); color: #f4f1e6; }
+.rp-value .n { font-family: var(--font-serif), Georgia, serif; font-size: 56px; line-height: 1; letter-spacing: -0.02em; }
+.rp-value .l { font-size: 15px; color: #d6dfcf; }
+.rp-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.rp-note { margin: 0; font-size: 13px; line-height: 1.5; color: var(--ck-muted); }
+.rp-note a { color: inherit; }
+@media (max-width: 720px) { .rp-stats { grid-template-columns: 1fr 1fr; } .rp-value .n { font-size: 42px; } }
+@media print {
+  .rp { max-width: none; gap: 16px; }
+  .rp-value { background: #fff; color: #000; border: 2px solid #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .rp-value .l { color: #333; }
+}
