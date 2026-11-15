@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
 
   if (intent === "create") {
     if (name.length < 2) return back(request, "/app/setup", "Give the organization a name.");
+    if (name.length > 80) return back(request, "/app/setup", "That name is too long. Use 80 characters or fewer.");
     const existing = await getOrg(session);
     if (existing) return back(request, "/app/dashboard");
 
@@ -60,6 +61,10 @@ export async function POST(request: NextRequest) {
     if (!org) return back(request, "/app/setup");
     const contactEmail = String(form.get("contact_email") || "").trim() || null;
     if (name.length < 2) return back(request, "/app/settings", "Give the organization a name.");
+    if (name.length > 80) return back(request, "/app/settings", "That name is too long. Use 80 characters or fewer.");
+    if (contactEmail && (contactEmail.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail))) {
+      return back(request, "/app/settings", "That contact email doesn't look right.");
+    }
     const { error } = await session.supabase
       .from("organizations")
       .update({ name, time_zone: timeZone, contact_email: contactEmail })

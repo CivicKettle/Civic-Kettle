@@ -75,7 +75,15 @@ export async function getSession(): Promise<Session | null> {
     if (!supabase) return null;
     const { data } = await supabase.auth.getUser();
     if (!data.user) return null;
-    const hasPassword = (data.user.user_metadata as { has_password?: boolean } | null)?.has_password === true;
+    // The note on the account says a password was chosen, but the account's
+    // owner can edit that note. So when it says yes, the database confirms it
+    // from the password record itself. If that check isn't installed yet
+    // (database step 10), the note is used as before.
+    let hasPassword = (data.user.user_metadata as { has_password?: boolean } | null)?.has_password === true;
+    if (hasPassword) {
+      const { data: confirmed, error } = await supabase.rpc("has_password");
+      if (!error && confirmed === false) hasPassword = false;
+    }
     return { supabase, userId: data.user.id, email: data.user.email ?? "", hasPassword };
   } catch {
     return null;
