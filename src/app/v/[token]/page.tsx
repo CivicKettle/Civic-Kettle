@@ -68,24 +68,18 @@ export default async function PublicEventPage({
           {event.description && <p className="pv-desc">{event.description}</p>}
         </div>
 
-        {/* The sign-up form always comes first. On the day, checking in is a quiet
-            link above it and a plain button below it, for people who signed up
-            on another phone. A phone that signed up here never sees this page:
-            it goes straight to check-in above. */}
+        {/* On the day, one bar above the form lets people who already signed up
+            check in. It spans the width but stays one line tall, so the sign-up
+            form is still on the first screen. A phone that signed up here never
+            sees this page: it goes straight to check-in above. */}
         {event.status === "cancelled" ? (
           <div className="pv-card"><h2>This event has been cancelled</h2><p className="pv-muted">Sorry about that. {org.contact_email ? <>Questions: <a href={`mailto:${org.contact_email}`}>{org.contact_email}</a>.</> : null}</p></div>
         ) : past ? (
           <div className="pv-card"><h2>This event has already happened</h2><p className="pv-muted">Thanks for your interest. Watch for the next one from {org.name}.</p></div>
         ) : (
           <>
-            {checkinOpen && <p className="pv-already">Already signed up? <a href={`/v/${token}/checkin`}>Check in</a></p>}
+            {checkinOpen && <a className="pv-link pv-already" href={`/v/${token}/checkin`}>Already signed up? Check in</a>}
             <SignupForm token={token} shifts={shifts} tz={tz} error={error} prefillShift={shift} />
-            {checkinOpen && (
-              <div className="pv-card pv-fields pv-today">
-                <p className="pv-muted">Already signed up on another phone or computer?</p>
-                <a className="pv-button ghost" href={`/v/${token}/checkin`}>Check in</a>
-              </div>
-            )}
           </>
         )}
       </main>
