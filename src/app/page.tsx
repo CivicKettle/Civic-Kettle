@@ -213,7 +213,7 @@ export default async function Home() {
           <div className="hm-ticket" id="contact">
             <div className="hm-ticket-stub">
               <p className="hm-price"><strong>$19</strong><span>a month</span></p>
-              <p className="hm-price-year">or <strong>$150 a year</strong>, which saves $78</p>
+              <p className="hm-price-year">or <strong>$150 a year</strong>, which is 34% off</p>
               <p>Free for the first {TRIAL_DAYS} days. One plan, everything included. No card to start, no contract, cancel any time.</p>
             </div>
             <div className="hm-ticket-body">
