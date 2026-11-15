@@ -9,7 +9,10 @@ import { isSupabaseConfigured, supabaseUrl, supabaseAnonKey } from "@/lib/supaba
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  const next = url.searchParams.get("next") || "/app/dashboard";
+  // Only a path inside the workspace is accepted, so a crafted link can't
+  // bounce a coordinator to another website after signing in.
+  const wanted = url.searchParams.get("next") || "";
+  const next = /^\/app(\/[A-Za-z0-9\-_/]*)?(\?[A-Za-z0-9\-_=&%.]*)?$/.test(wanted) ? wanted : "/app/dashboard";
   const failure = NextResponse.redirect(new URL("/app?error=link", url.origin));
 
   if (!code || !isSupabaseConfigured()) return failure;

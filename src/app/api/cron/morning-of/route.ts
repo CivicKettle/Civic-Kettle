@@ -8,7 +8,12 @@ export const maxDuration = 60;
 export async function GET(request: NextRequest) {
   const secret = (process.env.CRON_SECRET || "").trim();
   const auth = request.headers.get("authorization") || "";
-  if (secret && auth !== `Bearer ${secret}`) {
+  // Closed by default: with no secret configured, nobody can trigger the emails.
+  if (!secret) {
+    console.error("[cron] CRON_SECRET is not set, so this scheduled job refuses to run. Add it in Vercel.");
+    return NextResponse.json({ ok: false, error: "not configured" }, { status: 503 });
+  }
+  if (auth !== `Bearer ${secret}`) {
     return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
   const result = await runReminders("morning_of");

@@ -12,10 +12,10 @@ export default async function CancelPage({
   searchParams,
 }: {
   params: Promise<{ cancelToken: string }>;
-  searchParams: Promise<{ done?: string; mine?: string }>;
+  searchParams: Promise<{ done?: string; mine?: string; error?: string }>;
 }) {
   const { cancelToken } = await params;
-  const { done, mine: mineRaw } = await searchParams;
+  const { done, mine: mineRaw, error } = await searchParams;
   const mine = mineRaw && /^[a-f0-9]{16,64}$/i.test(mineRaw) ? mineRaw : null;
   const data = await loadSignupByCancelToken(cancelToken);
   if (!data) notFound();
@@ -40,6 +40,7 @@ export default async function CancelPage({
             {shift.name} · {fmtRange(shift.starts_at, shift.ends_at, tz)}
           </p>
         </div>
+        {error && !cancelled && <p className="pv-error" role="alert">{error}</p>}
         <div className="pv-card pv-fields">
           {cancelled ? (
             <>

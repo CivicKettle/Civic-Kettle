@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { Shift, Signup } from "@/lib/db";
 import { deliver, loadParts } from "@/lib/emails/deliver";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { clientIp, withinLimits } from "@/lib/rateLimit";
 import { promoteShift } from "@/lib/waitlist";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +26,10 @@ export async function POST(request: NextRequest) {
   const admin = createAdminClient();
   if (!admin) return home;
   if (!shiftId) return back({ error: "Pick the shift you want to move to." });
+  // Switching sends an email, so one connection can't do it without limit.
+  if (!(await withinLimits([{ action: "change-ip", who: clientIp(request), max: 30, minutes: 10 }]))) {
+    return back({ error: "That's a lot of changes in a short time. Please wait a few minutes and try again." });
+  }
 
   const { data: s } = await admin.from("signups").select("*").eq("cancel_token", cancelToken).eq("status", "confirmed").maybeSingle();
   if (!s) return back({ error: "That sign-up isn't active anymore." });

@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { deliver, loadParts } from "@/lib/emails/deliver";
+import { clientIp, withinLimits } from "@/lib/rateLimit";
 import { promoteShift } from "@/lib/waitlist";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +13,12 @@ export async function POST(request: NextRequest) {
   const admin = createAdminClient();
   if (!admin || !/^[a-f0-9]{16,64}$/i.test(cancelToken)) {
     return NextResponse.redirect(new URL("/", request.url), { status: 303 });
+  }
+  // Cancelling sends an email, so one connection can't do it without limit.
+  if (!(await withinLimits([{ action: "change-ip", who: clientIp(request), max: 30, minutes: 10 }]))) {
+    const wait = new URL(`/v/cancel/${cancelToken}`, request.url);
+    wait.searchParams.set("error", "That's a lot of changes in a short time. Please wait a few minutes and try again.");
+    return NextResponse.redirect(wait, { status: 303 });
   }
   const { data: before } = await admin.from("signups").select("id,shift_id,status").eq("cancel_token", cancelToken).maybeSingle();
   if (before && (before.status === "confirmed" || before.status === "waitlist")) {

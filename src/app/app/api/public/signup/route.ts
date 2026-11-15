@@ -42,6 +42,10 @@ export async function POST(request: NextRequest) {
   const consent = String(form.get("guardian_consent") || "") === "yes";
 
   if (!shiftId) return go(request, back, "Pick a shift.");
+  if (name.length > 80) return go(request, back, "That name is too long. Use 80 characters or fewer.");
+  if (guardianName.length > 80) return go(request, back, "The parent or guardian's name is too long. Use 80 characters or fewer.");
+  if (emailRaw.length > 254) return go(request, back, "That email address is too long.");
+  if (phoneRaw.length > 30 || guardianPhoneRaw.length > 30) return go(request, back, "That mobile number is too long. Use 10 digits, like 949 555 0100.");
   if (name.length < 2) return go(request, back, "Enter the volunteer's name.");
   if (adult !== "yes" && adult !== "no") return go(request, back, "Tell us whether the volunteer is 18 or older.");
 
